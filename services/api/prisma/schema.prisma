@@ -1,0 +1,267 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole{
+  CLIENT
+  SALON_OWNER
+  ADMIN
+}
+
+enum EmployeeRole{
+  HAIRDRESSER
+  NAIL_TECH
+  MAKEUP_ARTIST
+  BARBER
+}
+
+enum SalonStatus{
+  ACTIVE
+  PENDING
+  SUSPENDED
+}
+
+enum MediaType{
+  PROFILE
+  GALLERY
+}
+
+enum SalonCategory{
+  HAIR
+  NAILS
+  MAKEUP
+  BARBERSHOP
+}
+
+enum BookingStatus{
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+}
+
+enum PaymentMethod{
+  CARD 
+  CASH 
+  PAYPAL
+}
+
+enum PaymentType{
+  DEPOSIT 
+  FULL
+}
+
+enum PaymentStatus{
+  PENDING
+  PAID 
+  REFUNDED 
+  FAILED
+}
+
+model Service_Categories{
+  id String @id @default(uuid())
+  name String @unique
+  slug String @unique
+
+  services Services[]
+}
+
+model Users{
+  id String @id @default(uuid())
+  email String @unique
+  firstName String 
+  lastName String
+  password String
+  phone String?
+  role UserRole @default(CLIENT)
+  city String
+  postalcode String
+  country String
+  street String
+  lat Float?
+  lng Float?
+  createdAt DateTime @default(now())
+
+  salons Salons[]
+  bookings Bookings[]
+  reviews Reviews[]
+  notifications Notifications[]
+  paymentTransactions Payment_Transactions[]
+}
+
+model Salons{
+  id String @id @default(uuid())
+  owner_id String
+  name String 
+  country String
+  city String
+  postalcode String
+  street String
+  lat Float?
+  lng Float?
+  status SalonStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+  owner Users @relation(fields: [owner_id], references: [id])
+  media Salon_Media[]
+  categories Salon_Categories[]
+  services Services[]
+  employees Employees[]
+  bookings Bookings[]
+  reviews Reviews[]
+}
+
+model Salon_Media{
+  id String @id @default(uuid())
+  salon_id String
+  url String
+  type MediaType @default(PROFILE)
+  sort_order Int
+  createdAt DateTime @default(now())
+
+  salon Salons @relation(fields: [salon_id], references: [id])
+}
+
+model Salon_Categories{
+  id String @id @default(uuid())
+  salon_id String
+  category SalonCategory
+
+  salon Salons @relation(fields: [salon_id], references: [id])
+}
+
+model Services{
+  id String @id @default(uuid())
+  salon_id String
+  category_id String
+  name String
+  price Decimal
+  duration_min Int
+  is_active Boolean @default(true)
+
+  salon Salons @relation(fields: [salon_id], references: [id])
+  category Service_Categories @relation(fields: [category_id], references: [id])
+  employee_services Employee_Services[]
+  bookings Bookings[]
+}
+
+model Employees{
+  id String @id @default(uuid())
+  salon_id String 
+  name String
+  role EmployeeRole 
+  is_active Boolean @default(true)
+
+  salon Salons @relation(fields: [salon_id], references: [id])
+  employee_services Employee_Services[]
+  bookings Bookings[]
+  working_hours Working_Hours[]
+  time_offs Time_Off[]
+}
+
+model Employee_Services{
+  employee_id String
+  service_id String
+
+  employee Employees @relation(fields: [employee_id], references: [id])
+  service Services @relation(fields: [service_id], references: [id])
+
+  @@id([employee_id, service_id])
+}
+
+model Working_Hours{
+  id String @id @default(uuid())
+  employee_id String
+  day_of_week Int
+  start_time String
+  end_time String
+
+  employee Employees @relation(fields: [employee_id], references: [id])
+}
+
+model Time_Off{
+  id String @id @default(uuid())
+  employee_id String
+  start_datetime DateTime
+  end_datetime DateTime
+  reason String?
+
+  employee Employees @relation(fields: [employee_id], references: [id])
+}
+
+model Bookings{
+  id String @id @default(uuid())
+  client_id String
+  salon_id String
+  service_id String
+  employee_id String
+  start_time DateTime
+  end_time DateTime
+  status BookingStatus @default(PENDING)
+  createdAt DateTime @default(now())
+
+  client Users @relation(fields: [client_id], references: [id])
+  salon Salons @relation(fields: [salon_id], references: [id])
+  service Services @relation(fields: [service_id], references: [id])
+  employee Employees @relation(fields: [employee_id], references: [id])
+  payments Payments[]
+  review Reviews?
+}
+
+model Payments{
+  id String @id @default(uuid())
+  booking_id String
+  amount Decimal
+  method PaymentMethod
+  type PaymentType
+  status PaymentStatus @default(PENDING)
+  external_id String?
+  createdAt DateTime @default(now())
+
+  booking Bookings @relation(fields: [booking_id], references: [id])
+  transactions Payment_Transactions[]
+}
+
+model Payment_Transactions{
+  id String @id @default(uuid())
+  payment_id String
+  initiated_by String
+  type String
+  amount Decimal
+  status String
+  createdAt DateTime @default(now())
+  notes String?
+
+  payment Payments @relation(fields: [payment_id], references: [id])
+  initiator Users @relation(fields: [initiated_by], references: [id])
+}
+
+model Reviews{
+  id String @id @default(uuid())
+  booking_id String @unique
+  client_id String
+  salon_id String
+  rating Int
+  comment String?
+  createdAt DateTime @default(now())
+
+  booking Bookings @relation(fields: [booking_id], references: [id])
+  client Users @relation(fields: [client_id], references: [id])
+  salon Salons @relation(fields: [salon_id], references: [id])
+}
+
+model Notifications{
+  id String @id @default(uuid())
+  user_id String
+  type String
+  content String
+  is_read Boolean @default(false)
+  createdAt DateTime @default(now())
+
+  user Users @relation(fields: [user_id], references: [id])
+}

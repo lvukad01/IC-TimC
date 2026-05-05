@@ -40,7 +40,8 @@
       "@validators/*": ["src/common/validators/*"],
       "@users/*": ["src/modules/users/*"],
       "@auth/*": ["src/modules/auth/*"],
-      "@assets/*": ["src/modules/orders/*"]
+      "@assets/*": ["src/modules/orders/*"],
+      "@logger/*": ["src/modules/logger/*"]
     }
   }
 }

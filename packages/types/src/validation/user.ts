@@ -1,4 +1,4 @@
-export const NAME_REGEX = /^[a-zA-ZčćšđžČĆŠĐŽ\s]$/;
+export const nameRegex = /^[a-zA-ZčćšđžČĆŠĐŽ\s]$/;
 export const NAME_MIN_LENGTH = 3;
 export const NAME_MAX_LENGTH = 50;
 export const MIN_PASSWORD_LENGTH = 8;
