@@ -46,6 +46,24 @@ enum BookingStatus{
   COMPLETED
 }
 
+enum PaymentMethod{
+  CARD 
+  CASH 
+  PAYPAL
+}
+
+enum PaymentType{
+  DEPOSIT 
+  FULL
+}
+
+enum PaymentStatus{
+  PENDING
+  PAID 
+  REFUNDED 
+  FAILED
+}
+
 model Service_Categories{
   id String @id @default(uuid())
   name String @unique
@@ -193,9 +211,9 @@ model Payments{
   id String @id @default(uuid())
   booking_id String
   amount Decimal
-  method String
-  type String
-  status String @default("PENDING")
+  method PaymentMethod
+  type PaymentType
+  status PaymentStatus @default(PENDING)
   external_id String?
   createdAt DateTime @default(now())
 
