@@ -1,7 +1,7 @@
 export enum UserRole {
-  CLIENT = 'CLIENT',
-  ADMIN = 'ADMIN',
-  SALON_OWNER = 'SALON_OWNER',
+  CLIENT,
+  SALON_OWNER,
+  ADMIN,
 }
 
 export enum EmployeeRole {

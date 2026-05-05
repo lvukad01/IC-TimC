@@ -1,9 +1,9 @@
-import { Role } from '@prisma/client';
+import { UserRole } from '@lumii/types';
 
 export interface AccessTokenPayload {
   sub: string;
   email: string;
-  role: Role;
+  role: UserRole;
   iat?: number;
   exp?: number;
 }

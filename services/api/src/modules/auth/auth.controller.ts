@@ -31,6 +31,7 @@ import { AccessTokenDto } from './dto/access-token.dto';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { MeResponseDto } from './dto/me-response-dto';
 import { RegisterRequestDto } from './dto/register-request.dto';
+
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

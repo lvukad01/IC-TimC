@@ -11,13 +11,13 @@ import {
   NAME_MIN_LENGTH,
   phoneRegex,
   RegisterRequest,
+  UserRole,
   zipcodeRegex,
 } from '@lumii/types';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsValidName } from '@validators/name.validator';
 import { IsStrongPassword } from '@validators/password.validator';
 import { IsEmail, IsEnum, Length, Matches, MinLength } from 'class-validator';
-import { UserRole } from 'generated/prisma';
 
 export class RegisterRequestDto implements RegisterRequest {
   @ApiProperty({ description: 'User email, must be unique' })
