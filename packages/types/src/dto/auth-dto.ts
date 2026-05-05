@@ -11,4 +11,8 @@ export interface RegisterRequest {
   password: string;
   phone: string;
   role: UserRole;
+  street: string;
+  city: string;
+  zipcode: string;
+  country: string;
 }
