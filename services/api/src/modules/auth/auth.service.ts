@@ -10,7 +10,6 @@ import * as bcrypt from 'bcrypt';
 import { Users } from 'generated/prisma';
 import { AccessTokenDto } from './dto/access-token.dto';
 import { RegisterRequestDto } from './dto/register-request.dto';
-
 @Injectable()
 export class AuthService {
   constructor(

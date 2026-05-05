@@ -1,8 +1,10 @@
-export enum UserRole {
-  CLIENT = 'CLIENT',
-  ADMIN = 'ADMIN',
-  SALON_OWNER = 'SALON_OWNER',
-}
+export const UserRole = {
+  CLIENT: 'CLIENT',
+  SALON_OWNER: 'SALON_OWNER',
+  ADMIN: 'ADMIN',
+} as const;
+
+export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
 export enum EmployeeRole {
   HAIRDRESSER,
