@@ -1,0 +1,5 @@
+types/dist
+types/node_modules
+types/build
+types/.turbo
+
