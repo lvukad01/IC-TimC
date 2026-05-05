@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum UserRole{
@@ -79,6 +78,10 @@ model Users{
   lastName String
   phone String?
   role UserRole @default(CLIENT)
+  city String
+  postalcode String
+  country String
+  street String
   lat Float?
   lng Float?
   createdAt DateTime @default(now())
@@ -94,8 +97,11 @@ model Salons{
   id String @id @default(uuid())
   owner_id String
   name String 
-  address String
+  country String
   city String
+  postalcode String
+  country String
+  street String
   lat Float?
   lng Float?
   status SalonStatus @default(PENDING)
