@@ -6,52 +6,68 @@ export const UserRole = {
 
 export type UserRole = (typeof UserRole)[keyof typeof UserRole];
 
-export enum EmployeeRole {
-  HAIRDRESSER,
-  NAIL_TECH,
-  MAKEUP_ARTIST,
-  BARBER,
-}
+export const EmployeeRole = {
+  HAIRDRESSER: 'HAIRDRESSER',
+  NAIL_TECH: 'NAIL_TECH',
+  MAKEUP_ARTIST: 'MAKEUP_ARTIST',
+  BARBER: 'BARBER',
+} as const;
 
-export enum SalonStatus {
-  ACTIVE,
-  PENDING,
-  SUSPENDED,
-}
+export type EmployeeRole = (typeof EmployeeRole)[keyof typeof EmployeeRole];
 
-export enum MediaType {
-  PROFILE,
-  GALLERY,
-}
+export const SalonStatus = {
+  ACTIVE: 'ACTIVE',
+  PENDING: 'PENDING',
+  SUSPENDED: 'SUSPENDED',
+} as const;
 
-export enum SalonCategory {
-  HAIR,
-  NAILS,
-  MAKEUP,
-  BARBERSHOP,
-}
+export type SalonStatus = (typeof SalonStatus)[keyof typeof SalonStatus];
 
-export enum BookingStatus {
-  PENDING,
-  CONFIRMED,
-  CANCELLED,
-  COMPLETED,
-}
+export const MediaType = {
+  PROFILE: 'PROFILE',
+  GALLERY: 'GALLERY',
+} as const;
 
-export enum PaymentMethod {
-  CARD,
-  CASH,
-  PAYPAL,
-}
+export type MediaType = (typeof MediaType)[keyof typeof MediaType];
 
-export enum PaymentType {
-  DEPOSIT,
-  FULL,
-}
+export const SalonCategory = {
+  HAIR: 'HAIR',
+  NAILS: 'NAILS',
+  MAKEUP: 'MAKEUP',
+  BARBERSHOP: 'BARBERSHOP',
+} as const;
 
-export enum PaymentStatus {
-  PENDING,
-  PAID,
-  REFUNDED,
-  FAILED,
-}
+export type SalonCategory = (typeof SalonCategory)[keyof typeof SalonCategory];
+
+export const BookingStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED',
+  CANCELLED: 'CANCELLED',
+  COMPLETED: 'COMPLETED',
+} as const;
+
+export type BookingStatus = (typeof BookingStatus)[keyof typeof BookingStatus];
+
+export const PaymentMethod = {
+  CARD: 'CARD',
+  CASH: 'CASH',
+  PAYPAL: 'PAYPAL',
+} as const;
+
+export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
+
+export const PaymentType = {
+  DEPOSIT: 'DEPOSIT',
+  FULL: 'FULL',
+} as const;
+
+export type PaymentType = (typeof PaymentType)[keyof typeof PaymentType];
+
+export const PaymentStatus = {
+  PENDING: 'PENDING',
+  PAID: 'PAID',
+  REFUNDED: 'REFUNDED',
+  FAILED: 'FAILED',
+} as const;
+
+export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
