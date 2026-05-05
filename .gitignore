@@ -1,2 +1,5 @@
+node_modules/
+.turbo
 .vscode/
-.env
+.apps/
+packages/types/dist/
