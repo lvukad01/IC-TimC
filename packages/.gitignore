@@ -1,0 +1,9 @@
+types/dist
+types/node_modules
+types/build
+types/.turbo
+messages/dist
+messages/build
+messages/.turbo
+messages/node_modules
+

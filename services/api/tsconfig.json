@@ -20,6 +20,27 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@prisma/*": ["src/prisma/*"],
+      "@decorators/*": ["src/common/decorators/*"],
+      "@enums/*": ["src/common/enums/*"],
+      "@utils/*": ["src/common/utils/*"],
+      "@helpers/*": ["src/common/helpers/*"],
+      "@pipes/*": ["src/common/pipes/*"],
+      "@config/*": ["src/common/config/*"],
+      "@constants/*": ["src/common/constants/*"],
+      "@response/*": ["src/common/response/*"],
+      "@guards/*": ["src/common/guards/*"],
+      "@interceptors/*": ["src/common/interceptors/*"],
+      "@middleware/*": ["src/common/middleware/*"],
+      "@filters/*": ["src/common/filters/*"],
+      "@strategy/*": ["src/common/strategy/*"],
+      "@tstypes/*": ["src/common/types/*"],
+      "@validators/*": ["src/common/validators/*"],
+      "@users/*": ["src/modules/users/*"],
+      "@auth/*": ["src/modules/auth/*"],
+      "@assets/*": ["src/modules/orders/*"]
+    }
   }
 }
