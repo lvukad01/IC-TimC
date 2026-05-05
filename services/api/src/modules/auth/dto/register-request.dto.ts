@@ -1,25 +1,25 @@
+import { VALIDATION_MESSAGES } from '@lumii/messages';
 import {
-  AddressType,
+  MAX_CITY_LENGTH,
+  MAX_COUNTRY_LENGTH,
+  MAX_STREET_LENGTH,
+  MIN_CITY_LENGTH,
+  MIN_COUNTRY_LENGTH,
   MIN_PASSWORD_LENGTH,
+  MIN_STREET_LENGTH,
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
-} from '@cart-app/types';
+  phoneRegex,
+  RegisterRequest,
+  zipcodeRegex,
+} from '@lumii/types';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserAddressDto } from '@users/dto/user-address.dto';
-import { UserCardDto } from '@users/dto/user-card.dto';
 import { IsValidName } from '@validators/name.validator';
 import { IsStrongPassword } from '@validators/password.validator';
-import { Type } from 'class-transformer';
-import {
-  ArrayMinSize,
-  IsDefined,
-  IsEmail,
-  Length,
-  MinLength,
-  ValidateNested,
-} from 'class-validator';
+import { IsEmail, IsEnum, Length, Matches, MinLength } from 'class-validator';
+import { UserRole } from 'generated/prisma';
 
-export class RegisterRequestDto {
+export class RegisterRequestDto implements RegisterRequest {
   @ApiProperty({ description: 'User email, must be unique' })
   @IsEmail()
   email: string;
@@ -42,34 +42,29 @@ export class RegisterRequestDto {
   @IsStrongPassword()
   password: string;
 
-  @ApiProperty({
-    type: () => [UserAddressDto],
-    default: [
-      {
-        type: AddressType.BILLING,
-        street: '',
-        city: 'Virovitica',
-        zipcode: '33000',
-        country: 'Croatia',
-      },
-      {
-        type: AddressType.SHIPPING,
-        street: '',
-        city: 'Virovitica',
-        zipcode: '33000',
-        country: 'Croatia',
-      },
-    ],
-  })
-  @IsDefined({ message: 'Address is required' })
-  @ValidateNested({ each: true })
-  @Type(() => UserAddressDto)
-  @ArrayMinSize(2)
-  addresses: UserAddressDto[];
+  @ApiProperty()
+  @Matches(phoneRegex, { message: VALIDATION_MESSAGES.INVALID_PHONE_FORMAT })
+  phone: string;
 
-  @ApiProperty({ type: () => UserCardDto })
-  @IsDefined({ message: 'Card is required' })
-  @ValidateNested()
-  @Type(() => UserCardDto)
-  card: UserCardDto;
+  @ApiProperty({ enum: UserRole })
+  @IsEnum(UserRole)
+  role: UserRole;
+
+  @ApiProperty({ description: 'Street and number' })
+  @Length(MIN_STREET_LENGTH, MAX_STREET_LENGTH)
+  street: string;
+
+  @ApiProperty({ description: 'City' })
+  @Length(MIN_CITY_LENGTH, MAX_CITY_LENGTH)
+  city: string;
+
+  @ApiProperty({ description: 'Postal code' })
+  @Matches(zipcodeRegex, {
+    message: VALIDATION_MESSAGES.INVALID_ZIPCODE_FORMAT,
+  })
+  zipcode: string;
+
+  @ApiProperty({ description: 'Country' })
+  @Length(MIN_COUNTRY_LENGTH, MAX_COUNTRY_LENGTH)
+  country: string;
 }

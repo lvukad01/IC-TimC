@@ -3,7 +3,7 @@ import {
   ApiOkMessage,
 } from '@decorators/api-response.decorator';
 import { RolesAuth } from '@decorators/auth.decorator';
-import { AccessTokenDto } from '@lumii/types';
+import { UserRole } from '@lumii/types';
 import {
   Body,
   Controller,
@@ -26,8 +26,8 @@ import type {
   RequestWithJwtUser,
   RequestWithUser,
 } from '@tstypes/request-types';
-import { UserRole } from 'generated/prisma';
 import { AuthService } from './auth.service';
+import { AccessTokenDto } from './dto/access-token.dto';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { MeResponseDto } from './dto/me-response-dto';
 import { RegisterRequestDto } from './dto/register-request.dto';

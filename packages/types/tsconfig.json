@@ -12,7 +12,12 @@
     "skipLibCheck": true,
     "strict": true,
     "strictPropertyInitialization": false,
-    "experimentalDecorators": true
+    "experimentalDecorators": true,
+    "baseUrl": ".",
+    "paths": {
+      "@enums/*": ["src/enums/*"],
+      "@dto/*": ["src/dto/*"]
+    }
   },
   "include": ["src/**/*"],
   "exclude": ["node_modules"]
