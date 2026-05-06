@@ -1,9 +1,23 @@
-import { Controller, Get, Put, Body, UseGuards, Request } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import {
+  Controller,
+  Get,
+  Put,
+  Body,
+  UseGuards,
+  Request,
+  Query,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
-@ApiTags('users')
+@ApiTags('salons')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
-@Controller('services')
-export class ServicesController {}
+@Controller('salons')
+export class SalonsController {
+  @Get()
+  @ApiOperation({ summary: 'Get all salons' })
+  getAllSalons(
+    @Query('search') search?: string,
+    @Query('city') city?: string,
+    @Query('category') category?: string,
+  ) {}
+}
