@@ -2,7 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import type { PrismaService } from '../prisma/prisma.service';
 import type { UpdateSalonDto } from './dto/update-salon.dto';
 import type { CreateSalonDto } from './dto/create-salon.dto';
-import { UserRole } from '@lumii/types/dist/enums/enum';
+import { UserRole } from '@lumii/types';
+import { UpdateStatusDto } from './dto/update-status.dto';
+import { AddCategoryDto } from './dto/add-category.dto';
 
 @Injectable()
 export class SalonsService {
@@ -41,10 +43,19 @@ export class SalonsService {
           city: createSalonDto.city.trim(),
           street: createSalonDto.street.trim(),
           country: createSalonDto.country.trim(),
-          zipcode: createSalonDto.postalcode.trim(),
+          zipcode: createSalonDto.zipcode.trim(),
           status: 'PENDING',
         },
       });
+
+      if (createSalonDto.categories?.length) {
+        await tx.salon_Categories.createMany({
+          data: createSalonDto.categories.map((category) => ({
+            salon_id: salon.id,
+            category,
+          })),
+        });
+      }
       await tx.users.update({
         where: { id: userId },
         data: { role: UserRole.SALON_OWNER },
@@ -68,17 +79,24 @@ export class SalonsService {
 
   async uploadMedia(salonId: string, media: any) {
     await this.getSalonById(salonId);
-    // TODO
   }
 
-  async addCategory(salonId: string, AddCategoryDto: any) {
+  async addCategory(salonId: string, addCategoryDto: AddCategoryDto) {
     await this.getSalonById(salonId);
-    // TODO
+    return this.prisma.salon_Categories.create({
+      data: {
+        salon_id: salonId,
+        category: addCategoryDto.category,
+      },
+    });
   }
 
-  async updateStatus(salonId: string, updateStatusDto: any) {
+  async updateStatus(salonId: string, updateStatusDto: UpdateStatusDto) {
     await this.getSalonById(salonId);
-    // TODO
+    return this.prisma.salons.update({
+      where: { id: salonId },
+      data: { status: updateStatusDto.status },
+    });
   }
 
   async deleteMedia(salonId: string, mediaId: string) {
@@ -86,14 +104,11 @@ export class SalonsService {
     // TODO
   }
 
-  async deleteCategory(salonId: string, categoryId: string) {
-    await this.getSalonById(salonId);
-    // TODO
-  }
-
   async removeCategory(salonId: string, categoryId: string) {
     await this.getSalonById(salonId);
-    // TODO
+    return this.prisma.salon_Categories.delete({
+      where: { id: categoryId, salon_id: salonId },
+    });
   }
 
   async findPendingSalons() {
