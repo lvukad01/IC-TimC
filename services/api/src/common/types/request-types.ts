@@ -1,4 +1,4 @@
-import { Request } from 'express';
+import type { Request } from 'express';
 import { Users } from 'generated/prisma';
 import { AccessTokenPayload } from './access-token';
 
