@@ -1,7 +1,11 @@
+import { RolesGuard } from '@guards/roles.guard';
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiForbiddenResponse, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { RolesGuard } from '../guards/roles.guard';
+import {
+  ApiBearerAuth,
+  ApiForbiddenResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { Roles } from './roles.decorator';
 
 export function RolesAuth(...roles: string[]) {

@@ -76,6 +76,7 @@ model Users{
   email String @unique
   firstName String 
   lastName String
+  password String
   phone String?
   role UserRole @default(CLIENT)
   city String
@@ -100,7 +101,6 @@ model Salons{
   country String
   city String
   postalcode String
-  country String
   street String
   lat Float?
   lng Float?

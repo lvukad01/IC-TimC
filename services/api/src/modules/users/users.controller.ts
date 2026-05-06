@@ -1,7 +1,7 @@
-import { Controller, Get, Put, Body, Request } from '@nestjs/common';
-import { UsersService } from './users.service';
-import { UpdateUserDto } from './dto/update-user.dto';
+import { Body, Controller, Get, Put, Request } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
 @ApiTags('users')
 @ApiBearerAuth()
