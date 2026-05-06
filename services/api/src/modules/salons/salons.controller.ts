@@ -1,23 +1,118 @@
 import {
   Controller,
   Get,
-  Put,
+  Post,
+  Patch,
   Body,
-  UseGuards,
   Request,
   Query,
+  Delete,
+  Param,
 } from '@nestjs/common';
+import { RolesAuth } from '@decorators/auth.decorator';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { UserRole } from '@lumii/types';
+import { SalonsService } from './salons.service';
+import type { CreateSalonDto } from './dto/create-salon.dto';
+import type { UpdateSalonDto } from './dto/update-salon.dto';
+import { AddCategoryDto } from './dto/add-category.dto';
+import { UploadMediaDto } from './dto/upload-media.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @ApiTags('salons')
 @ApiBearerAuth()
 @Controller('salons')
 export class SalonsController {
+  constructor(private readonly salonsService: SalonsService) {}
+
   @Get()
   @ApiOperation({ summary: 'Get all salons' })
   getAllSalons(
     @Query('search') search?: string,
     @Query('city') city?: string,
     @Query('category') category?: string,
-  ) {}
+  ) {
+    return this.salonsService.findAll(search, city, category);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Get salon by ID' })
+  getSalonById(@Param('id') id: string) {
+    return this.salonsService.getSalonById(id);
+  }
+
+  @Post('')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Create a new salon' })
+  createSalon(@Body() createSalonDto: CreateSalonDto, @Request() req) {
+    return this.salonsService.createSalon(req.user.id, createSalonDto);
+  }
+
+  @Patch(':id')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Update salon details' })
+  updateSalon(@Param('id') id: string, @Body() updateSalonDto: UpdateSalonDto) {
+    return this.salonsService.updateSalon(id, updateSalonDto);
+  }
+
+  @Delete(':id')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Delete a salon' })
+  deleteSalon(@Param('id') id: string) {
+    return this.salonsService.deleteSalon(id);
+  }
+
+  @Post(':id/media')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Upload media for a salon' })
+  uploadSalonMedia(
+    @Param('id') id: string,
+    @Body() uploadMediaDto: UploadMediaDto,
+  ) {
+    return this.salonsService.uploadMedia(id, uploadMediaDto);
+  }
+
+  @Delete(':id/media/:mediaId')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Delete media from a salon' })
+  deleteSalonMedia(@Param('id') id: string, @Param('mediaId') mediaId: string) {
+    return this.salonsService.deleteMedia(id, mediaId);
+  }
+
+  @Post(':id/categories')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Add category to a salon' })
+  addSalonCategory(
+    @Param('id') id: string,
+    @Body() addCategoryDto: AddCategoryDto,
+  ) {
+    return this.salonsService.addCategory(id, addCategoryDto);
+  }
+
+  @Delete(':id/categories/:categoryId')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Remove category from a salon' })
+  removeSalonCategory(
+    @Param('id') id: string,
+    @Param('categoryId') categoryId: string,
+  ) {
+    return this.salonsService.removeCategory(id, categoryId);
+  }
+
+  @Get('pending')
+  @RolesAuth(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get all pending salons' })
+  getPendingSalons() {
+    return this.salonsService.findPendingSalons();
+  }
+
+  @Patch(':id/status')
+  @RolesAuth(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Update salon status' })
+  updateSalonStatus(
+    @Param('id') id: string,
+    @Body() updateStatusDto: UpdateStatusDto,
+  ) {
+    return this.salonsService.updateStatus(id, updateStatusDto);
+  }
 }

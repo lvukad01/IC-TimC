@@ -80,5 +80,5 @@ export class UpdateUserDto {
   @Matches(zipcodeRegex, {
     message: VALIDATION_MESSAGES.INVALID_ZIPCODE_FORMAT,
   })
-  postalcode?: string;
+  zipcode?: string;
 }
