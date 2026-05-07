@@ -6,9 +6,14 @@ import { S3Service } from '@s3/s3.service';
 import type { PrismaService } from '../prisma/prisma.service';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreateSalonDto } from './dto/create-salon.dto';
+import {
+  SalonDetailResponseDto,
+  SalonListResponseDto,
+} from './dto/salon-response.dto';
 import type { UpdateSalonDto } from './dto/update-salon.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UploadMediaDto } from './dto/upload-media.dto';
+import { SalonsMapper } from './mapper/salons.mapper';
 
 @Injectable()
 export class SalonsService {
@@ -16,9 +21,14 @@ export class SalonsService {
     private readonly prisma: PrismaService,
     private readonly geocodingService: GeocodingService,
     private readonly s3Service: S3Service,
+    private readonly mapper: SalonsMapper,
   ) {}
 
-  async findAll(search?: string, city?: string, category?: string) {
+  async findAll(
+    search?: string,
+    city?: string,
+    category?: string,
+  ): Promise<SalonListResponseDto[]> {
     const where: any = { status: 'ACTIVE' };
     if (search) {
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
@@ -31,15 +41,28 @@ export class SalonsService {
         some: { category: category },
       };
     }
-    return this.prisma.salons.findMany({ where });
+    const salons = await this.prisma.salons.findMany({
+      where,
+      include: {
+        media: true,
+      },
+    });
+
+    return Promise.all(
+      salons.map((salon) => this.mapper.mapSalonListItem(salon)),
+    );
   }
 
-  async getSalonById(id: string) {
-    const salon = await this.prisma.salons.findUnique({ where: { id } });
+  async getSalonById(id: string): Promise<SalonDetailResponseDto> {
+    const salon = await this.prisma.salons.findUnique({
+      where: { id },
+      include: { media: true },
+    });
     if (!salon) {
       throw new NotFoundException('Salon not found');
     }
-    return salon;
+
+    return this.mapper.mapSalonDetails(salon);
   }
 
   async createSalon(userId: string, createSalonDto: CreateSalonDto) {
@@ -158,8 +181,22 @@ export class SalonsService {
   }
 
   async deleteMedia(salonId: string, mediaId: string) {
-    await this.getSalonById(salonId);
-    // TODO
+    const media = await this.prisma.salon_Media.findFirst({
+      where: { id: mediaId, salon_id: salonId },
+    });
+
+    if (!media) throw new NotFoundException('Media not found');
+
+    await this.prisma.salon_Media.delete({
+      where: { id: mediaId },
+    });
+
+    await this.s3Service.deleteFile(media.key);
+
+    return {
+      id: mediaId,
+      message: 'Media deleted successfully',
+    };
   }
 
   async removeCategory(salonId: string, categoryId: string) {
@@ -169,7 +206,14 @@ export class SalonsService {
     });
   }
 
-  async findPendingSalons() {
-    return this.prisma.salons.findMany({ where: { status: 'PENDING' } });
+  async findPendingSalons(): Promise<SalonListResponseDto[]> {
+    const pendingSalons = await this.prisma.salons.findMany({
+      where: { status: 'PENDING' },
+      include: { media: true },
+    });
+
+    return Promise.all(
+      pendingSalons.map((salon) => this.mapper.mapSalonListItem(salon)),
+    );
   }
 }

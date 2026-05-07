@@ -12,10 +12,19 @@ import {
   Request,
   UploadedFile,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import type { RequestWithJwtUser } from '@tstypes/request-types';
 import { AddCategoryDto } from './dto/add-category.dto';
 import type { CreateSalonDto } from './dto/create-salon.dto';
+import {
+  SalonDetailResponseDto,
+  SalonListResponseDto,
+} from './dto/salon-response.dto';
 import type { UpdateSalonDto } from './dto/update-salon.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UploadMediaDto } from './dto/upload-media.dto';
@@ -29,6 +38,7 @@ export class SalonsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all salons' })
+  @ApiOkResponse({ type: SalonListResponseDto, isArray: true })
   getAllSalons(
     @Query('search') search?: string,
     @Query('city') city?: string,
@@ -39,6 +49,7 @@ export class SalonsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get salon by ID' })
+  @ApiOkResponse({ type: SalonDetailResponseDto })
   getSalonById(@Param('id') id: string) {
     return this.salonsService.getSalonById(id);
   }

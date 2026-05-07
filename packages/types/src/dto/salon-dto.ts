@@ -25,3 +25,25 @@ export interface UploadMediaRequest {
   type: MediaType;
   sortOrder: number;
 }
+
+export interface SalonListResponse {
+  id: string;
+  name: string;
+  city: string;
+  profileImageUrl?: string;
+}
+
+export interface SalonDetailResponse {
+  id: string;
+  name: string;
+  city: string;
+  street: string;
+  zipcode: string;
+  country: string;
+  media: {
+    id: string;
+    type: MediaType;
+    sortOrder: number;
+    url: string;
+  }[];
+}
