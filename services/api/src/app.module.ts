@@ -26,6 +26,12 @@ import { AppService } from './app.service';
     GeocodingModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, ResponseInterceptor],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware, SecurityHeadersMiddleware)
+      .forRoutes({ path: '*path', method: RequestMethod.ALL });
+  }
+}
