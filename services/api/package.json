@@ -20,6 +20,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/s3-request-presigner": "^3.1044.0",
     "@lumii/messages": "^1.0.0",
     "@lumii/types": "^1.0.0",
     "@nestjs/common": "^11.0.1",
@@ -38,7 +39,8 @@
     "dotenv": "^17.4.2",
     "helmet": "^8.1.0",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

@@ -1,3 +1,5 @@
+import { MediaType } from '@enums/enum';
+
 export interface CreateSalonRequest {
   name: string;
   street: string;
@@ -17,4 +19,9 @@ export interface UpdateSalonRequest {
   country?: string;
   lat?: number;
   lng?: number;
+}
+
+export interface UploadMediaRequest {
+  type: MediaType;
+  sortOrder: number;
 }

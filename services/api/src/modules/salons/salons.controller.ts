@@ -1,23 +1,25 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Body,
-  Request,
-  Query,
-  Delete,
-  Param,
-} from '@nestjs/common';
 import { RolesAuth } from '@decorators/auth.decorator';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRole } from '@lumii/types';
-import { SalonsService } from './salons.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Request,
+  UploadedFile,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import type { RequestWithJwtUser } from '@tstypes/request-types';
+import { AddCategoryDto } from './dto/add-category.dto';
 import type { CreateSalonDto } from './dto/create-salon.dto';
 import type { UpdateSalonDto } from './dto/update-salon.dto';
-import { AddCategoryDto } from './dto/add-category.dto';
-import { UploadMediaDto } from './dto/upload-media.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { UploadMediaDto } from './dto/upload-media.dto';
+import { SalonsService } from './salons.service';
 
 @ApiTags('salons')
 @ApiBearerAuth()
@@ -44,8 +46,11 @@ export class SalonsController {
   @Post('')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Create a new salon' })
-  createSalon(@Body() createSalonDto: CreateSalonDto, @Request() req) {
-    return this.salonsService.createSalon(req.user.id, createSalonDto);
+  createSalon(
+    @Body() createSalonDto: CreateSalonDto,
+    @Request() req: RequestWithJwtUser,
+  ) {
+    return this.salonsService.createSalon(req.user.sub, createSalonDto);
   }
 
   @Patch(':id')
@@ -67,9 +72,10 @@ export class SalonsController {
   @ApiOperation({ summary: 'Upload media for a salon' })
   uploadSalonMedia(
     @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
     @Body() uploadMediaDto: UploadMediaDto,
   ) {
-    return this.salonsService.uploadMedia(id, uploadMediaDto);
+    return this.salonsService.uploadMedia(id, file, uploadMediaDto);
   }
 
   @Delete(':id/media/:mediaId')

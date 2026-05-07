@@ -44,7 +44,8 @@
       "@auth/*": ["src/modules/auth/*"],
       "@assets/*": ["src/modules/orders/*"],
       "@logger/*": ["src/modules/logger/*"],
-      "@geocoding/*": ["src/modules/geocoding/*"]
+      "@geocoding/*": ["src/modules/geocoding/*"],
+      "@s3/*": ["src/modules/s3/*"]
     }
   }
 }

@@ -2,17 +2,20 @@ import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
 import { UserRole } from '@lumii/types';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { S3Service } from '@s3/s3.service';
 import type { PrismaService } from '../prisma/prisma.service';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreateSalonDto } from './dto/create-salon.dto';
 import type { UpdateSalonDto } from './dto/update-salon.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { UploadMediaDto } from './dto/upload-media.dto';
 
 @Injectable()
 export class SalonsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly geocodingService: GeocodingService,
+    private readonly s3Service: S3Service,
   ) {}
 
   async findAll(search?: string, city?: string, category?: string) {
@@ -110,8 +113,30 @@ export class SalonsService {
     return this.prisma.salons.delete({ where: { id } });
   }
 
-  async uploadMedia(salonId: string, media: any) {
-    await this.getSalonById(salonId);
+  async uploadMedia(
+    salonId: string,
+    file: Express.Multer.File,
+    media: UploadMediaDto,
+  ) {
+    const salon = await this.getSalonById(salonId);
+
+    if (!salon) throw new NotFoundException('Salon not found');
+
+    const key = await this.s3Service.uploadFile(file);
+
+    try {
+      await this.prisma.salon_Media.create({
+        data: {
+          salon_id: salonId,
+          key,
+          type: media.type,
+          sort_order: media.sortOrder,
+        },
+      });
+    } catch (err) {
+      await this.s3Service.deleteFile(key);
+      throw err;
+    }
   }
 
   async addCategory(salonId: string, addCategoryDto: AddCategoryDto) {

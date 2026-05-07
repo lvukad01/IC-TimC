@@ -119,7 +119,7 @@ model Salons{
 model Salon_Media{
   id String @id @default(uuid())
   salon_id String
-  url String
+  key String
   type MediaType @default(PROFILE)
   sort_order Int
   createdAt DateTime @default(now())
