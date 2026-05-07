@@ -1,3 +1,4 @@
+import { GeocodingService } from '@geocoding/geocoding.service';
 import {
   ConflictException,
   Injectable,
@@ -15,6 +16,7 @@ export class AuthService {
   constructor(
     private readonly usersService: UsersService,
     private readonly jwtService: JwtService,
+    private readonly geocodingService: GeocodingService,
   ) {}
 
   async validateUser(email: string, password: string): Promise<Users> {
@@ -41,10 +43,19 @@ export class AuthService {
       throw new ConflictException('Email already exists');
     }
 
+    const coordinates = await this.geocodingService.geocode({
+      street: user.street,
+      city: user.city,
+      zipcode: user.zipcode,
+      country: user.country,
+    });
+
     const hashedPassword = await bcrypt.hash(user.password, 10);
     const newUser = await this.usersService.create({
       ...user,
       password: hashedPassword,
+      lat: coordinates.lat,
+      lng: coordinates.lng,
     });
 
     return this.login(newUser);

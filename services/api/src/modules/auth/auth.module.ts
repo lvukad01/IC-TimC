@@ -1,10 +1,10 @@
-import ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC from '@constants/token-duration';
+import { GeocodingService } from '@geocoding/geocoding.service';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
+import { JwtStrategy } from '@strategy/jwt.strategy';
+import { LocalStrategy } from '@strategy/local.strategy';
 import { UsersModule } from '@users/users.module';
-import { JwtStrategy } from '../../common/strategy/jwt.strategy';
-import { LocalStrategy } from '../../common/strategy/local.strategy';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
@@ -12,12 +12,13 @@ import { AuthService } from './auth.service';
   imports: [
     UsersModule,
     ConfigModule,
+    GeocodingService,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
         secret: configService.getOrThrow<string>('JWT_SECRET'),
         signOptions: {
-          expiresIn: ACCESS_TOKEN_VALIDITY_DURATION_IN_SEC,
+          expiresIn: 86400,
         },
       }),
       inject: [ConfigService],

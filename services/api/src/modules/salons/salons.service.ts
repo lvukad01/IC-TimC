@@ -1,14 +1,19 @@
+import { GeocodingService } from '@geocoding/geocoding.service';
+import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
+import { UserRole } from '@lumii/types';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import type { PrismaService } from '../prisma/prisma.service';
-import type { UpdateSalonDto } from './dto/update-salon.dto';
-import type { CreateSalonDto } from './dto/create-salon.dto';
-import { UserRole } from '@lumii/types';
-import { UpdateStatusDto } from './dto/update-status.dto';
 import { AddCategoryDto } from './dto/add-category.dto';
+import { CreateSalonDto } from './dto/create-salon.dto';
+import type { UpdateSalonDto } from './dto/update-salon.dto';
+import { UpdateStatusDto } from './dto/update-status.dto';
 
 @Injectable()
 export class SalonsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly geocodingService: GeocodingService,
+  ) {}
 
   async findAll(search?: string, city?: string, category?: string) {
     const where: any = { status: 'ACTIVE' };
@@ -35,6 +40,15 @@ export class SalonsService {
   }
 
   async createSalon(userId: string, createSalonDto: CreateSalonDto) {
+    const { street, city, zipcode, country } = createSalonDto;
+
+    const coordinates = await this.geocodingService.geocode({
+      street,
+      city,
+      zipcode,
+      country,
+    });
+
     return this.prisma.$transaction(async (tx) => {
       const salon = await tx.salons.create({
         data: {
@@ -45,6 +59,8 @@ export class SalonsService {
           country: createSalonDto.country.trim(),
           zipcode: createSalonDto.zipcode.trim(),
           status: 'PENDING',
+          lat: coordinates.lat,
+          lng: coordinates.lng,
         },
       });
 
@@ -65,10 +81,27 @@ export class SalonsService {
   }
 
   async updateSalon(id: string, updateSalonDto: UpdateSalonDto) {
-    await this.getSalonById(id);
+    const salon = await this.getSalonById(id);
+
+    if (!salon) throw new NotFoundException('Salon not found');
+
+    const existingAddress = {
+      street: salon.street,
+      city: salon.city,
+      zipcode: salon.zipcode,
+      country: salon.country,
+    };
+
+    const mergedAdress = buildFullAdress(updateSalonDto, existingAddress);
+    const addressChanged = isAddressChanged(updateSalonDto);
+
+    let coordinates;
+    if (addressChanged)
+      coordinates = await this.geocodingService.geocode(mergedAdress);
+
     return this.prisma.salons.update({
       where: { id },
-      data: updateSalonDto,
+      data: { ...updateSalonDto, ...coordinates },
     });
   }
 

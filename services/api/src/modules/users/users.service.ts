@@ -1,36 +1,35 @@
+import { GeocodingService } from '@geocoding/geocoding.service';
+import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
+import { toUserResponse } from '@mappers/user-response.mapper';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { CreateUserInput } from '@tstypes/create-user';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { RegisterRequestDto } from '@auth/dto/register-request.dto';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly geocodingService: GeocodingService,
+  ) {}
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<UserResponseDto> {
     const user = await this.prisma.users.findUnique({
       where: { id },
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-        role: true,
-      },
     });
 
     if (!user) throw new NotFoundException('User not found');
-    return user;
+    return toUserResponse(user);
   }
 
   async findOneByEmail(email: string) {
-    const user = await this.prisma.users.findUnique({
+    return this.prisma.users.findUnique({
       where: { email },
     });
   }
 
-  async create(data: RegisterRequestDto) {
+  async create(data: CreateUserInput) {
     return this.prisma.users.create({
       data: {
         email: data.email,
@@ -47,17 +46,33 @@ export class UsersService {
     });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto) {
-    return this.prisma.users.update({
+  async update(
+    id: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UserResponseDto> {
+    const user = await this.findOne(id);
+
+    if (!user) throw new NotFoundException('User not found');
+
+    const existingAddress = {
+      street: user.street,
+      city: user.city,
+      zipcode: user.zipcode,
+      country: user.country,
+    };
+
+    const mergedAdress = buildFullAdress(updateUserDto, existingAddress);
+    const addressChanged = isAddressChanged(updateUserDto);
+
+    let coordinates;
+    if (addressChanged)
+      coordinates = await this.geocodingService.geocode(mergedAdress);
+
+    const updatedUser = await this.prisma.users.update({
       where: { id },
-      data: updateUserDto,
-      select: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        phone: true,
-      },
+      data: { ...updateUserDto, ...coordinates },
     });
+
+    return toUserResponse(updatedUser);
   }
 }
