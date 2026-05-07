@@ -1,22 +1,39 @@
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
-import { UserRole } from '@lumii/types';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { MediaType, SalonStatus, UserRole } from '@lumii/types';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { S3Service } from '@s3/s3.service';
 import type { PrismaService } from '../prisma/prisma.service';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreateSalonDto } from './dto/create-salon.dto';
+import {
+  SalonDetailResponseDto,
+  SalonListResponseDto,
+} from './dto/salon-response.dto';
 import type { UpdateSalonDto } from './dto/update-salon.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { UploadMediaDto } from './dto/upload-media.dto';
+import { SalonsMapper } from './mapper/salons.mapper';
 
 @Injectable()
 export class SalonsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly geocodingService: GeocodingService,
+    private readonly s3Service: S3Service,
+    private readonly mapper: SalonsMapper,
   ) {}
 
-  async findAll(search?: string, city?: string, category?: string) {
-    const where: any = { status: 'ACTIVE' };
+  async findAll(
+    search?: string,
+    city?: string,
+    category?: string,
+  ): Promise<SalonListResponseDto[]> {
+    const where: any = { status: SalonStatus.ACTIVE };
     if (search) {
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
     }
@@ -28,15 +45,28 @@ export class SalonsService {
         some: { category: category },
       };
     }
-    return this.prisma.salons.findMany({ where });
+    const salons = await this.prisma.salons.findMany({
+      where,
+      include: {
+        media: true,
+      },
+    });
+
+    return Promise.all(
+      salons.map((salon) => this.mapper.mapSalonListItem(salon)),
+    );
   }
 
-  async getSalonById(id: string) {
-    const salon = await this.prisma.salons.findUnique({ where: { id } });
+  async getSalonById(id: string): Promise<SalonDetailResponseDto> {
+    const salon = await this.prisma.salons.findUnique({
+      where: { id },
+      include: { media: true },
+    });
     if (!salon) {
       throw new NotFoundException('Salon not found');
     }
-    return salon;
+
+    return this.mapper.mapSalonDetails(salon);
   }
 
   async createSalon(userId: string, createSalonDto: CreateSalonDto) {
@@ -58,7 +88,7 @@ export class SalonsService {
           street: createSalonDto.street.trim(),
           country: createSalonDto.country.trim(),
           zipcode: createSalonDto.zipcode.trim(),
-          status: 'PENDING',
+          status: SalonStatus.PENDING,
           lat: coordinates.lat,
           lng: coordinates.lng,
         },
@@ -110,8 +140,53 @@ export class SalonsService {
     return this.prisma.salons.delete({ where: { id } });
   }
 
-  async uploadMedia(salonId: string, media: any) {
-    await this.getSalonById(salonId);
+  async uploadMedia(
+    salonId: string,
+    file: Express.Multer.File,
+    media: UploadMediaDto,
+  ) {
+    const salon = await this.getSalonById(salonId);
+
+    if (!salon) throw new NotFoundException('Salon not found');
+
+    const existingOrder = await this.prisma.salon_Media.findFirst({
+      where: { salon_id: salonId, sort_order: media.sortOrder },
+    });
+
+    if (existingOrder)
+      throw new ConflictException('Media with this sort_order already exists');
+
+    if (media.type === MediaType.PROFILE && media.sortOrder !== 0)
+      throw new ConflictException('Profile image must have sort_order = 0');
+
+    if (media.type !== MediaType.PROFILE && media.sortOrder === 0)
+      throw new ConflictException('Only profile image can have sort_order = 0');
+
+    if (media.type === MediaType.PROFILE) {
+      const existingProfile = await this.prisma.salon_Media.findFirst({
+        where: { salon_id: salonId, type: MediaType.PROFILE },
+      });
+
+      if (existingProfile) {
+        throw new ConflictException('Profile image already exists');
+      }
+    }
+
+    const key = await this.s3Service.uploadFile(file);
+
+    try {
+      await this.prisma.salon_Media.create({
+        data: {
+          salon_id: salonId,
+          key,
+          type: media.type,
+          sort_order: media.sortOrder,
+        },
+      });
+    } catch (err) {
+      await this.s3Service.deleteFile(key);
+      throw err;
+    }
   }
 
   async addCategory(salonId: string, addCategoryDto: AddCategoryDto) {
@@ -133,8 +208,22 @@ export class SalonsService {
   }
 
   async deleteMedia(salonId: string, mediaId: string) {
-    await this.getSalonById(salonId);
-    // TODO
+    const media = await this.prisma.salon_Media.findFirst({
+      where: { id: mediaId, salon_id: salonId },
+    });
+
+    if (!media) throw new NotFoundException('Media not found');
+
+    await this.prisma.salon_Media.delete({
+      where: { id: mediaId },
+    });
+
+    await this.s3Service.deleteFile(media.key);
+
+    return {
+      id: mediaId,
+      message: 'Media deleted successfully',
+    };
   }
 
   async removeCategory(salonId: string, categoryId: string) {
@@ -144,7 +233,14 @@ export class SalonsService {
     });
   }
 
-  async findPendingSalons() {
-    return this.prisma.salons.findMany({ where: { status: 'PENDING' } });
+  async findPendingSalons(): Promise<SalonListResponseDto[]> {
+    const pendingSalons = await this.prisma.salons.findMany({
+      where: { status: SalonStatus.PENDING },
+      include: { media: true },
+    });
+
+    return Promise.all(
+      pendingSalons.map((salon) => this.mapper.mapSalonListItem(salon)),
+    );
   }
 }

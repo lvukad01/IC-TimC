@@ -1,23 +1,36 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Patch,
-  Body,
-  Request,
-  Query,
-  Delete,
-  Param,
-} from '@nestjs/common';
 import { RolesAuth } from '@decorators/auth.decorator';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRole } from '@lumii/types';
-import { SalonsService } from './salons.service';
-import type { CreateSalonDto } from './dto/create-salon.dto';
-import type { UpdateSalonDto } from './dto/update-salon.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  Request,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import type { RequestWithJwtUser } from '@tstypes/request-types';
 import { AddCategoryDto } from './dto/add-category.dto';
-import { UploadMediaDto } from './dto/upload-media.dto';
+import type { CreateSalonDto } from './dto/create-salon.dto';
+import {
+  SalonDetailResponseDto,
+  SalonListResponseDto,
+} from './dto/salon-response.dto';
+import type { UpdateSalonDto } from './dto/update-salon.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
+import { UploadMediaDto } from './dto/upload-media.dto';
+import { SalonsService } from './salons.service';
 
 @ApiTags('salons')
 @ApiBearerAuth()
@@ -27,6 +40,7 @@ export class SalonsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all salons' })
+  @ApiOkResponse({ type: SalonListResponseDto, isArray: true })
   getAllSalons(
     @Query('search') search?: string,
     @Query('city') city?: string,
@@ -37,6 +51,7 @@ export class SalonsController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Get salon by ID' })
+  @ApiOkResponse({ type: SalonDetailResponseDto })
   getSalonById(@Param('id') id: string) {
     return this.salonsService.getSalonById(id);
   }
@@ -44,8 +59,11 @@ export class SalonsController {
   @Post('')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Create a new salon' })
-  createSalon(@Body() createSalonDto: CreateSalonDto, @Request() req) {
-    return this.salonsService.createSalon(req.user.id, createSalonDto);
+  createSalon(
+    @Body() createSalonDto: CreateSalonDto,
+    @Request() req: RequestWithJwtUser,
+  ) {
+    return this.salonsService.createSalon(req.user.sub, createSalonDto);
   }
 
   @Patch(':id')
@@ -67,13 +85,15 @@ export class SalonsController {
   @ApiOperation({ summary: 'Upload media for a salon' })
   uploadSalonMedia(
     @Param('id') id: string,
+    @UploadedFile() file: Express.Multer.File,
     @Body() uploadMediaDto: UploadMediaDto,
   ) {
-    return this.salonsService.uploadMedia(id, uploadMediaDto);
+    return this.salonsService.uploadMedia(id, file, uploadMediaDto);
   }
 
   @Delete(':id/media/:mediaId')
   @RolesAuth(UserRole.SALON_OWNER)
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Delete media from a salon' })
   deleteSalonMedia(@Param('id') id: string, @Param('mediaId') mediaId: string) {
     return this.salonsService.deleteMedia(id, mediaId);
