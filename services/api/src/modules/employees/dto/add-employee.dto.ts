@@ -1,0 +1,19 @@
+import { ApiProperty } from '@nestjs/swagger';
+import { NAME_MAX_LENGTH, NAME_MIN_LENGTH } from '@lumii/types';
+import { EmployeeRole } from 'generated/prisma';
+import { IsBoolean, IsEnum, IsString, Length } from 'class-validator';
+
+export class AddEmployeeDto {
+  @ApiProperty({ example: 'John', required: true })
+  @IsString()
+  @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
+  name: string;
+
+  @ApiProperty({ enum: EmployeeRole, required: true })
+  @IsEnum(EmployeeRole, { each: true })
+  role: EmployeeRole;
+
+  @ApiProperty({ example: true, required: true })
+  @IsBoolean()
+  isActive: boolean;
+}
