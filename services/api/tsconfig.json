@@ -32,6 +32,7 @@
       "@constants/*": ["src/common/constants/*"],
       "@response/*": ["src/common/response/*"],
       "@guards/*": ["src/common/guards/*"],
+      "@errors/*": ["src/common/errors/*"],
       "@interceptors/*": ["src/common/interceptors/*"],
       "@middleware/*": ["src/common/middleware/*"],
       "@filters/*": ["src/common/filters/*"],
@@ -41,7 +42,8 @@
       "@users/*": ["src/modules/users/*"],
       "@auth/*": ["src/modules/auth/*"],
       "@assets/*": ["src/modules/orders/*"],
-      "@logger/*": ["src/modules/logger/*"]
+      "@logger/*": ["src/modules/logger/*"],
+      "@geocoding/*": ["src/modules/geocoding/*"]
     }
   }
 }
