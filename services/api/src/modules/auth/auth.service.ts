@@ -1,4 +1,5 @@
 import { GeocodingService } from '@geocoding/geocoding.service';
+import { AUTH_MESSAGES } from '@lumii/messages';
 import {
   ConflictException,
   Injectable,
@@ -23,7 +24,7 @@ export class AuthService {
     const user = await this.usersService.findOneByEmail(email);
 
     if (!user || !bcrypt.compareSync(password, user.password))
-      throw new UnauthorizedException('User not found');
+      throw new UnauthorizedException(AUTH_MESSAGES.INVALID_CREDENTIALS);
 
     return user;
   }
@@ -40,7 +41,7 @@ export class AuthService {
   async register(user: RegisterRequestDto): Promise<AccessTokenDto> {
     const existingUser = await this.usersService.findOneByEmail(user.email);
     if (existingUser) {
-      throw new ConflictException('Email already exists');
+      throw new ConflictException(AUTH_MESSAGES.EMAIL_EXISTS);
     }
 
     const coordinates = await this.geocodingService.geocode({

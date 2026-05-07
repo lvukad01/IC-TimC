@@ -22,7 +22,7 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@prisma/*": ["src/prisma/*"],
+      "@prisma/*": ["src/modules/prisma/*"],
       "@decorators/*": ["src/common/decorators/*"],
       "@enums/*": ["src/common/enums/*"],
       "@utils/*": ["src/common/utils/*"],
@@ -44,7 +44,9 @@
       "@auth/*": ["src/modules/auth/*"],
       "@assets/*": ["src/modules/orders/*"],
       "@logger/*": ["src/modules/logger/*"],
-      "@geocoding/*": ["src/modules/geocoding/*"]
+      "@geocoding/*": ["src/modules/geocoding/*"],
+      "@mails/*": ["src/modules/mails/*"],
+      "@bookings/*": ["src/modules/bookings/*"]
     }
   }
 }

@@ -79,3 +79,10 @@ export const NotificationType = {
 } as const;
 
 export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];
+
+export const SortOrder = {
+  asc: 'asc',
+  desc: 'desc',
+} as const;
+
+export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
