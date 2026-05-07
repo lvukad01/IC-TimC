@@ -8,6 +8,7 @@ import {
   Patch,
   Delete,
   Body,
+  ParseUUIDPipe,
 } from '@nestjs/common';
 import { AddEmployeeDto } from './dto/add-employee.dto';
 import { UserRole } from 'generated/prisma/edge';
@@ -16,19 +17,20 @@ import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 @ApiTags('salons/:salonId/employees')
 @ApiBearerAuth()
+@RolesAuth(UserRole.SALON_OWNER, UserRole.ADMIN)
 @Controller('salons/:salonId/employees')
 export class EmployeesController {
   constructor(private readonly employeesService: EmployeesService) {}
 
   @Get()
-  getAllEmployees(@Param('salonId') salonId: string) {
+  getAllEmployees(@Param('salonId', ParseUUIDPipe) salonId: string) {
     return this.employeesService.getAllEmployees(salonId);
   }
 
   @Get(':id')
   getEmployeeById(
-    @Param('salonId') salonId: string,
-    @Param('id') employeeId: string,
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Param('id', ParseUUIDPipe) employeeId: string,
   ) {
     return this.employeesService.getEmployeeById(salonId, employeeId);
   }
@@ -36,7 +38,7 @@ export class EmployeesController {
   @Post()
   @RolesAuth(UserRole.SALON_OWNER)
   addEmployee(
-    @Param('salonId') salonId: string,
+    @Param('salonId', ParseUUIDPipe) salonId: string,
     @Body() addEmployeeDto: AddEmployeeDto,
   ) {
     return this.employeesService.addEmployee(salonId, addEmployeeDto);
@@ -45,8 +47,8 @@ export class EmployeesController {
   @Patch(':id')
   @RolesAuth(UserRole.SALON_OWNER)
   updateEmployee(
-    @Param('salonId') salonId: string,
-    @Param('id') employeeId: string,
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Param('id', ParseUUIDPipe) employeeId: string,
     @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
     return this.employeesService.updateEmployee(
@@ -59,8 +61,8 @@ export class EmployeesController {
   @Delete(':id')
   @RolesAuth(UserRole.SALON_OWNER)
   deleteEmployee(
-    @Param('salonId') salonId: string,
-    @Param('id') employeeId: string,
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Param('id', ParseUUIDPipe) employeeId: string,
   ) {
     return this.employeesService.deleteEmployee(salonId, employeeId);
   }

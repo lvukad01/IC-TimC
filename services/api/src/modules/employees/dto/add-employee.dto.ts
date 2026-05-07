@@ -14,7 +14,7 @@ export class AddEmployeeDto implements CreateEmployeeRequest {
   name: string;
 
   @ApiProperty({ enum: EmployeeRole, required: true })
-  @IsEnum(EmployeeRole, { each: true })
+  @IsEnum(EmployeeRole)
   role: EmployeeRole;
 
   @ApiProperty({ example: true, required: true })
