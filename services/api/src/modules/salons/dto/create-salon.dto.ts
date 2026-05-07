@@ -9,35 +9,36 @@ import {
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
   zipcodeRegex,
+  SalonCategory,
+  CreateSalonRequest,
 } from '@lumii/types';
-import { SalonCategory } from 'generated/prisma';
 import { IsArray, IsEnum } from 'class-validator';
 import { IsString, Length, Matches } from 'class-validator';
 
-export class CreateSalonDto {
-  @ApiProperty({ example: 'Salon ljepote', required: true })
+export class CreateSalonDto implements CreateSalonRequest {
+  @ApiProperty({ example: 'Salon ljepote' })
   @IsString()
   @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
   name: string;
 
-  @ApiProperty({ example: 'Zagreb', required: true })
+  @ApiProperty({ example: 'Zagreb' })
   @IsString()
   @Length(MIN_CITY_LENGTH, MAX_CITY_LENGTH)
   city: string;
 
-  @ApiProperty({ example: 'Ilica 123', required: true })
+  @ApiProperty({ example: 'Ilica 123' })
   @IsString()
   @Length(MIN_STREET_LENGTH, MAX_STREET_LENGTH)
   street: string;
 
-  @ApiProperty({ example: '21000', required: true })
+  @ApiProperty({ example: '21000' })
   @IsString()
   @Matches(zipcodeRegex, {
     message: 'Invalid zipcode format',
   })
   zipcode: string;
 
-  @ApiProperty({ example: 'Croatia', required: true })
+  @ApiProperty({ example: 'Croatia' })
   @IsString()
   @Length(MIN_COUNTRY_LENGTH, MAX_COUNTRY_LENGTH)
   country: string;

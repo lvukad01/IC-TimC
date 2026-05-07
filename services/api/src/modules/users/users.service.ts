@@ -30,7 +30,7 @@ export class UsersService {
     });
   }
 
-  async create(data: RegisterRequestDto & { password: string }) {
+  async create(data: RegisterRequestDto) {
     return this.prisma.users.create({
       data: {
         email: data.email,
