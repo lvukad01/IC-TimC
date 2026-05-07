@@ -1,3 +1,4 @@
+import { VALIDATION_MESSAGES } from '@lumii/messages';
 import {
   CreateSalonRequest,
   MAX_CITY_LENGTH,
@@ -33,7 +34,7 @@ export class CreateSalonDto implements CreateSalonRequest {
   @ApiProperty({ example: '21000' })
   @IsString()
   @Matches(zipcodeRegex, {
-    message: 'Invalid zipcode format',
+    message: VALIDATION_MESSAGES.INVALID_ZIPCODE_FORMAT,
   })
   zipcode: string;
 

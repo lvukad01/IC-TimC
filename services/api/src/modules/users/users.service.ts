@@ -2,8 +2,8 @@ import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
 import { toUserResponse } from '@mappers/user-response.mapper';
 import { Injectable, NotFoundException } from '@nestjs/common';
+import { PrismaService } from '@prisma/prisma.service';
 import { CreateUserInput } from '@tstypes/create-user';
-import { PrismaService } from '../prisma/prisma.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 
