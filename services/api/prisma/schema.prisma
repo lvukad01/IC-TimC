@@ -80,7 +80,7 @@ model Users{
   phone String?
   role UserRole @default(CLIENT)
   city String
-  postalcode String
+  zipcode String
   country String
   street String
   lat Float?
@@ -100,7 +100,7 @@ model Salons{
   name String 
   country String
   city String
-  postalcode String
+  zipcode String
   street String
   lat Float?
   lng Float?

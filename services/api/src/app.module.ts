@@ -1,36 +1,14 @@
-import { ResponseInterceptor } from '@interceptors/response.interceptor';
-import { LoggerMiddleware } from '@middleware/logger.middleware';
-import { SecurityHeadersMiddleware } from '@middleware/security-headers-middleware';
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
-import { seconds, ThrottlerModule } from '@nestjs/throttler';
-import { UsersModule } from '@users/users.module';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { UsersModule } from './modules/users/users.module';
+import { SalonsModule } from './modules/salons/salons.module';
+import { AuthModule } from '@auth/auth.module';
+import { PrismaModule } from './modules/prisma/prisma.module';
 
 @Module({
-  imports: [
-    UsersModule,
-    ThrottlerModule.forRoot({
-      throttlers: [
-        {
-          ttl: seconds(60),
-          limit: 30,
-        },
-      ],
-    }),
-  ],
+  imports: [UsersModule, PrismaModule, AuthModule, SalonsModule],
   controllers: [AppController],
-  providers: [AppService, ResponseInterceptor],
+  providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware, SecurityHeadersMiddleware)
-      .forRoutes({ path: '*path', method: RequestMethod.ALL });
-  }
-}
+export class AppModule {}
