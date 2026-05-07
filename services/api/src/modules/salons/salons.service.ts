@@ -1,7 +1,11 @@
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
-import { UserRole } from '@lumii/types';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { MediaType, SalonStatus, UserRole } from '@lumii/types';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { S3Service } from '@s3/s3.service';
 import type { PrismaService } from '../prisma/prisma.service';
 import { AddCategoryDto } from './dto/add-category.dto';
@@ -29,7 +33,7 @@ export class SalonsService {
     city?: string,
     category?: string,
   ): Promise<SalonListResponseDto[]> {
-    const where: any = { status: 'ACTIVE' };
+    const where: any = { status: SalonStatus.ACTIVE };
     if (search) {
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
     }
@@ -84,7 +88,7 @@ export class SalonsService {
           street: createSalonDto.street.trim(),
           country: createSalonDto.country.trim(),
           zipcode: createSalonDto.zipcode.trim(),
-          status: 'PENDING',
+          status: SalonStatus.PENDING,
           lat: coordinates.lat,
           lng: coordinates.lng,
         },
@@ -144,6 +148,29 @@ export class SalonsService {
     const salon = await this.getSalonById(salonId);
 
     if (!salon) throw new NotFoundException('Salon not found');
+
+    const existingOrder = await this.prisma.salon_Media.findFirst({
+      where: { salon_id: salonId, sort_order: media.sortOrder },
+    });
+
+    if (existingOrder)
+      throw new ConflictException('Media with this sort_order already exists');
+
+    if (media.type === MediaType.PROFILE && media.sortOrder !== 0)
+      throw new ConflictException('Profile image must have sort_order = 0');
+
+    if (media.type !== MediaType.PROFILE && media.sortOrder === 0)
+      throw new ConflictException('Only profile image can have sort_order = 0');
+
+    if (media.type === MediaType.PROFILE) {
+      const existingProfile = await this.prisma.salon_Media.findFirst({
+        where: { salon_id: salonId, type: MediaType.PROFILE },
+      });
+
+      if (existingProfile) {
+        throw new ConflictException('Profile image already exists');
+      }
+    }
 
     const key = await this.s3Service.uploadFile(file);
 
@@ -208,7 +235,7 @@ export class SalonsService {
 
   async findPendingSalons(): Promise<SalonListResponseDto[]> {
     const pendingSalons = await this.prisma.salons.findMany({
-      where: { status: 'PENDING' },
+      where: { status: SalonStatus.PENDING },
       include: { media: true },
     });
 

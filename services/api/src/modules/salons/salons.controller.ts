@@ -11,7 +11,9 @@ import {
   Query,
   Request,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -91,6 +93,7 @@ export class SalonsController {
 
   @Delete(':id/media/:mediaId')
   @RolesAuth(UserRole.SALON_OWNER)
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Delete media from a salon' })
   deleteSalonMedia(@Param('id') id: string, @Param('mediaId') mediaId: string) {
     return this.salonsService.deleteMedia(id, mediaId);
