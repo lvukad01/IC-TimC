@@ -71,3 +71,11 @@ export const PaymentStatus = {
 } as const;
 
 export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus];
+
+export const NotificationType = {
+  CONFIRMATION: 'CONFIRMATION',
+  REMINDER: 'REMINDER',
+  CANCELLED: 'CANCELLED',
+} as const;
+
+export type NotificationType = (typeof NotificationType)[keyof typeof NotificationType];
