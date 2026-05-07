@@ -36,6 +36,7 @@
       "@interceptors/*": ["src/common/interceptors/*"],
       "@middleware/*": ["src/common/middleware/*"],
       "@filters/*": ["src/common/filters/*"],
+      "@mappers/*": ["src/common/mappers/*"],
       "@strategy/*": ["src/common/strategy/*"],
       "@tstypes/*": ["src/common/types/*"],
       "@validators/*": ["src/common/validators/*"],

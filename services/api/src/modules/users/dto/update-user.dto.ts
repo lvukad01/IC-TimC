@@ -1,31 +1,25 @@
 import { VALIDATION_MESSAGES } from '@lumii/messages';
 import {
   MAX_CITY_LENGTH,
-  MAX_COUNTRY_LENGTH,
   MAX_STREET_LENGTH,
   MIN_CITY_LENGTH,
-  MIN_COUNTRY_LENGTH,
   MIN_PASSWORD_LENGTH,
   MIN_STREET_LENGTH,
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
   phoneRegex,
-  RegisterRequest,
-  UserRole,
   zipcodeRegex,
 } from '@lumii/types';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsValidName } from '@validators/name.validator';
+import { IsStrongPassword } from '@validators/password.validator';
 import {
   IsOptional,
   IsString,
-  IsNumber,
   Length,
-  MinLength,
   Matches,
-  IsEnum,
+  MinLength,
 } from 'class-validator';
-import { IsStrongPassword } from '@validators/password.validator';
 
 export class UpdateUserDto {
   @ApiProperty({ example: 'Lana', required: false })
