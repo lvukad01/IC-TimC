@@ -1,14 +1,6 @@
 import configuration from '@config/configuration';
 import { GeocodingModule } from '@geocoding/geocoding.module';
-import { ResponseInterceptor } from '@interceptors/response.interceptor';
-import { LoggerMiddleware } from '@middleware/logger.middleware';
-import { SecurityHeadersMiddleware } from '@middleware/security-headers-middleware';
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { seconds, ThrottlerModule } from '@nestjs/throttler';
 import { UsersModule } from '@users/users.module';
@@ -34,12 +26,6 @@ import { AppService } from './app.service';
     GeocodingModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ResponseInterceptor],
+  providers: [AppService],
 })
-export class AppModule implements NestModule {
-  configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(LoggerMiddleware, SecurityHeadersMiddleware)
-      .forRoutes({ path: '*path', method: RequestMethod.ALL });
-  }
-}
+export class AppModule {}
