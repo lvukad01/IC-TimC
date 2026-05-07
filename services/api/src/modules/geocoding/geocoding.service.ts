@@ -14,7 +14,7 @@ export class GeocodingService {
     private readonly http: HttpService,
     private readonly configService: ConfigService,
   ) {
-    this.apiKey = this.configService.getOrThrow<string>('GEOCODING_API');
+    this.apiKey = this.configService.getOrThrow<string>('GEOCODING_API_KEY');
   }
 
   async geocode(address: AddressInput): Promise<Coordinates> {

@@ -8,7 +8,7 @@ const configuration = () => ({
   MAIL_USER: process.env.MAIL_USER,
   MAIL_PASS: process.env.MAIL_PASS,
   MAIL_FROM: process.env.MAIL_FROM,
-  GEOCODING_API: process.env.GEOCODING_API,
+  GEOCODING_API_KEY: process.env.GEOCODING_API_KEY,
   HTTP_TIMEOUT: process.env.HTTP_TIMEOUT,
   HTTP_MAX_REDIRECTS: process.env.HTTP_MAX_REDIRECTS,
 });

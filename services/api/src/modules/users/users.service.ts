@@ -1,4 +1,5 @@
 import { GeocodingService } from '@geocoding/geocoding.service';
+import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
 import { toUserResponse } from '@mappers/user-response.mapper';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserInput } from '@tstypes/create-user';
@@ -51,18 +52,17 @@ export class UsersService {
   ): Promise<UserResponseDto> {
     const user = await this.findOne(id);
 
-    const mergedAdress = {
-      street: updateUserDto.street ?? user.street,
-      city: updateUserDto.city ?? user.city,
-      zipcode: updateUserDto.zipcode ?? user.zipcode,
-      country: updateUserDto.country ?? user.country,
+    if (!user) throw new NotFoundException('User not found');
+
+    const existingAddress = {
+      street: user.street,
+      city: user.city,
+      zipcode: user.zipcode,
+      country: user.country,
     };
 
-    const addressChanged =
-      updateUserDto.street !== undefined ||
-      updateUserDto.city !== undefined ||
-      updateUserDto.zipcode !== undefined ||
-      updateUserDto.country !== undefined;
+    const mergedAdress = buildFullAdress(updateUserDto, existingAddress);
+    const addressChanged = isAddressChanged(updateUserDto);
 
     let coordinates;
     if (addressChanged)
