@@ -63,6 +63,12 @@ enum PaymentStatus{
   FAILED
 }
 
+enum NotificationType{
+  CONFIRMATION
+  REMINDER
+  CANCELLED
+}
+
 model Service_Categories{
   id String @id @default(uuid())
   name String @unique
@@ -258,10 +264,9 @@ model Reviews{
 model Notifications{
   id String @id @default(uuid())
   user_id String
-  type String
+  type NotificationType
   content String
   is_read Boolean @default(false)
   createdAt DateTime @default(now())
-
   user Users @relation(fields: [user_id], references: [id])
 }

@@ -1,4 +1,4 @@
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { VALIDATION_MESSAGES } from '@lumii/messages';
 import {
   MAX_CITY_LENGTH,
   MAX_COUNTRY_LENGTH,
@@ -11,7 +11,8 @@ import {
   zipcodeRegex,
   UpdateSalonRequest,
 } from '@lumii/types';
-import { IsString, Length, Matches, IsOptional } from 'class-validator';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsOptional, IsString, Length, Matches } from 'class-validator';
 
 export class UpdateSalonDto implements UpdateSalonRequest {
   @ApiPropertyOptional({ example: 'Salon ljepote' })
@@ -35,7 +36,7 @@ export class UpdateSalonDto implements UpdateSalonRequest {
   @ApiPropertyOptional({ example: '21000' })
   @IsString()
   @Matches(zipcodeRegex, {
-    message: 'Invalid zipcode format',
+    message: VALIDATION_MESSAGES.INVALID_ZIPCODE_FORMAT,
   })
   @IsOptional()
   zipcode?: string;

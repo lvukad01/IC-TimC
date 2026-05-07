@@ -1,4 +1,6 @@
 export * from './dto/auth-dto';
+export * from './dto/common-dto';
+export * from './dto/notification-dto';
 export * from './dto/user-dto';
 export * from './dto/salon-dto';
 export * from './dto/employee-dto';
