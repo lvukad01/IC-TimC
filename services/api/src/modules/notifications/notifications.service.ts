@@ -22,6 +22,20 @@ export class NotificationsService {
     };
   }
 
+  async removeOne(
+    notificationId: string,
+    userId: string,
+  ): Promise<ActionResponseDto> {
+    const deletedNotification = await this.prisma.notifications.delete({
+      where: { id: notificationId, user_id: userId },
+    });
+
+    return {
+      id: deletedNotification.id,
+      message: 'Notification successfully deleted',
+    };
+  }
+
   async removeAll(userId: string): Promise<ActionResponseDto> {
     await this.prisma.notifications.deleteMany({ where: { user_id: userId } });
 

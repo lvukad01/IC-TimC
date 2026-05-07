@@ -53,9 +53,23 @@ export class NotificationsController {
     description: 'Returns success message if notifications are deleted',
     type: ActionResponseDto,
   })
-  remove(@Req() req: RequestWithJwtUser) {
+  removeAll(@Req() req: RequestWithJwtUser) {
     const userId = req.user.sub;
     return this.notificationsService.removeAll(userId);
+  }
+
+  @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
+  @Delete(':id')
+  @ApiOkResponse({
+    description: 'Returns success message if notification is deleted',
+    type: ActionResponseDto,
+  })
+  removeOne(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: RequestWithJwtUser,
+  ) {
+    const userId = req.user.sub;
+    return this.notificationsService.removeOne(id, userId);
   }
 
   @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
@@ -74,7 +88,7 @@ export class NotificationsController {
   }
 
   @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
-  @Patch(':read-all')
+  @Patch('read-all')
   @ApiOkResponse({
     description:
       'Returns success message if all user notifications are marked as read',
