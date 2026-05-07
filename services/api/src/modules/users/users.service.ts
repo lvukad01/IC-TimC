@@ -28,9 +28,6 @@ export class UsersService {
     const user = await this.prisma.users.findUnique({
       where: { email },
     });
-
-    if (!user) throw new NotFoundException('User not found');
-    return user;
   }
 
   async create(data: RegisterRequestDto & { password: string }) {
@@ -40,6 +37,10 @@ export class UsersService {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
+        street: data.street,
+        city: data.city,
+        zipcode: data.zipcode,
+        country: data.country,
         password: data.password,
         role: data.role,
       },
