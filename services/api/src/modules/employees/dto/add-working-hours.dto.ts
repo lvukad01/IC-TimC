@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNumber, IsString, Matches } from 'class-validator';
-import { timeRegex } from '@lumii/types';
-export class AddWorkingHoursDto {
+import { AddWorkingHoursRequest, timeRegex } from '@lumii/types';
+
+export class AddWorkingHoursDto implements AddWorkingHoursRequest {
   @ApiProperty({ example: '0 for Monday' })
   @IsNumber()
   day_of_week: number;
