@@ -1,5 +1,5 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
+  CreateSalonRequest,
   MAX_CITY_LENGTH,
   MAX_COUNTRY_LENGTH,
   MAX_STREET_LENGTH,
@@ -8,12 +8,11 @@ import {
   MIN_STREET_LENGTH,
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
-  zipcodeRegex,
   SalonCategory,
-  CreateSalonRequest,
+  zipcodeRegex,
 } from '@lumii/types';
-import { IsArray, IsEnum } from 'class-validator';
-import { IsString, Length, Matches } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsArray, IsEnum, IsString, Length, Matches } from 'class-validator';
 
 export class CreateSalonDto implements CreateSalonRequest {
   @ApiProperty({ example: 'Salon ljepote' })

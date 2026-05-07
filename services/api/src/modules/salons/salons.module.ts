@@ -1,10 +1,11 @@
+import { GeocodingModule } from '@geocoding/geocoding.module';
 import { Module } from '@nestjs/common';
 import { PrismaModule } from '../prisma/prisma.module';
-import { SalonsService } from './salons.service';
 import { SalonsController } from './salons.controller';
+import { SalonsService } from './salons.service';
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, GeocodingModule],
   controllers: [SalonsController],
   providers: [SalonsService],
 })

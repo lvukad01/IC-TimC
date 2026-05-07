@@ -32,16 +32,19 @@
       "@constants/*": ["src/common/constants/*"],
       "@response/*": ["src/common/response/*"],
       "@guards/*": ["src/common/guards/*"],
+      "@errors/*": ["src/common/errors/*"],
       "@interceptors/*": ["src/common/interceptors/*"],
       "@middleware/*": ["src/common/middleware/*"],
       "@filters/*": ["src/common/filters/*"],
+      "@mappers/*": ["src/common/mappers/*"],
       "@strategy/*": ["src/common/strategy/*"],
       "@tstypes/*": ["src/common/types/*"],
       "@validators/*": ["src/common/validators/*"],
       "@users/*": ["src/modules/users/*"],
       "@auth/*": ["src/modules/auth/*"],
       "@assets/*": ["src/modules/orders/*"],
-      "@logger/*": ["src/modules/logger/*"]
+      "@logger/*": ["src/modules/logger/*"],
+      "@geocoding/*": ["src/modules/geocoding/*"]
     }
   }
 }
