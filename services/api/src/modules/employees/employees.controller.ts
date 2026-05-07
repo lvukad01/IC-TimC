@@ -12,6 +12,7 @@ import {
 import { AddEmployeeDto } from './dto/add-employee.dto';
 import { UserRole } from 'generated/prisma/edge';
 import { RolesAuth } from '@decorators/auth.decorator';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 @ApiTags('salons/:salonId/employees')
 @ApiBearerAuth()
@@ -46,8 +47,13 @@ export class EmployeesController {
   updateEmployee(
     @Param('salonId') salonId: string,
     @Param('id') employeeId: string,
+    @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    return this.employeesService.updateEmployee(salonId, employeeId);
+    return this.employeesService.updateEmployee(
+      salonId,
+      employeeId,
+      updateEmployeeDto,
+    );
   }
 
   @Delete(':id')
