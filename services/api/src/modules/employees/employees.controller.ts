@@ -10,6 +10,8 @@ import {
   Body,
 } from '@nestjs/common';
 import { AddEmployeeDto } from './dto/add-employee.dto';
+import { UserRole } from 'generated/prisma/edge';
+import { RolesAuth } from '@decorators/auth.decorator';
 
 @ApiTags('salons/:salonId/employees')
 @ApiBearerAuth()
@@ -31,6 +33,7 @@ export class EmployeesController {
   }
 
   @Post()
+  @RolesAuth(UserRole.SALON_OWNER)
   addEmployee(
     @Param('salonId') salonId: string,
     @Body() addEmployeeDto: AddEmployeeDto,
@@ -39,6 +42,7 @@ export class EmployeesController {
   }
 
   @Patch(':id')
+  @RolesAuth(UserRole.SALON_OWNER)
   updateEmployee(
     @Param('salonId') salonId: string,
     @Param('id') employeeId: string,
@@ -47,6 +51,7 @@ export class EmployeesController {
   }
 
   @Delete(':id')
+  @RolesAuth(UserRole.SALON_OWNER)
   deleteEmployee(
     @Param('salonId') salonId: string,
     @Param('id') employeeId: string,

@@ -9,10 +9,11 @@ import {
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
   zipcodeRegex,
+  UpdateSalonRequest,
 } from '@lumii/types';
 import { IsString, Length, Matches, IsOptional } from 'class-validator';
 
-export class UpdateSalonDto {
+export class UpdateSalonDto implements UpdateSalonRequest {
   @ApiPropertyOptional({ example: 'Salon ljepote' })
   @IsString()
   @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
