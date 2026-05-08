@@ -6,6 +6,7 @@ import {
   Patch,
   Post,
   Delete,
+  Param,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -22,9 +23,9 @@ import { UpdateServiceDto } from './dto/update-service.dto';
 import { UserRole } from '@lumii/types';
 import { RolesAuth } from '@decorators/auth.decorator';
 
-@ApiTags('salon/:salonid/category/:categoryid')
+@ApiTags('services')
 @ApiBearerAuth()
-@Controller()
+@Controller('salons/:salonId/categories/:categoryId/services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
@@ -32,8 +33,8 @@ export class ServicesController {
   @ApiOperation({ summary: 'Get all services for a category' })
   @ApiOkResponse({ type: ServiceResponseDto, isArray: true })
   getAllServices(
-    @Body('salonid', ParseUUIDPipe) salonId: string,
-    @Body('categoryid', ParseUUIDPipe) categoryId: string,
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
     return this.servicesService.getAllServices(salonId, categoryId);
   }
@@ -42,34 +43,34 @@ export class ServicesController {
   @ApiOperation({ summary: 'Get service by ID' })
   @ApiOkResponse({ type: ServiceResponseDto })
   getServiceById(
-    @Body('salonid', ParseUUIDPipe) salonId: string,
-    @Body('categoryid', ParseUUIDPipe) categoryId: string,
-    @Body('serviceId', ParseUUIDPipe) serviceId: string,
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Param('categoryId', ParseUUIDPipe) categoryId: string,
+    @Param('serviceId', ParseUUIDPipe) serviceId: string,
   ) {
     return this.servicesService.getServiceById(salonId, categoryId, serviceId);
   }
 
   @Post()
+  @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Add a new service to a category' })
   @ApiCreatedResponse({ type: ServiceResponseDto })
-  @RolesAuth(UserRole.SALON_OWNER)
   addService(
-    @Body('salonid', ParseUUIDPipe) salonId: string,
-    @Body('categoryid', ParseUUIDPipe) categoryId: string,
-    addServiceDto: AddServiceDto,
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Param('categoryId', ParseUUIDPipe) categoryId: string,
+    @Body() addServiceDto: AddServiceDto,
   ) {
     return this.servicesService.addService(salonId, categoryId, addServiceDto);
   }
 
-  @Patch(':serviceid')
+  @Patch(':serviceId')
+  @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Update a service' })
   @ApiOkResponse({ type: ServiceResponseDto })
-  @RolesAuth(UserRole.SALON_OWNER)
   updateService(
-    @Body('salonid', ParseUUIDPipe) salonId: string,
-    @Body('categoryid', ParseUUIDPipe) categoryId: string,
-    @Body('serviceid', ParseUUIDPipe) serviceId: string,
-    updateServiceDto: UpdateServiceDto,
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Param('categoryId', ParseUUIDPipe) categoryId: string,
+    @Param('serviceId', ParseUUIDPipe) serviceId: string,
+    @Body() updateServiceDto: UpdateServiceDto,
   ) {
     return this.servicesService.updateService(
       salonId,
@@ -79,14 +80,14 @@ export class ServicesController {
     );
   }
 
-  @Delete(':serviceid')
+  @Delete(':serviceId')
+  @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Delete a service' })
   @ApiNoContentResponse({ description: 'Service deleted successfully' })
-  @RolesAuth(UserRole.SALON_OWNER)
   deleteService(
-    @Body('salonid', ParseUUIDPipe) salonId: string,
-    @Body('categoryid', ParseUUIDPipe) categoryId: string,
-    @Body('serviceid', ParseUUIDPipe) serviceId: string,
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Param('categoryId', ParseUUIDPipe) categoryId: string,
+    @Param('serviceId', ParseUUIDPipe) serviceId: string,
   ) {
     return this.servicesService.deleteService(salonId, categoryId, serviceId);
   }
