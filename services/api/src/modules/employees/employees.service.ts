@@ -1,8 +1,8 @@
+import { ErrorMessages } from '@lumii/messages';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { AddEmployeeDto } from './dto/add-employee.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { AddEmployeeDto } from './dto/add-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
-import { ERROR_MESSAGES } from '@lumii/messages';
 
 @Injectable()
 export class EmployeesService {
@@ -18,8 +18,8 @@ export class EmployeesService {
     });
   }
 
-  getEmployeeById(salonId: string, employeeId: string) {
-    const employee = this.prisma.employees.findFirst({
+  async getEmployeeById(salonId: string, employeeId: string) {
+    const employee = await this.prisma.employees.findFirst({
       where: { salonId: salonId, id: employeeId },
       select: {
         id: true,
@@ -28,9 +28,9 @@ export class EmployeesService {
         isActive: true,
       },
     });
-    if (!employee) {
-      throw new NotFoundException(ERROR_MESSAGES.EMPLOYEE_NOT_FOUND);
-    }
+    if (!employee)
+      throw new NotFoundException(ErrorMessages.notFound('Employee'));
+
     return employee;
   }
 
@@ -67,10 +67,15 @@ export class EmployeesService {
     });
 
     if (!employee)
-      throw new NotFoundException(ERROR_MESSAGES.EMPLOYEE_NOT_FOUND);
+      throw new NotFoundException(ErrorMessages.notFound('Employee'));
 
-    return this.prisma.employees.delete({
+    await this.prisma.employees.delete({
       where: { id: employeeId },
     });
+
+    return {
+      id: employeeId,
+      message: 'Employee deleted successfully',
+    };
   }
 }

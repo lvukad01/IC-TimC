@@ -1,15 +1,26 @@
+import { ActionResponseDto } from '@common/common';
+import { InvalidDepositException } from '@exceptions/salon.exception';
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
-import { MediaType, SalonStatus, UserRole } from '@lumii/types';
+import { ErrorMessages, VALIDATION_MESSAGES } from '@lumii/messages';
+import {
+  DepositType,
+  MAX_PERCENTAGE_DEPOSIT_VALUE,
+  MediaType,
+  MIN_FIXED_DEPOSIT_VALUE,
+  MIN_PERCENTAGE_DEPOSIT_VALUE,
+  SalonStatus,
+  UserRole,
+} from '@lumii/types';
 import {
   ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { ERROR_MESSAGES } from '@lumii/messages';
 import { S3Service } from '@s3/s3.service';
 import type { PrismaService } from '../prisma/prisma.service';
 import { AddCategoryDto } from './dto/add-category.dto';
+import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
 import { CreateSalonDto } from './dto/create-salon.dto';
 import {
   SalonDetailResponseDto,
@@ -64,7 +75,7 @@ export class SalonsService {
       include: { media: true },
     });
     if (!salon) {
-      throw new NotFoundException(ERROR_MESSAGES.SALON_NOT_FOUND);
+      throw new NotFoundException(ErrorMessages.notFound('Salon'));
     }
 
     return this.mapper.mapSalonDetails(salon);
@@ -84,11 +95,11 @@ export class SalonsService {
       const salon = await tx.salons.create({
         data: {
           ownerId: userId,
-          name: createSalonDto.name.trim(),
-          city: createSalonDto.city.trim(),
-          street: createSalonDto.street.trim(),
-          country: createSalonDto.country.trim(),
-          zipcode: createSalonDto.zipcode.trim(),
+          name: createSalonDto.name,
+          city: createSalonDto.city,
+          street: createSalonDto.street,
+          country: createSalonDto.country,
+          zipcode: createSalonDto.zipcode,
           status: SalonStatus.PENDING,
           lat: coordinates.lat,
           lng: coordinates.lng,
@@ -114,7 +125,7 @@ export class SalonsService {
   async updateSalon(id: string, updateSalonDto: UpdateSalonDto) {
     const salon = await this.getSalonById(id);
 
-    if (!salon) throw new NotFoundException('Salon not found');
+    if (!salon) throw new NotFoundException(ErrorMessages.notFound('Salon'));
 
     const existingAddress = {
       street: salon.street,
@@ -148,7 +159,7 @@ export class SalonsService {
   ) {
     const salon = await this.getSalonById(salonId);
 
-    if (!salon) throw new NotFoundException('Salon not found');
+    if (!salon) throw new NotFoundException(ErrorMessages.notFound('Salon'));
 
     const existingOrder = await this.prisma.salonMedia.findFirst({
       where: { salonId: salonId, sortOrder: media.sortOrder },
@@ -208,18 +219,21 @@ export class SalonsService {
     });
   }
 
-  async deleteMedia(salonId: string, mediaId: string) {
+  async deleteMedia(
+    salonId: string,
+    mediaId: string,
+  ): Promise<ActionResponseDto> {
     const media = await this.prisma.salonMedia.findFirst({
       where: { id: mediaId, salonId: salonId },
     });
 
-    if (!media) throw new NotFoundException('Media not found');
+    if (!media) throw new NotFoundException(ErrorMessages.notFound('Media'));
+
+    await this.s3Service.deleteFile(media.key);
 
     await this.prisma.salonMedia.delete({
       where: { id: mediaId },
     });
-
-    await this.s3Service.deleteFile(media.key);
 
     return {
       id: mediaId,
@@ -227,11 +241,18 @@ export class SalonsService {
     };
   }
 
-  async removeCategory(salonId: string, categoryId: string) {
+  async removeCategory(
+    salonId: string,
+    categoryId: string,
+  ): Promise<ActionResponseDto> {
     await this.getSalonById(salonId);
-    return this.prisma.salonCategories.delete({
+    await this.prisma.salonCategories.delete({
       where: { id: categoryId, salonId: salonId },
     });
+    return {
+      id: categoryId,
+      message: 'Category deleted successfully',
+    };
   }
 
   async findPendingSalons(): Promise<SalonListResponseDto[]> {
@@ -243,5 +264,75 @@ export class SalonsService {
     return Promise.all(
       pendingSalons.map((salon) => this.mapper.mapSalonListItem(salon)),
     );
+  }
+
+  async createPaymentConfig(salonId: string, dto: CreatePaymentConfigDto) {
+    const salon = await this.prisma.salons.findUnique({
+      where: { id: salonId },
+      include: { config: true },
+    });
+
+    if (!salon) throw new NotFoundException(ErrorMessages.notFound('Salon'));
+
+    if (salon.config)
+      throw new ConflictException(VALIDATION_MESSAGES.PAYMENT_CONFIG_CONFLICT);
+
+    if (
+      dto.depositType === DepositType.PERCENTAGE &&
+      (dto.depositValue <= MIN_PERCENTAGE_DEPOSIT_VALUE ||
+        dto.depositValue >= MAX_PERCENTAGE_DEPOSIT_VALUE)
+    )
+      throw new InvalidDepositException(
+        'Deposit percentage must be between 1 and 100',
+      );
+
+    if (
+      dto.depositType === DepositType.FIXED &&
+      dto.depositValue <= MIN_FIXED_DEPOSIT_VALUE
+    )
+      throw new InvalidDepositException('Fixed deposit must be greater than 0');
+
+    return await this.prisma.salonPaymentConfig.create({
+      data: {
+        salonId,
+        depositType: dto.depositType,
+        depositValue: dto.depositValue,
+      },
+    });
+  }
+
+  async updatePaymentConfig(salonId: string, dto: UpdatePaymentConfigDto) {
+    const salon = await this.prisma.salons.findUnique({
+      where: { id: salonId },
+      include: { config: true },
+    });
+
+    if (!salon) throw new NotFoundException(ErrorMessages.notFound('Salon'));
+
+    if (!salon.config)
+      throw new NotFoundException(ErrorMessages.notFound('Payment config'));
+
+    if (
+      dto.depositType === DepositType.PERCENTAGE &&
+      (dto.depositValue <= MIN_PERCENTAGE_DEPOSIT_VALUE ||
+        dto.depositValue >= MAX_PERCENTAGE_DEPOSIT_VALUE)
+    )
+      throw new InvalidDepositException(
+        'Deposit percentage must be between 1 and 100',
+      );
+
+    if (
+      dto.depositType === DepositType.FIXED &&
+      dto.depositValue <= MIN_FIXED_DEPOSIT_VALUE
+    )
+      throw new InvalidDepositException('Fixed deposit must be greater than 0');
+
+    return await this.prisma.salonPaymentConfig.update({
+      where: { salonId },
+      data: {
+        depositType: dto.depositType,
+        depositValue: dto.depositValue,
+      },
+    });
   }
 }

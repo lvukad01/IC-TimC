@@ -1,4 +1,4 @@
-import { MediaType } from '@enums/enum';
+import { DepositType, MediaType } from '@enums/enum';
 
 export interface CreateSalonRequest {
   name: string;
@@ -24,6 +24,11 @@ export interface UpdateSalonRequest {
 export interface UploadMediaRequest {
   type: MediaType;
   sortOrder: number;
+}
+
+export interface CreatePaymentConfigRequest {
+  depositType: DepositType;
+  depositValue: number;
 }
 
 export interface SalonListResponse {

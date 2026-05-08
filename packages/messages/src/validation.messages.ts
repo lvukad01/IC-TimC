@@ -5,4 +5,5 @@ export const VALIDATION_MESSAGES = {
   INVALID_ZIPCODE_FORMAT: 'ZIP code must be numeric only and have between 4 and 10 characters',
   INVALID_SERVICE_NAME:
     'Name must be 2-50 characters long and can contain letters, numbers, spaces, hyphens, and apostrophes.',
+  PAYMENT_CONFIG_CONFLICT: 'Payment config already exists.',
 };

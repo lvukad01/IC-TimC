@@ -86,3 +86,10 @@ export const SortOrder = {
 } as const;
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder];
+
+export const DepositType = {
+  FIXED: 'FIXED',
+  PERCENTAGE: 'PERCENTAGE',
+} as const;
+
+export type DepositType = (typeof DepositType)[keyof typeof DepositType];

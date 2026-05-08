@@ -56,6 +56,11 @@ enum PaymentType{
   FULL
 }
 
+enum DepositType{
+  FIXED
+  PERCENTAGE
+}
+
 enum PaymentStatus{
   PENDING
   PAID 
@@ -120,11 +125,21 @@ model Salons{
   employees Employees[]
   bookings Bookings[]
   reviews Reviews[]
+  config SalonPaymentConfig?
+}
+
+model SalonPaymentConfig{
+  id String @id @default(uuid()) 
+  salonId String @unique
+  depositType DepositType
+  depositValue Decimal
+  createdAt DateTime @default(now())
+  salon Salons @relation(fields: [salonId], references: [id])
 }
 
 model SalonMedia{
   id String @id @default(uuid())
-  salonId String
+  salonId String 
   key String
   type MediaType @default(PROFILE)
   sortOrder Int
@@ -230,21 +245,6 @@ model Payments{
   createdAt DateTime @default(now())
 
   booking Bookings @relation(fields: [bookingId], references: [id])
-  transactions PaymentTransactions[]
-}
-
-model PaymentTransactions{
-  id String @id @default(uuid())
-  paymentId String
-  initiatedBy String
-  type String
-  amount Decimal
-  status String
-  createdAt DateTime @default(now())
-  notes String?
-
-  payment Payments @relation(fields: [paymentId], references: [id])
-  initiator Users @relation(fields: [initiatedBy], references: [id])
 }
 
 model Reviews{

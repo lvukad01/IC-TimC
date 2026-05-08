@@ -1,3 +1,4 @@
+import { ActionResponseDto } from '@common/common';
 import { RolesAuth } from '@decorators/auth.decorator';
 import { UserRole } from '@lumii/types';
 import {
@@ -18,13 +19,13 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import type { RequestWithJwtUser } from '@tstypes/request-types';
 import { AddCategoryDto } from './dto/add-category.dto';
+import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
 import type { CreateSalonDto } from './dto/create-salon.dto';
 import {
   SalonDetailResponseDto,
@@ -84,7 +85,10 @@ export class SalonsController {
   @Delete(':id')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Delete a salon' })
-  @ApiOkResponse({ description: 'Salon deleted successfully' })
+  @ApiOkResponse({
+    description: 'Salon deleted successfully',
+    type: ActionResponseDto,
+  })
   deleteSalon(@Param('id', ParseUUIDPipe) id: string) {
     return this.salonsService.deleteSalon(id);
   }
@@ -104,7 +108,10 @@ export class SalonsController {
   @RolesAuth(UserRole.SALON_OWNER)
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Delete media from a salon' })
-  @ApiNoContentResponse({ description: 'Media deleted successfully' })
+  @ApiOkResponse({
+    description: 'Media deleted successfully',
+    type: ActionResponseDto,
+  })
   deleteSalonMedia(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('mediaId', ParseUUIDPipe) mediaId: string,
@@ -126,7 +133,10 @@ export class SalonsController {
   @Delete(':id/categories/:categoryId')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Remove category from a salon' })
-  @ApiOkResponse({ description: 'Category removed successfully' })
+  @ApiOkResponse({
+    description: 'Category removed successfully',
+    type: ActionResponseDto,
+  })
   removeSalonCategory(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
@@ -150,5 +160,27 @@ export class SalonsController {
     @Body() updateStatusDto: UpdateStatusDto,
   ) {
     return this.salonsService.updateStatus(id, updateStatusDto);
+  }
+
+  @Post(':id/paymentConfig')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Add payment config to a salon' })
+  @ApiCreatedResponse({ description: 'Payment config created successfully' })
+  addSalonPaymentConfig(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: CreatePaymentConfigDto,
+  ) {
+    return this.salonsService.createPaymentConfig(id, dto);
+  }
+
+  @Patch(':id/paymentConfig')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Add payment config to a salon' })
+  @ApiCreatedResponse({ description: 'Payment config updated successfully' })
+  updateSalonPaymentConfig(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdatePaymentConfigDto,
+  ) {
+    return this.salonsService.updatePaymentConfig(id, dto);
   }
 }

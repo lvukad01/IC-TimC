@@ -1,12 +1,12 @@
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
+import { ErrorMessages } from '@lumii/messages';
 import { toUserResponse } from '@mappers/user-response.mapper';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
 import { CreateUserInput } from '@tstypes/create-user';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
-import { ERROR_MESSAGES } from '@lumii/messages';
 
 @Injectable()
 export class UsersService {
@@ -20,7 +20,7 @@ export class UsersService {
       where: { id },
     });
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException(ErrorMessages.notFound('User'));
     return toUserResponse(user);
   }
 
@@ -29,7 +29,7 @@ export class UsersService {
       where: { email },
     });
     if (!user) {
-      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
+      throw new NotFoundException(ErrorMessages.notFound('User'));
     }
     return user;
   }
@@ -57,7 +57,7 @@ export class UsersService {
   ): Promise<UserResponseDto> {
     const user = await this.findOne(id);
 
-    if (!user) throw new NotFoundException('User not found');
+    if (!user) throw new NotFoundException(ErrorMessages.notFound('User'));
 
     const existingAddress = {
       street: user.street,
