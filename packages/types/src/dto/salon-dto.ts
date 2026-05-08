@@ -1,4 +1,4 @@
-import { DepositType, MediaType } from '@enums/enum';
+import { DepositType, MediaType, SalonCategory } from '@enums/enum';
 
 export interface CreateSalonRequest {
   name: string;
@@ -56,4 +56,15 @@ export interface SalonDetailResponse {
     sortOrder: number;
     url: string;
   }[];
+}
+
+export interface FindSalonsQuery {
+  search?: string;
+  city?: string;
+  category?: SalonCategory;
+  radiusMeters?: number;
+  lat?: number;
+  lng?: number;
+  page: number;
+  limit: number;
 }

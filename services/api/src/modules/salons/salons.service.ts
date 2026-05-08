@@ -17,11 +17,16 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { PaginatedResponse } from '@response/paginated-response.dto';
 import { S3Service } from '@s3/s3.service';
+import { SalonsWithMedia } from '@tstypes/salon';
+import { paginate } from '@utils/paginate.util';
+import { getBoundsOfDistance, isPointWithinRadius } from 'geolib';
 import type { PrismaService } from '../prisma/prisma.service';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
 import { CreateSalonDto } from './dto/create-salon.dto';
+import { FindSalonsQueryDto } from './dto/find-salons-query.dto';
 import {
   SalonDetailResponseDto,
   SalonListResponseDto,
@@ -41,11 +46,16 @@ export class SalonsService {
     private readonly mapper: SalonsMapper,
   ) {}
 
-  async findAll(
-    search?: string,
-    city?: string,
-    category?: string,
-  ): Promise<SalonListResponseDto[]> {
+  async findAll({
+    search,
+    city,
+    category,
+    radiusMeters,
+    lat,
+    lng,
+    page,
+    limit,
+  }: FindSalonsQueryDto): Promise<PaginatedResponse<SalonListResponseDto>> {
     const where: any = { status: SalonStatus.ACTIVE };
     if (search) {
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
@@ -58,16 +68,50 @@ export class SalonsService {
         some: { category: category },
       };
     }
-    const salons = await this.prisma.salons.findMany({
+
+    if (radiusMeters && lat && lng) {
+      const center = { latitude: lat, longitude: lng };
+      const [min, max] = getBoundsOfDistance(center, 10000);
+
+      where.lat = { gte: min.latitude, lte: max.latitude };
+      where.lng = { gte: min.longitude, lte: max.longitude };
+    }
+
+    const salons = await paginate({
+      model: this.prisma.salons,
       where,
+      page,
+      limit,
       include: {
         media: true,
       },
     });
 
-    return Promise.all(
-      salons.map((salon) => this.mapper.mapSalonListItem(salon)),
-    );
+    let filteredResults = salons.results as SalonsWithMedia[];
+
+    if (radiusMeters && lat != null && lng != null) {
+      const center = { latitude: lat, longitude: lng };
+
+      filteredResults = filteredResults.filter((salon) => {
+        if (salon.lat == null || salon.lng == null) return false;
+
+        return isPointWithinRadius(
+          {
+            latitude: salon.lat,
+            longitude: salon.lng,
+          },
+          center,
+          radiusMeters,
+        );
+      });
+    }
+
+    return {
+      ...salons,
+      results: await Promise.all(
+        filteredResults.map((salon) => this.mapper.mapSalonListItem(salon)),
+      ),
+    };
   }
 
   async getSalonById(id: string): Promise<SalonDetailResponseDto> {

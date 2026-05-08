@@ -11,8 +11,10 @@ export interface PaymentInput {
 export interface PaymentRefundInput {
   bookingId: string;
   clientId: string;
-  refunds: {
-    amount: number;
-    method: PaymentMethod;
-  }[];
+  refunds: Refund[];
+}
+
+export interface Refund {
+  amount: number;
+  method: PaymentMethod;
 }

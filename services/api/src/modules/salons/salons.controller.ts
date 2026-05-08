@@ -27,6 +27,7 @@ import type { RequestWithJwtUser } from '@tstypes/request-types';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
 import type { CreateSalonDto } from './dto/create-salon.dto';
+import { FindSalonsQueryDto } from './dto/find-salons-query.dto';
 import {
   SalonDetailResponseDto,
   SalonListResponseDto,
@@ -46,12 +47,8 @@ export class SalonsController {
   @Get()
   @ApiOperation({ summary: 'Get all salons' })
   @ApiOkResponse({ type: SalonListResponseDto, isArray: true })
-  getAllSalons(
-    @Query('search') search?: string,
-    @Query('city') city?: string,
-    @Query('category') category?: string,
-  ) {
-    return this.salonsService.findAll(search, city, category);
+  getAllSalons(@Query() query: FindSalonsQueryDto) {
+    return this.salonsService.findAll(query);
   }
 
   @Get(':id')

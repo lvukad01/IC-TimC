@@ -6,6 +6,7 @@ export * from './dto/salon-dto';
 export * from './dto/service-dto';
 export * from './dto/user-dto';
 export * from './enums/enum';
+export * from './validation/booking';
 export * from './validation/salon';
 export * from './validation/service';
 export * from './validation/time-off';
