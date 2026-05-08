@@ -9,6 +9,6 @@ export interface NotificationResponseDto {
   id: string;
   content: string;
   type: NotificationType;
-  is_read: boolean;
+  isRead: boolean;
   createdAt: Date;
 }

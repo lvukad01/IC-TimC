@@ -6,6 +6,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseUUIDPipe,
   Patch,
   Post,
   Query,
@@ -16,6 +17,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
@@ -52,13 +55,14 @@ export class SalonsController {
   @Get(':id')
   @ApiOperation({ summary: 'Get salon by ID' })
   @ApiOkResponse({ type: SalonDetailResponseDto })
-  getSalonById(@Param('id') id: string) {
+  getSalonById(@Param('id', ParseUUIDPipe) id: string) {
     return this.salonsService.getSalonById(id);
   }
 
   @Post('')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Create a new salon' })
+  @ApiCreatedResponse({ type: SalonDetailResponseDto })
   createSalon(
     @Body() createSalonDto: CreateSalonDto,
     @Request() req: RequestWithJwtUser,
@@ -69,14 +73,19 @@ export class SalonsController {
   @Patch(':id')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Update salon details' })
-  updateSalon(@Param('id') id: string, @Body() updateSalonDto: UpdateSalonDto) {
+  @ApiOkResponse({ type: SalonDetailResponseDto })
+  updateSalon(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateSalonDto: UpdateSalonDto,
+  ) {
     return this.salonsService.updateSalon(id, updateSalonDto);
   }
 
   @Delete(':id')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Delete a salon' })
-  deleteSalon(@Param('id') id: string) {
+  @ApiOkResponse({ description: 'Salon deleted successfully' })
+  deleteSalon(@Param('id', ParseUUIDPipe) id: string) {
     return this.salonsService.deleteSalon(id);
   }
 
@@ -84,7 +93,7 @@ export class SalonsController {
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Upload media for a salon' })
   uploadSalonMedia(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @UploadedFile() file: Express.Multer.File,
     @Body() uploadMediaDto: UploadMediaDto,
   ) {
@@ -95,15 +104,20 @@ export class SalonsController {
   @RolesAuth(UserRole.SALON_OWNER)
   @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Delete media from a salon' })
-  deleteSalonMedia(@Param('id') id: string, @Param('mediaId') mediaId: string) {
+  @ApiNoContentResponse({ description: 'Media deleted successfully' })
+  deleteSalonMedia(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('mediaId', ParseUUIDPipe) mediaId: string,
+  ) {
     return this.salonsService.deleteMedia(id, mediaId);
   }
 
   @Post(':id/categories')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Add category to a salon' })
+  @ApiCreatedResponse({ description: 'Category added successfully' })
   addSalonCategory(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() addCategoryDto: AddCategoryDto,
   ) {
     return this.salonsService.addCategory(id, addCategoryDto);
@@ -112,9 +126,10 @@ export class SalonsController {
   @Delete(':id/categories/:categoryId')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Remove category from a salon' })
+  @ApiOkResponse({ description: 'Category removed successfully' })
   removeSalonCategory(
-    @Param('id') id: string,
-    @Param('categoryId') categoryId: string,
+    @Param('id', ParseUUIDPipe) id: string,
+    @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
     return this.salonsService.removeCategory(id, categoryId);
   }
@@ -129,8 +144,9 @@ export class SalonsController {
   @Patch(':id/status')
   @RolesAuth(UserRole.ADMIN)
   @ApiOperation({ summary: 'Update salon status' })
+  @ApiOkResponse({ description: 'Salon status updated successfully' })
   updateSalonStatus(
-    @Param('id') id: string,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() updateStatusDto: UpdateStatusDto,
   ) {
     return this.salonsService.updateStatus(id, updateStatusDto);
