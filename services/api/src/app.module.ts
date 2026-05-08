@@ -6,6 +6,8 @@ import { seconds, ThrottlerModule } from '@nestjs/throttler';
 import { UsersModule } from '@users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PaymentsService } from './modules/payments/payments.service';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -24,9 +26,10 @@ import { AppService } from './app.service';
       envFilePath: ['services/api/.env', '.env'],
     }),
     GeocodingModule,
+    PaymentsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, ResponseInterceptor],
+  providers: [AppService, ResponseInterceptor, PaymentsService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

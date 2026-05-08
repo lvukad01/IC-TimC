@@ -31,6 +31,11 @@ export interface CreatePaymentConfigRequest {
   depositValue: number;
 }
 
+export interface UpdatePaymentConfigRequest {
+  depositType?: DepositType;
+  depositValue?: number;
+}
+
 export interface SalonListResponse {
   id: string;
   name: string;

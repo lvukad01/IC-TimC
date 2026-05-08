@@ -31,6 +31,7 @@ import {
   SalonDetailResponseDto,
   SalonListResponseDto,
 } from './dto/salon-response.dto';
+import { UpdatePaymentConfigDto } from './dto/update-payment-config.dto';
 import type { UpdateSalonDto } from './dto/update-salon.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UploadMediaDto } from './dto/upload-media.dto';

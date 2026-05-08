@@ -53,7 +53,8 @@ enum PaymentMethod{
 
 enum PaymentType{
   DEPOSIT 
-  FULL
+  BALANCE
+  REFUND
 }
 
 enum DepositType{
@@ -64,7 +65,6 @@ enum DepositType{
 enum PaymentStatus{
   PENDING
   PAID 
-  REFUNDED 
   FAILED
 }
 
@@ -102,7 +102,7 @@ model Users{
   bookings Bookings[]
   reviews Reviews[]
   notifications Notifications[]
-  paymentTransactions PaymentTransactions[]
+  payments Payments[]
 }
 
 model Salons{
@@ -236,6 +236,7 @@ model Bookings{
 
 model Payments{
   id String @id @default(uuid())
+  clientId String
   bookingId String
   amount Decimal
   method PaymentMethod
@@ -245,6 +246,7 @@ model Payments{
   createdAt DateTime @default(now())
 
   booking Bookings @relation(fields: [bookingId], references: [id])
+  client Users @relation(fields: [clientId], references: [id])
 }
 
 model Reviews{

@@ -58,7 +58,8 @@ export type PaymentMethod = (typeof PaymentMethod)[keyof typeof PaymentMethod];
 
 export const PaymentType = {
   DEPOSIT: 'DEPOSIT',
-  FULL: 'FULL',
+  BALANCE: 'BALANCE',
+  REFUND: 'REFUND',
 } as const;
 
 export type PaymentType = (typeof PaymentType)[keyof typeof PaymentType];
@@ -66,7 +67,6 @@ export type PaymentType = (typeof PaymentType)[keyof typeof PaymentType];
 export const PaymentStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',
-  REFUNDED: 'REFUNDED',
   FAILED: 'FAILED',
 } as const;
 
