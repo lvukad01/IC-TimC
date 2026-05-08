@@ -11,8 +11,8 @@ export class ServicesService {
   async getAllServices(salonId: string, categoryId: string) {
     return this.prisma.services.findMany({
       where: {
-        salon_id: salonId,
-        category_id: categoryId,
+        salonId: salonId,
+        categoryId: categoryId,
       },
     });
   }
@@ -21,8 +21,8 @@ export class ServicesService {
     const service = await this.prisma.services.findFirst({
       where: {
         id: serviceId,
-        salon_id: salonId,
-        category_id: categoryId,
+        salonId: salonId,
+        categoryId: categoryId,
       },
     });
     if (!service) {
@@ -39,10 +39,10 @@ export class ServicesService {
       data: {
         name: addServiceDto.name,
         price: addServiceDto.price,
-        duration_min: addServiceDto.duration_min,
-        is_active: addServiceDto.is_active,
-        salon_id: salonId,
-        category_id: categoryId,
+        durationMin: addServiceDto.durationMin,
+        isActive: addServiceDto.isActive,
+        salonId: salonId,
+        categoryId: categoryId,
       },
     });
   }
@@ -60,8 +60,8 @@ export class ServicesService {
       data: {
         name: updateServiceDto.name || service.name,
         price: updateServiceDto.price || service.price,
-        duration_min: updateServiceDto.duration_min || service.duration_min,
-        is_active: updateServiceDto.is_active || service.is_active,
+        durationMin: updateServiceDto.durationMin || service.durationMin,
+        isActive: updateServiceDto.isActive || service.isActive,
       },
     });
   }

@@ -12,13 +12,13 @@ import {
   Length,
   Matches,
 } from 'class-validator';
+import { VALIDATION_MESSAGES } from '@lumii/messages';
 
 export class AddServiceDto implements AddServiceRequest {
   @ApiProperty({ example: 'haircut' })
   @IsString()
   @Matches(serviceNameRegex, {
-    message:
-      'Name must be 2-50 characters long and can contain letters, numbers, spaces, hyphens, and apostrophes.',
+    message: VALIDATION_MESSAGES.INVALID_SERVICE_NAME,
   })
   name: string;
 
@@ -29,9 +29,9 @@ export class AddServiceDto implements AddServiceRequest {
   @ApiProperty({ example: 30 })
   @IsNumber()
   @Length(DURATION_MIN, DURATION_MAX)
-  duration_min: number;
+  durationMin: number;
 
   @ApiProperty({ example: true })
   @IsBoolean()
-  is_active: boolean;
+  isActive: boolean;
 }

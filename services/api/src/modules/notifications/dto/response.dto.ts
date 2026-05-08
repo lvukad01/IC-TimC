@@ -12,7 +12,7 @@ export class NotificationResponseDto {
   type: NotificationType;
 
   @ApiProperty()
-  is_read: boolean;
+  isRead: boolean;
 
   @ApiProperty({ description: 'Timestamp when the notification was created' })
   createdAt: Date;

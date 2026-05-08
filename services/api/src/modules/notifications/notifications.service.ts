@@ -13,7 +13,7 @@ export class NotificationsService {
     dto: CreateNotificationDto,
   ): Promise<ActionResponseDto> {
     const notification = await this.prisma.notifications.create({
-      data: { content: dto.content, user_id: userId, type: dto.type },
+      data: { content: dto.content, userId: userId, type: dto.type },
     });
 
     return {
@@ -27,7 +27,7 @@ export class NotificationsService {
     userId: string,
   ): Promise<ActionResponseDto> {
     const deletedNotification = await this.prisma.notifications.delete({
-      where: { id: notificationId, user_id: userId },
+      where: { id: notificationId, userId: userId },
     });
 
     return {
@@ -37,14 +37,14 @@ export class NotificationsService {
   }
 
   async removeAll(userId: string): Promise<ActionResponseDto> {
-    await this.prisma.notifications.deleteMany({ where: { user_id: userId } });
+    await this.prisma.notifications.deleteMany({ where: { userId: userId } });
 
     return { message: 'Notifications successfully deleted' };
   }
 
   async findAll(userId: string): Promise<NotificationResponseDto[]> {
     return await this.prisma.notifications.findMany({
-      where: { user_id: userId },
+      where: { userId: userId },
       orderBy: { createdAt: SortOrder.desc },
     });
   }
@@ -54,8 +54,8 @@ export class NotificationsService {
     userId: string,
   ): Promise<ActionResponseDto> {
     const updatedNotification = await this.prisma.notifications.update({
-      where: { id: notificationId, user_id: userId },
-      data: { is_read: true },
+      where: { id: notificationId, userId: userId },
+      data: { isRead: true },
     });
 
     return {
@@ -66,8 +66,8 @@ export class NotificationsService {
 
   async markAllAsRead(userId: string): Promise<ActionResponseDto> {
     await this.prisma.notifications.updateMany({
-      where: { user_id: userId, is_read: false },
-      data: { is_read: true },
+      where: { userId: userId, isRead: false },
+      data: { isRead: true },
     });
 
     return {

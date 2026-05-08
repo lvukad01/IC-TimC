@@ -8,14 +8,14 @@ export class AddTimeOffDto implements AddTimeOffRequest {
   @Matches(dateRegex, {
     message: 'Invalid date format',
   })
-  start_date: string;
+  startDate: string;
 
   @ApiProperty({ example: '2023-12-31' })
   @IsDateString()
   @Matches(dateRegex, {
     message: 'Invalid date format',
   })
-  end_date: string;
+  endDate: string;
 
   @ApiPropertyOptional({ example: 'Vacation' })
   @IsString()

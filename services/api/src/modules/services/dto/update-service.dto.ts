@@ -24,9 +24,9 @@ export class UpdateServiceDto {
   @ApiProperty({ example: 30 })
   @IsNumber()
   @Length(DURATION_MIN, DURATION_MAX)
-  duration_min?: number;
+  durationMin?: number;
 
   @ApiProperty({ example: true })
   @IsBoolean()
-  is_active?: boolean;
+  isActive?: boolean;
 }

@@ -69,7 +69,7 @@ enum NotificationType{
   CANCELLED
 }
 
-model Service_Categories{
+model ServiceCategories{
   id String @id @default(uuid())
   name String @unique
   slug String @unique
@@ -97,12 +97,12 @@ model Users{
   bookings Bookings[]
   reviews Reviews[]
   notifications Notifications[]
-  paymentTransactions Payment_Transactions[]
+  paymentTransactions PaymentTransactions[]
 }
 
 model Salons{
   id String @id @default(uuid())
-  owner_id String
+  ownerId String
   name String 
   country String
   city String
@@ -113,160 +113,160 @@ model Salons{
   status SalonStatus @default(PENDING)
   createdAt DateTime @default(now())
 
-  owner Users @relation(fields: [owner_id], references: [id])
-  media Salon_Media[]
-  categories Salon_Categories[]
+  owner Users @relation(fields: [ownerId], references: [id])
+  media SalonMedia[]
+  categories SalonCategories[]
   services Services[]
   employees Employees[]
   bookings Bookings[]
   reviews Reviews[]
 }
 
-model Salon_Media{
+model SalonMedia{
   id String @id @default(uuid())
-  salon_id String
+  salonId String
   key String
   type MediaType @default(PROFILE)
-  sort_order Int
+  sortOrder Int
   createdAt DateTime @default(now())
 
-  salon Salons @relation(fields: [salon_id], references: [id])
+  salon Salons @relation(fields: [salonId], references: [id])
 }
 
-model Salon_Categories{
+model SalonCategories{
   id String @id @default(uuid())
-  salon_id String
+  salonId String
   category SalonCategory
 
-  salon Salons @relation(fields: [salon_id], references: [id])
+  salon Salons @relation(fields: [salonId], references: [id])
 }
 
 model Services{
   id String @id @default(uuid())
-  salon_id String
-  category_id String
+  salonId String
+  categoryId String
   name String
   price Decimal
-  duration_min Int
-  is_active Boolean @default(true)
+  durationMin Int
+  isActive Boolean @default(true)
 
-  salon Salons @relation(fields: [salon_id], references: [id])
-  category Service_Categories @relation(fields: [category_id], references: [id])
-  employee_services Employee_Services[]
+  salon Salons @relation(fields: [salonId], references: [id])
+  category ServiceCategories @relation(fields: [categoryId], references: [id])
+  employeeServices EmployeeServices[]
   bookings Bookings[]
 }
 
 model Employees{
   id String @id @default(uuid())
-  salon_id String 
+  salonId String 
   name String
   role EmployeeRole 
-  is_active Boolean @default(true)
+  isActive Boolean @default(true)
 
-  salon Salons @relation(fields: [salon_id], references: [id])
-  employee_services Employee_Services[]
+  salon Salons @relation(fields: [salonId], references: [id])
+  employeeServices EmployeeServices[]
   bookings Bookings[]
-  working_hours Working_Hours[]
-  time_offs Time_Off[]
+  workingHours WorkingHours[]
+  timeOffs TimeOff[]
 }
 
-model Employee_Services{
-  employee_id String
-  service_id String
+model EmployeeServices{
+  employeeId String
+  serviceId String
 
-  employee Employees @relation(fields: [employee_id], references: [id])
-  service Services @relation(fields: [service_id], references: [id])
+  employee Employees @relation(fields: [employeeId], references: [id])
+  service Services @relation(fields: [serviceId], references: [id])
 
-  @@id([employee_id, service_id])
+  @@id([employeeId, serviceId])
 }
 
-model Working_Hours{
+model WorkingHours{
   id String @id @default(uuid())
-  employee_id String
-  day_of_week Int
-  start_time String
-  end_time String
+  employeeId String
+  dayOfWeek Int
+  startTime String
+  endTime String
 
-  employee Employees @relation(fields: [employee_id], references: [id])
+  employee Employees @relation(fields: [employeeId], references: [id])
 }
 
-model Time_Off{
+model TimeOff{
   id String @id @default(uuid())
-  employee_id String
-  start_datetime DateTime
-  end_datetime DateTime
+  employeeId String
+  startDatetime DateTime
+  endDatetime DateTime
   reason String?
 
-  employee Employees @relation(fields: [employee_id], references: [id])
+  employee Employees @relation(fields: [employeeId], references: [id])
 }
 
 model Bookings{
   id String @id @default(uuid())
-  client_id String
-  salon_id String
-  service_id String
-  employee_id String
-  start_time DateTime
-  end_time DateTime
+  clientId String
+  salonId String
+  serviceId String
+  employeeId String
+  startTime DateTime
+  endTime DateTime
   status BookingStatus @default(PENDING)
   createdAt DateTime @default(now())
 
-  client Users @relation(fields: [client_id], references: [id])
-  salon Salons @relation(fields: [salon_id], references: [id])
-  service Services @relation(fields: [service_id], references: [id])
-  employee Employees @relation(fields: [employee_id], references: [id])
+  client Users @relation(fields: [clientId], references: [id])
+  salon Salons @relation(fields: [salonId], references: [id])
+  service Services @relation(fields: [serviceId], references: [id])
+  employee Employees @relation(fields: [employeeId], references: [id])
   payments Payments[]
   review Reviews?
 }
 
 model Payments{
   id String @id @default(uuid())
-  booking_id String
+  bookingId String
   amount Decimal
   method PaymentMethod
   type PaymentType
   status PaymentStatus @default(PENDING)
-  external_id String?
+  externalId String?
   createdAt DateTime @default(now())
 
-  booking Bookings @relation(fields: [booking_id], references: [id])
-  transactions Payment_Transactions[]
+  booking Bookings @relation(fields: [bookingId], references: [id])
+  transactions PaymentTransactions[]
 }
 
-model Payment_Transactions{
+model PaymentTransactions{
   id String @id @default(uuid())
-  payment_id String
-  initiated_by String
+  paymentId String
+  initiatedBy String
   type String
   amount Decimal
   status String
   createdAt DateTime @default(now())
   notes String?
 
-  payment Payments @relation(fields: [payment_id], references: [id])
-  initiator Users @relation(fields: [initiated_by], references: [id])
+  payment Payments @relation(fields: [paymentId], references: [id])
+  initiator Users @relation(fields: [initiatedBy], references: [id])
 }
 
 model Reviews{
   id String @id @default(uuid())
-  booking_id String @unique
-  client_id String
-  salon_id String
+  bookingId String @unique
+  clientId String
+  salonId String
   rating Int
   comment String?
   createdAt DateTime @default(now())
 
-  booking Bookings @relation(fields: [booking_id], references: [id])
-  client Users @relation(fields: [client_id], references: [id])
-  salon Salons @relation(fields: [salon_id], references: [id])
+  booking Bookings @relation(fields: [bookingId], references: [id])
+  client Users @relation(fields: [clientId], references: [id])
+  salon Salons @relation(fields: [salonId], references: [id])
 }
 
 model Notifications{
   id String @id @default(uuid())
-  user_id String
+  userId String
   type NotificationType
   content String
-  is_read Boolean @default(false)
+  isRead Boolean @default(false)
   createdAt DateTime @default(now())
-  user Users @relation(fields: [user_id], references: [id])
+  user Users @relation(fields: [userId], references: [id])
 }

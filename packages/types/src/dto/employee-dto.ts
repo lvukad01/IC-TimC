@@ -10,14 +10,14 @@ export interface UpdateEmployeeRequest {
 }
 
 export interface AddWorkingHoursRequest {
-  day_of_week: number;
-  start_time: string;
-  end_time: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
 }
 
 export interface AddTimeOffRequest {
-  start_date: string;
-  end_date: string;
+  startDate: string;
+  endDate: string;
   reason?: string;
 }
 
@@ -25,16 +25,16 @@ export interface EmployeeResponse {
   id: string;
   name: string;
   role: string;
-  is_active: boolean;
-  working_hours: {
-    day_of_week: number;
-    start_time: string;
-    end_time: string;
+  isActive: boolean;
+  workingHours: {
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
   }[];
-  time_off: {
+  timeOff: {
     id: string;
-    start_date: string;
-    end_date: string;
+    startDate: string;
+    endDate: string;
     reason?: string;
   }[];
 }

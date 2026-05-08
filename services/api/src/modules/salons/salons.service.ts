@@ -6,7 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import {ERROR_MESSAGES} from '@lumii/messages';
+import { ERROR_MESSAGES } from '@lumii/messages';
 import { S3Service } from '@s3/s3.service';
 import type { PrismaService } from '../prisma/prisma.service';
 import { AddCategoryDto } from './dto/add-category.dto';
@@ -64,7 +64,7 @@ export class SalonsService {
       include: { media: true },
     });
     if (!salon) {
-      throw new NotFoundException(ERROR_MESSAGES.SALON_NOT_FOUND));
+      throw new NotFoundException(ERROR_MESSAGES.SALON_NOT_FOUND);
     }
 
     return this.mapper.mapSalonDetails(salon);
@@ -83,7 +83,7 @@ export class SalonsService {
     return this.prisma.$transaction(async (tx) => {
       const salon = await tx.salons.create({
         data: {
-          owner_id: userId,
+          ownerId: userId,
           name: createSalonDto.name.trim(),
           city: createSalonDto.city.trim(),
           street: createSalonDto.street.trim(),
@@ -96,9 +96,9 @@ export class SalonsService {
       });
 
       if (createSalonDto.categories?.length) {
-        await tx.salon_Categories.createMany({
+        await tx.salonCategories.createMany({
           data: createSalonDto.categories.map((category) => ({
-            salon_id: salon.id,
+            salonId: salon.id,
             category,
           })),
         });
@@ -150,8 +150,8 @@ export class SalonsService {
 
     if (!salon) throw new NotFoundException('Salon not found');
 
-    const existingOrder = await this.prisma.salon_Media.findFirst({
-      where: { salon_id: salonId, sort_order: media.sortOrder },
+    const existingOrder = await this.prisma.salonMedia.findFirst({
+      where: { salonId: salonId, sortOrder: media.sortOrder },
     });
 
     if (existingOrder)
@@ -164,8 +164,8 @@ export class SalonsService {
       throw new ConflictException('Only profile image can have sort_order = 0');
 
     if (media.type === MediaType.PROFILE) {
-      const existingProfile = await this.prisma.salon_Media.findFirst({
-        where: { salon_id: salonId, type: MediaType.PROFILE },
+      const existingProfile = await this.prisma.salonMedia.findFirst({
+        where: { salonId: salonId, type: MediaType.PROFILE },
       });
 
       if (existingProfile) {
@@ -176,12 +176,12 @@ export class SalonsService {
     const key = await this.s3Service.uploadFile(file);
 
     try {
-      await this.prisma.salon_Media.create({
+      await this.prisma.salonMedia.create({
         data: {
-          salon_id: salonId,
+          salonId: salonId,
           key,
           type: media.type,
-          sort_order: media.sortOrder,
+          sortOrder: media.sortOrder,
         },
       });
     } catch (err) {
@@ -192,9 +192,9 @@ export class SalonsService {
 
   async addCategory(salonId: string, addCategoryDto: AddCategoryDto) {
     await this.getSalonById(salonId);
-    return this.prisma.salon_Categories.create({
+    return this.prisma.salonCategories.create({
       data: {
-        salon_id: salonId,
+        salonId: salonId,
         category: addCategoryDto.category,
       },
     });
@@ -209,13 +209,13 @@ export class SalonsService {
   }
 
   async deleteMedia(salonId: string, mediaId: string) {
-    const media = await this.prisma.salon_Media.findFirst({
-      where: { id: mediaId, salon_id: salonId },
+    const media = await this.prisma.salonMedia.findFirst({
+      where: { id: mediaId, salonId: salonId },
     });
 
     if (!media) throw new NotFoundException('Media not found');
 
-    await this.prisma.salon_Media.delete({
+    await this.prisma.salonMedia.delete({
       where: { id: mediaId },
     });
 
@@ -229,8 +229,8 @@ export class SalonsService {
 
   async removeCategory(salonId: string, categoryId: string) {
     await this.getSalonById(salonId);
-    return this.prisma.salon_Categories.delete({
-      where: { id: categoryId, salon_id: salonId },
+    return this.prisma.salonCategories.delete({
+      where: { id: categoryId, salonId: salonId },
     });
   }
 

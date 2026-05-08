@@ -2,18 +2,18 @@ import { EmployeeResponse } from '@lumii/types';
 
 export class EmployeeResponseDto implements EmployeeResponse {
   id: string;
-  working_hours: {
-    day_of_week: number;
-    start_time: string;
-    end_time: string;
+  workingHours: {
+    dayOfWeek: number;
+    startTime: string;
+    endTime: string;
   }[];
-  time_off: {
+  timeOff: {
     id: string;
-    start_date: string;
-    end_date: string;
+    startDate: string;
+    endDate: string;
     reason?: string;
   }[];
   name: string;
   role: string;
-  is_active: boolean;
+  isActive: boolean;
 }

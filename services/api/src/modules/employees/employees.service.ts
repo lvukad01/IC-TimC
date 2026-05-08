@@ -9,7 +9,7 @@ export class EmployeesService {
   constructor(private readonly prisma: PrismaService) {}
   getAllEmployees(salonId: string) {
     return this.prisma.employees.findMany({
-      where: { salon_id: salonId },
+      where: { salonId: salonId },
       select: {
         id: true,
         name: true,
@@ -20,7 +20,7 @@ export class EmployeesService {
 
   getEmployeeById(salonId: string, employeeId: string) {
     const employee = this.prisma.employees.findFirst({
-      where: { salon_id: salonId, id: employeeId },
+      where: { salonId: salonId, id: employeeId },
       select: {
         id: true,
         name: true,
@@ -37,7 +37,7 @@ export class EmployeesService {
   addEmployee(salonId: string, addEmployeeDto: AddEmployeeDto) {
     return this.prisma.employees.create({
       data: {
-        salon_id: salonId,
+        salonId: salonId,
         name: addEmployeeDto.name,
         role: addEmployeeDto.role,
         isActive: addEmployeeDto.isActive,
@@ -53,7 +53,7 @@ export class EmployeesService {
     return this.prisma.employees.update({
       where: { id: employeeId },
       data: {
-        salon_id: salonId,
+        salonId: salonId,
         name: updateEmployeeDto.name,
         role: updateEmployeeDto.role,
         isActive: updateEmployeeDto.isActive,
@@ -63,7 +63,7 @@ export class EmployeesService {
 
   async deleteEmployee(salonId: string, employeeId: string) {
     const employee = await this.prisma.employees.findFirst({
-      where: { id: employeeId, salon_id: salonId },
+      where: { id: employeeId, salonId: salonId },
     });
 
     if (!employee)

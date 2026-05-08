@@ -18,7 +18,7 @@ export class SalonsMapper {
         salon.media.map(async (m) => ({
           id: m.id,
           type: m.type,
-          sortOrder: m.sort_order,
+          sortOrder: m.sortOrder,
           url: await this.s3Service.getSignedUrl(m.key),
         })),
       ),
