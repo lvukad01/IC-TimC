@@ -2,6 +2,7 @@ import { PrismaService } from '@prisma/prisma.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { ERROR_MESSAGES } from '@lumii/messages';
 import { AddServiceDto } from './dto/add-service.dto';
+import { UpdateServiceDto } from './dto/update-service.dto';
 
 @Injectable()
 export class ServicesService {
@@ -42,6 +43,34 @@ export class ServicesService {
         is_active: addServiceDto.is_active,
         salon_id: salonId,
         category_id: categoryId,
+      },
+    });
+  }
+  async updateService(
+    salonId: string,
+    categoryId: string,
+    serviceId: string,
+    updateServiceDto: UpdateServiceDto,
+  ) {
+    const service = await this.getServiceById(salonId, categoryId, serviceId);
+    return this.prisma.services.update({
+      where: {
+        id: serviceId,
+      },
+      data: {
+        name: updateServiceDto.name || service.name,
+        price: updateServiceDto.price || service.price,
+        duration_min: updateServiceDto.duration_min || service.duration_min,
+        is_active: updateServiceDto.is_active || service.is_active,
+      },
+    });
+  }
+
+  async deleteService(salonId: string, categoryId: string, serviceId: string) {
+    await this.getServiceById(salonId, categoryId, serviceId);
+    return this.prisma.services.delete({
+      where: {
+        id: serviceId,
       },
     });
   }

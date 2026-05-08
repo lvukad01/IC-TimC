@@ -1,37 +1,32 @@
-import {
-  AddServiceRequest,
-  DURATION_MIN,
-  DURATION_MAX,
-  serviceNameRegex,
-} from '@lumii/types';
+import { serviceNameRegex, DURATION_MIN, DURATION_MAX } from '@lumii/types';
 import { ApiProperty } from '@nestjs/swagger';
 import {
   IsString,
   IsNumber,
   IsBoolean,
-  Length,
   Matches,
+  Length,
 } from 'class-validator';
 
-export class AddServiceDto implements AddServiceRequest {
+export class UpdateServiceDto {
   @ApiProperty({ example: 'haircut' })
   @IsString()
   @Matches(serviceNameRegex, {
     message:
       'Name must be 2-50 characters long and can contain letters, numbers, spaces, hyphens, and apostrophes.',
   })
-  name: string;
+  name?: string;
 
   @ApiProperty({ example: 20 })
   @IsNumber()
-  price: number;
+  price?: number;
 
   @ApiProperty({ example: 30 })
   @IsNumber()
   @Length(DURATION_MIN, DURATION_MAX)
-  duration_min: number;
+  duration_min?: number;
 
   @ApiProperty({ example: true })
   @IsBoolean()
-  is_active: boolean;
+  is_active?: boolean;
 }

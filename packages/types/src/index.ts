@@ -9,3 +9,4 @@ export * from './enums/enum';
 export * from './validation/user';
 export * from './validation/working-hours';
 export * from './validation/time-off';
+export * from './validation/service';
