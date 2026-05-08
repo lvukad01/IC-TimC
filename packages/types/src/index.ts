@@ -4,6 +4,7 @@ export * from './dto/notification-dto';
 export * from './dto/user-dto';
 export * from './dto/salon-dto';
 export * from './dto/employee-dto';
+export * from './dto/service-dto';
 export * from './enums/enum';
 export * from './validation/user';
 export * from './validation/working-hours';

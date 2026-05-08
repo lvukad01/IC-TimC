@@ -6,6 +6,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import {ERROR_MESSAGES} from '@lumii/messages';
 import { S3Service } from '@s3/s3.service';
 import type { PrismaService } from '../prisma/prisma.service';
 import { AddCategoryDto } from './dto/add-category.dto';
@@ -63,7 +64,7 @@ export class SalonsService {
       include: { media: true },
     });
     if (!salon) {
-      throw new NotFoundException('Salon not found');
+      throw new NotFoundException(ERROR_MESSAGES.SALON_NOT_FOUND));
     }
 
     return this.mapper.mapSalonDetails(salon);

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { AddEmployeeDto } from './dto/add-employee.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { ERROR_MESSAGES } from '@lumii/messages';
 
 @Injectable()
 export class EmployeesService {
@@ -18,7 +19,7 @@ export class EmployeesService {
   }
 
   getEmployeeById(salonId: string, employeeId: string) {
-    return this.prisma.employees.findFirst({
+    const employee = this.prisma.employees.findFirst({
       where: { salon_id: salonId, id: employeeId },
       select: {
         id: true,
@@ -27,6 +28,10 @@ export class EmployeesService {
         isActive: true,
       },
     });
+    if (!employee) {
+      throw new NotFoundException(ERROR_MESSAGES.EMPLOYEE_NOT_FOUND);
+    }
+    return employee;
   }
 
   addEmployee(salonId: string, addEmployeeDto: AddEmployeeDto) {
@@ -61,7 +66,8 @@ export class EmployeesService {
       where: { id: employeeId, salon_id: salonId },
     });
 
-    if (!employee) throw new NotFoundException('Employee not found');
+    if (!employee)
+      throw new NotFoundException(ERROR_MESSAGES.EMPLOYEE_NOT_FOUND);
 
     return this.prisma.employees.delete({
       where: { id: employeeId },

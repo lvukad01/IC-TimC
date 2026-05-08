@@ -3,6 +3,7 @@ import {
   ApiBearerAuth,
   ApiOperation,
   ApiOkResponse,
+  ApiNoContentResponse,
 } from '@nestjs/swagger';
 import { EmployeesService } from './employees.service';
 import {
@@ -74,7 +75,7 @@ export class EmployeesController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an employee' })
-  @ApiOkResponse({ description: 'Employee deleted successfully' })
+  @ApiNoContentResponse({ description: 'Employee deleted successfully' })
   @RolesAuth(UserRole.SALON_OWNER)
   deleteEmployee(
     @Param('salonId', ParseUUIDPipe) salonId: string,

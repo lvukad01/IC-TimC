@@ -6,6 +6,7 @@ import { PrismaService } from '@prisma/prisma.service';
 import { CreateUserInput } from '@tstypes/create-user';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
+import { ERROR_MESSAGES } from '@lumii/messages';
 
 @Injectable()
 export class UsersService {
@@ -24,9 +25,13 @@ export class UsersService {
   }
 
   async findOneByEmail(email: string) {
-    return this.prisma.users.findUnique({
+    const user = await this.prisma.users.findUnique({
       where: { email },
     });
+    if (!user) {
+      throw new NotFoundException(ERROR_MESSAGES.USER_NOT_FOUND);
+    }
+    return user;
   }
 
   async create(data: CreateUserInput) {
