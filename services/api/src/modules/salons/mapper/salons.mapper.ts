@@ -11,7 +11,7 @@ import { SalonsWithMedia, SalonsWithReviews } from '@tstypes/salon';
 export class SalonsMapper {
   constructor(private readonly s3Service: S3Service) {}
 
-  async mapSalonDetails(salon: SalonsWithMedia): Promise<SalonDetailResponse> {
+  mapSalonDetails(salon: SalonsWithMedia): SalonDetailResponse {
     return {
       ...salon,
       media: salon.media.map((m) => ({

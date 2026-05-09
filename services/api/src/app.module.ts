@@ -19,6 +19,7 @@ import { PaymentsService } from './modules/payments/payments.service';
 import { FilesController } from './modules/files/files.controller';
 import { ControllerService } from './modules/controller/controller.service';
 import { FilesService } from './modules/files/files.service';
+import { FilesModule } from './modules/files/files.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { FilesService } from './modules/files/files.service';
     }),
     GeocodingModule,
     PaymentsModule,
+    FilesModule,
   ],
   controllers: [AppController, FilesController],
   providers: [AppService, ResponseInterceptor, PaymentsService, ControllerService, FilesService],

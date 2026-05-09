@@ -95,10 +95,8 @@ export class SalonsService {
 
     return {
       ...salons,
-      results: await Promise.all(
-        salons.results.map((salon: SalonsWithReviews) =>
-          this.mapper.mapSalonListItem(salon),
-        ),
+      results: salons.results.map((salon: SalonsWithReviews) =>
+        this.mapper.mapSalonListItem(salon),
       ),
     };
   }
@@ -369,6 +367,7 @@ export class SalonsService {
 
   async findNearbySalons(userId: string): Promise<SalonListResponseDto[]> {
     const { lat, lng } = await this.usersService.findUserLocation(userId);
+
     const center = { latitude: lat, longitude: lng };
     const [min, max] = getBoundsOfDistance(center, 10000);
 
@@ -382,21 +381,19 @@ export class SalonsService {
       include: SALON_LIST_INCLUDE,
     });
 
-    return await Promise.all(
-      salons
-        .filter((salon) => {
-          if (salon.lat == null || salon.lng == null) return false;
+    return salons
+      .filter((salon) => {
+        if (salon.lat == null || salon.lng == null) return false;
 
-          return isPointWithinRadius(
-            {
-              latitude: salon.lat,
-              longitude: salon.lng,
-            },
-            center,
-            RADIUS_METERS,
-          );
-        })
-        .map((salon) => this.mapper.mapSalonListItem(salon)),
-    );
+        return isPointWithinRadius(
+          {
+            latitude: salon.lat,
+            longitude: salon.lng,
+          },
+          center,
+          RADIUS_METERS,
+        );
+      })
+      .map((salon) => this.mapper.mapSalonListItem(salon));
   }
 }
