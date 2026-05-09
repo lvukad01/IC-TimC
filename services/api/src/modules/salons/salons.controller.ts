@@ -1,4 +1,4 @@
-import { ActionResponseDto } from '@common/common';
+import { ActionResponseDto, PaginationQueryDto } from '@common/common';
 import { RolesAuth } from '@decorators/auth.decorator';
 import { UserRole } from '@lumii/types';
 import {
@@ -24,6 +24,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
+import { PaginatedResponse } from '@response/paginated-response.dto';
 import type { RequestWithJwtUser } from '@tstypes/request-types';
 import 'multer';
 import { AddCategoryDto } from './dto/add-category.dto';
@@ -48,7 +49,9 @@ export class SalonsController {
 
   @Get()
   @ApiOperation({ summary: 'Get all salons' })
-  @ApiOkResponse({ type: SalonListResponseDto, isArray: true })
+  @ApiOkResponse({
+    type: PaginatedResponse<SalonListResponseDto>,
+  })
   getAllSalons(@Query() query: FindSalonsQueryDto) {
     return this.salonsService.findAll(query);
   }
@@ -66,6 +69,20 @@ export class SalonsController {
   @ApiOkResponse({ type: SalonListResponseDto, isArray: true })
   findNearbySalons(@Req() req: RequestWithJwtUser) {
     return this.salonsService.findNearbySalons(req.user.sub);
+  }
+
+  @Get('popular')
+  @ApiOperation({ summary: 'Get most popular salons based on booking count' })
+  @ApiOkResponse({ type: PaginatedResponse<SalonListResponseDto> })
+  findPopularSalons(@Body() dto: PaginationQueryDto) {
+    return this.salonsService.findPopularSalons(dto);
+  }
+
+  @Get('newest')
+  @ApiOperation({ summary: 'Get newest added salons' })
+  @ApiOkResponse({ type: PaginatedResponse<SalonListResponseDto> })
+  findNewestSalons(@Body() dto: PaginationQueryDto) {
+    return this.salonsService.findNewestSalons(dto);
   }
 
   @Get(':id')

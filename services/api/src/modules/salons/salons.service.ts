@@ -1,4 +1,4 @@
-import { ActionResponseDto } from '@common/common';
+import { ActionResponseDto, PaginationQueryDto } from '@common/common';
 import { InvalidDepositException } from '@exceptions/salon.exception';
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
@@ -55,6 +55,8 @@ const SALON_LIST_INCLUDE = {
   },
 } as const;
 
+const STATUS_FILTER = { status: SalonStatus.ACTIVE };
+
 @Injectable()
 export class SalonsService {
   constructor(
@@ -72,7 +74,7 @@ export class SalonsService {
     page,
     limit,
   }: FindSalonsQueryDto): Promise<PaginatedResponse<SalonListResponseDto>> {
-    const where: any = { status: SalonStatus.ACTIVE };
+    const where: any = STATUS_FILTER;
     if (search) {
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
     }
@@ -103,7 +105,7 @@ export class SalonsService {
 
   async getSalonById(id: string): Promise<SalonDetailResponseDto> {
     const salon = await this.prisma.salons.findUnique({
-      where: { id },
+      where: { id, ...STATUS_FILTER },
       include: { media: true },
     });
     if (!salon) {
@@ -371,7 +373,7 @@ export class SalonsService {
     const center = { latitude: lat, longitude: lng };
     const [min, max] = getBoundsOfDistance(center, 10000);
 
-    const where: any = { status: SalonStatus.ACTIVE };
+    const where: any = STATUS_FILTER;
 
     where.lat = { gte: min.latitude, lte: max.latitude };
     where.lng = { gte: min.longitude, lte: max.longitude };
@@ -395,5 +397,50 @@ export class SalonsService {
         );
       })
       .map((salon) => this.mapper.mapSalonListItem(salon));
+  }
+
+  async findNewestSalons({
+    page,
+    limit,
+  }: PaginationQueryDto): Promise<PaginatedResponse<SalonListResponseDto>> {
+    const newestSalons = await paginate({
+      model: this.prisma.salons,
+      orderBy: { createdAt: 'desc' },
+      page,
+      limit,
+      include: SALON_LIST_INCLUDE,
+    });
+
+    return {
+      ...newestSalons,
+      results: newestSalons.results.map((salon: SalonsWithReviews) =>
+        this.mapper.mapSalonListItem(salon),
+      ),
+    };
+  }
+
+  async findPopularSalons({
+    page,
+    limit,
+  }: PaginationQueryDto): Promise<PaginatedResponse<SalonListResponseDto>> {
+    const popularSalons = await paginate({
+      model: this.prisma.salons,
+      where: STATUS_FILTER,
+      orderBy: {
+        bookings: {
+          _count: 'desc',
+        },
+      },
+      page,
+      limit,
+      include: SALON_LIST_INCLUDE,
+    });
+
+    return {
+      ...popularSalons,
+      results: popularSalons.results.map((salon: SalonsWithReviews) =>
+        this.mapper.mapSalonListItem(salon),
+      ),
+    };
   }
 }
