@@ -8,15 +8,15 @@ export class BookingReminderOrchestrator {
     private readonly bookingsService: BookingsService,
     private readonly mailsService: MailsService,
   ) {}
-
+  
   async sendDailyReminders() {
-    const bookings = [];
+    const bookings = await this.bookingsService.findTomorrowAppointments();
 
     for (const booking of bookings) {
       const emailContent = this.buildEmail(booking);
 
       await this.mailsService.sendMail({
-        to: 'dorian',
+        to: booking.user.email,
         subject: 'Appointment reminder',
         content: emailContent,
       });
