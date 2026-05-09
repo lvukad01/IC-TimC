@@ -1,13 +1,21 @@
 import configuration from '@config/configuration';
 import { GeocodingModule } from '@geocoding/geocoding.module';
-import { Module } from '@nestjs/common';
+import { ResponseInterceptor } from '@interceptors/response.interceptor';
+import { LoggerMiddleware } from '@middleware/logger.middleware';
+import { SecurityHeadersMiddleware } from '@middleware/security-headers-middleware';
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { seconds, ThrottlerModule } from '@nestjs/throttler';
 import { UsersModule } from '@users/users.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { PaymentsService } from './modules/payments/payments.service';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { PaymentsService } from './modules/payments/payments.service';
 
 @Module({
   imports: [

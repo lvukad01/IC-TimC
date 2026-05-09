@@ -4,6 +4,7 @@ import { ErrorMessages } from '@lumii/messages';
 import { toUserResponse } from '@mappers/user-response.mapper';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
+import { Coordinates } from '@tstypes/coordinates';
 import { CreateUserInput } from '@tstypes/create-user';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
@@ -22,6 +23,21 @@ export class UsersService {
 
     if (!user) throw new NotFoundException(ErrorMessages.notFound('User'));
     return toUserResponse(user);
+  }
+
+  async findUserLocation(id: string): Promise<Coordinates> {
+    const user = await this.prisma.users.findUnique({
+      where: { id },
+    });
+
+    if (!user) throw new NotFoundException(ErrorMessages.notFound('User'));
+
+    return await this.geocodingService.geocode({
+      street: user.street,
+      zipcode: user.zipcode,
+      city: user.city,
+      country: user.country,
+    });
   }
 
   async findOneByEmail(email: string) {

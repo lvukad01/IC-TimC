@@ -11,6 +11,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Request,
   UploadedFile,
   UseInterceptors,
@@ -24,6 +25,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import type { RequestWithJwtUser } from '@tstypes/request-types';
+import 'multer';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
 import type { CreateSalonDto } from './dto/create-salon.dto';
@@ -49,6 +51,21 @@ export class SalonsController {
   @ApiOkResponse({ type: SalonListResponseDto, isArray: true })
   getAllSalons(@Query() query: FindSalonsQueryDto) {
     return this.salonsService.findAll(query);
+  }
+
+  @Get('pending')
+  @RolesAuth(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get all pending salons' })
+  getPendingSalons() {
+    return this.salonsService.findPendingSalons();
+  }
+
+  @Get('nearby')
+  @RolesAuth(UserRole.SALON_OWNER, UserRole.ADMIN, UserRole.CLIENT)
+  @ApiOperation({ summary: 'Get salons in 1km radius' })
+  @ApiOkResponse({ type: SalonListResponseDto, isArray: true })
+  findNearbySalons(@Req() req: RequestWithJwtUser) {
+    return this.salonsService.findNearbySalons(req.user.sub);
   }
 
   @Get(':id')
@@ -105,6 +122,7 @@ export class SalonsController {
   @Delete(':id/media/:mediaId')
   @RolesAuth(UserRole.SALON_OWNER)
   @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Delete media from a salon' })
   @ApiOkResponse({
     description: 'Media deleted successfully',
@@ -140,13 +158,6 @@ export class SalonsController {
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
     return this.salonsService.removeCategory(id, categoryId);
-  }
-
-  @Get('pending')
-  @RolesAuth(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get all pending salons' })
-  getPendingSalons() {
-    return this.salonsService.findPendingSalons();
   }
 
   @Patch(':id/status')

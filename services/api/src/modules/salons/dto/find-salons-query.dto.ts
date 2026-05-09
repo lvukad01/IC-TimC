@@ -1,20 +1,6 @@
-import {
-  FindSalonsQuery,
-  MAX_LATITUDE,
-  MAX_LONGITUDE,
-  MIN_LATITUDE,
-  MIN_LONGITUDE,
-  SalonCategory,
-} from '@lumii/types';
+import { FindSalonsQuery, SalonCategory } from '@lumii/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import {
-  IsEnum,
-  IsNumber,
-  IsOptional,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class FindSalonsQueryDto implements FindSalonsQuery {
   @ApiPropertyOptional({
@@ -41,34 +27,6 @@ export class FindSalonsQueryDto implements FindSalonsQuery {
   @IsOptional()
   @IsEnum(SalonCategory)
   category?: SalonCategory;
-
-  @ApiPropertyOptional({
-    description: 'Search radius in meters (geo filter)',
-    example: 10000,
-  })
-  @IsOptional()
-  @IsNumber()
-  radiusMeters?: number;
-
-  @ApiPropertyOptional({
-    description: 'Latitude for geo search center',
-    example: 45.815,
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(MAX_LATITUDE)
-  @Max(MIN_LATITUDE)
-  lat?: number;
-
-  @ApiPropertyOptional({
-    description: 'Longitude for geo search center',
-    example: 15.981,
-  })
-  @IsOptional()
-  @IsNumber()
-  @Min(MIN_LONGITUDE)
-  @Max(MAX_LONGITUDE)
-  lng?: number;
 
   @ApiPropertyOptional({
     description: 'Page number for pagination',
