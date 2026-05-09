@@ -8,7 +8,7 @@ export class BookingReminderOrchestrator {
     private readonly bookingsService: BookingsService,
     private readonly mailsService: MailsService,
   ) {}
-
+  
   async sendDailyReminders() {
     const bookings = await this.bookingsService.findTomorrowAppointments();
 
