@@ -42,7 +42,7 @@ import { SalonsMapper } from './mapper/salons.mapper';
 
 const RADIUS_METERS = 1000;
 
-const SALON_LIST_INCLUDE = {
+export const SALON_LIST_INCLUDE = {
   media: true,
   _count: {
     select: {

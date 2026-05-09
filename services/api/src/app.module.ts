@@ -20,6 +20,7 @@ import { FilesController } from './modules/files/files.controller';
 import { ControllerService } from './modules/controller/controller.service';
 import { FilesService } from './modules/files/files.service';
 import { FilesModule } from './modules/files/files.module';
+import { FavoritesModule } from './favorites/favorites.module';
 
 @Module({
   imports: [
@@ -40,6 +41,7 @@ import { FilesModule } from './modules/files/files.module';
     GeocodingModule,
     PaymentsModule,
     FilesModule,
+    FavoritesModule,
   ],
   controllers: [AppController, FilesController],
   providers: [AppService, ResponseInterceptor, PaymentsService, ControllerService, FilesService],
