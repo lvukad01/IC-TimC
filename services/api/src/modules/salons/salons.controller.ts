@@ -1,3 +1,4 @@
+import { ActionResponseDto } from '@common/common';
 import { RolesAuth } from '@decorators/auth.decorator';
 import { UserRole } from '@lumii/types';
 import {
@@ -10,6 +11,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   Request,
   UploadedFile,
   UseInterceptors,
@@ -18,18 +20,21 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import type { RequestWithJwtUser } from '@tstypes/request-types';
+import 'multer';
 import { AddCategoryDto } from './dto/add-category.dto';
+import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
 import type { CreateSalonDto } from './dto/create-salon.dto';
+import { FindSalonsQueryDto } from './dto/find-salons-query.dto';
 import {
   SalonDetailResponseDto,
   SalonListResponseDto,
 } from './dto/salon-response.dto';
+import { UpdatePaymentConfigDto } from './dto/update-payment-config.dto';
 import type { UpdateSalonDto } from './dto/update-salon.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UploadMediaDto } from './dto/upload-media.dto';
@@ -44,12 +49,23 @@ export class SalonsController {
   @Get()
   @ApiOperation({ summary: 'Get all salons' })
   @ApiOkResponse({ type: SalonListResponseDto, isArray: true })
-  getAllSalons(
-    @Query('search') search?: string,
-    @Query('city') city?: string,
-    @Query('category') category?: string,
-  ) {
-    return this.salonsService.findAll(search, city, category);
+  getAllSalons(@Query() query: FindSalonsQueryDto) {
+    return this.salonsService.findAll(query);
+  }
+
+  @Get('pending')
+  @RolesAuth(UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get all pending salons' })
+  getPendingSalons() {
+    return this.salonsService.findPendingSalons();
+  }
+
+  @Get('nearby')
+  @RolesAuth(UserRole.SALON_OWNER, UserRole.ADMIN, UserRole.CLIENT)
+  @ApiOperation({ summary: 'Get salons in 1km radius' })
+  @ApiOkResponse({ type: SalonListResponseDto, isArray: true })
+  findNearbySalons(@Req() req: RequestWithJwtUser) {
+    return this.salonsService.findNearbySalons(req.user.sub);
   }
 
   @Get(':id')
@@ -84,7 +100,10 @@ export class SalonsController {
   @Delete(':id')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Delete a salon' })
-  @ApiOkResponse({ description: 'Salon deleted successfully' })
+  @ApiOkResponse({
+    description: 'Salon deleted successfully',
+    type: ActionResponseDto,
+  })
   deleteSalon(@Param('id', ParseUUIDPipe) id: string) {
     return this.salonsService.deleteSalon(id);
   }
@@ -103,8 +122,12 @@ export class SalonsController {
   @Delete(':id/media/:mediaId')
   @RolesAuth(UserRole.SALON_OWNER)
   @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file'))
   @ApiOperation({ summary: 'Delete media from a salon' })
-  @ApiNoContentResponse({ description: 'Media deleted successfully' })
+  @ApiOkResponse({
+    description: 'Media deleted successfully',
+    type: ActionResponseDto,
+  })
   deleteSalonMedia(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('mediaId', ParseUUIDPipe) mediaId: string,
@@ -126,19 +149,15 @@ export class SalonsController {
   @Delete(':id/categories/:categoryId')
   @RolesAuth(UserRole.SALON_OWNER)
   @ApiOperation({ summary: 'Remove category from a salon' })
-  @ApiOkResponse({ description: 'Category removed successfully' })
+  @ApiOkResponse({
+    description: 'Category removed successfully',
+    type: ActionResponseDto,
+  })
   removeSalonCategory(
     @Param('id', ParseUUIDPipe) id: string,
     @Param('categoryId', ParseUUIDPipe) categoryId: string,
   ) {
     return this.salonsService.removeCategory(id, categoryId);
-  }
-
-  @Get('pending')
-  @RolesAuth(UserRole.ADMIN)
-  @ApiOperation({ summary: 'Get all pending salons' })
-  getPendingSalons() {
-    return this.salonsService.findPendingSalons();
   }
 
   @Patch(':id/status')
@@ -150,5 +169,27 @@ export class SalonsController {
     @Body() updateStatusDto: UpdateStatusDto,
   ) {
     return this.salonsService.updateStatus(id, updateStatusDto);
+  }
+
+  @Post(':id/paymentConfig')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Add payment config to a salon' })
+  @ApiCreatedResponse({ description: 'Payment config created successfully' })
+  addSalonPaymentConfig(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: CreatePaymentConfigDto,
+  ) {
+    return this.salonsService.createPaymentConfig(id, dto);
+  }
+
+  @Patch(':id/paymentConfig')
+  @RolesAuth(UserRole.SALON_OWNER)
+  @ApiOperation({ summary: 'Add payment config to a salon' })
+  @ApiCreatedResponse({ description: 'Payment config updated successfully' })
+  updateSalonPaymentConfig(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdatePaymentConfigDto,
+  ) {
+    return this.salonsService.updatePaymentConfig(id, dto);
   }
 }

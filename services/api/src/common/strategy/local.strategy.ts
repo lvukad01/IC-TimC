@@ -1,8 +1,8 @@
+import { AuthService } from '@auth/auth.service';
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { User } from '@prisma/client';
+import { Users } from 'generated/prisma';
 import { Strategy } from 'passport-local';
-import { AuthService } from '../../modules/auth/auth.service';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {
@@ -12,7 +12,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(email: string, password: string): Promise<User> {
+  async validate(email: string, password: string): Promise<Users> {
     return this.authService.validateUser(email, password);
   }
 }

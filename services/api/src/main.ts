@@ -44,7 +44,7 @@ async function bootstrap() {
     origin: configService.get<string>('ALLOWED_ORIGINS')?.split(',') || '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     credentials: true,
-    allowedHeader: ['Content-Type', 'Authorization'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
     optionsSuccessStatus: 204,
     preflightContinue: false,
   });

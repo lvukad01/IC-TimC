@@ -1,6 +1,6 @@
-import { PrismaService } from '@prisma/prisma.service';
+import { ErrorMessages } from '@lumii/messages';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { ERROR_MESSAGES } from '@lumii/messages';
+import { PrismaService } from '@prisma/prisma.service';
 import { AddServiceDto } from './dto/add-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 
@@ -26,7 +26,7 @@ export class ServicesService {
       },
     });
     if (!service) {
-      throw new NotFoundException(ERROR_MESSAGES.SERVICE_NOT_FOUND);
+      throw new NotFoundException(ErrorMessages.notFound('Service'));
     }
     return service;
   }

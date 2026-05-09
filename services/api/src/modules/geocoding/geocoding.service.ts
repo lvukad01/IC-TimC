@@ -1,4 +1,4 @@
-import { GeocodingException } from '@errors/geocoding.error';
+import { GeocodingException } from '@exceptions/geocoding.exception';
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';

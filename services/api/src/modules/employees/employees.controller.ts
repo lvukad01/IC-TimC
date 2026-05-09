@@ -1,26 +1,26 @@
-import {
-  ApiTags,
-  ApiBearerAuth,
-  ApiOperation,
-  ApiOkResponse,
-  ApiNoContentResponse,
-} from '@nestjs/swagger';
-import { EmployeesService } from './employees.service';
-import {
-  Controller,
-  Param,
-  Get,
-  Post,
-  Patch,
-  Delete,
-  Body,
-  ParseUUIDPipe,
-} from '@nestjs/common';
-import { AddEmployeeDto } from './dto/add-employee.dto';
-import { UserRole } from 'generated/prisma/edge';
+import { ActionResponseDto } from '@common/common';
 import { RolesAuth } from '@decorators/auth.decorator';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Patch,
+  Post,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { UserRole } from 'generated/prisma/edge';
+import { AddEmployeeDto } from './dto/add-employee.dto';
 import { EmployeeResponseDto } from './dto/employee-response.dto';
+import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { EmployeesService } from './employees.service';
 
 @ApiTags('salons/:salonId/employees')
 @ApiBearerAuth()
@@ -75,7 +75,10 @@ export class EmployeesController {
 
   @Delete(':id')
   @ApiOperation({ summary: 'Delete an employee' })
-  @ApiNoContentResponse({ description: 'Employee deleted successfully' })
+  @ApiOkResponse({
+    description: 'Employee deleted successfully',
+    type: ActionResponseDto,
+  })
   @RolesAuth(UserRole.SALON_OWNER)
   deleteEmployee(
     @Param('salonId', ParseUUIDPipe) salonId: string,

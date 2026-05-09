@@ -32,7 +32,8 @@
       "@constants/*": ["src/common/constants/*"],
       "@response/*": ["src/common/response/*"],
       "@guards/*": ["src/common/guards/*"],
-      "@errors/*": ["src/common/errors/*"],
+      "@common/*": ["src/common/dto/*"],
+      "@exceptions/*": ["src/common/exceptions/*"],
       "@interceptors/*": ["src/common/interceptors/*"],
       "@middleware/*": ["src/common/middleware/*"],
       "@filters/*": ["src/common/filters/*"],
@@ -45,7 +46,7 @@
       "@assets/*": ["src/modules/orders/*"],
       "@logger/*": ["src/modules/logger/*"],
       "@geocoding/*": ["src/modules/geocoding/*"],
-      "@s3/*": ["src/modules/s3/*"]
+      "@s3/*": ["src/modules/s3/*"],
       "@mails/*": ["src/modules/mails/*"],
       "@bookings/*": ["src/modules/bookings/*"]
     }

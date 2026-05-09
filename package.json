@@ -12,6 +12,6 @@
     "start": "node services/api/dist/src/main.js"
   },
   "devDependencies": {
-    "turbo": "^2.9.9"
+    "turbo": "^2.9.10"
   }
 }
