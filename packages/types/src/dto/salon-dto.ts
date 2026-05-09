@@ -40,7 +40,9 @@ export interface SalonListResponse {
   id: string;
   name: string;
   city: string;
-  profileImageUrl?: string;
+  street: string;
+  profileImageKey?: string;
+  avgRating: number;
 }
 
 export interface SalonDetailResponse {
@@ -54,7 +56,7 @@ export interface SalonDetailResponse {
     id: string;
     type: MediaType;
     sortOrder: number;
-    url: string;
+    key: string;
   }[];
 }
 

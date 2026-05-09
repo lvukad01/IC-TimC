@@ -5,7 +5,7 @@ import {
 } from '@lumii/types';
 import { Injectable } from '@nestjs/common';
 import { S3Service } from '@s3/s3.service';
-import { SalonsWithMedia } from '@tstypes/salon';
+import { SalonsWithMedia, SalonsWithReviews } from '@tstypes/salon';
 
 @Injectable()
 export class SalonsMapper {
@@ -14,29 +14,36 @@ export class SalonsMapper {
   async mapSalonDetails(salon: SalonsWithMedia): Promise<SalonDetailResponse> {
     return {
       ...salon,
-      media: await Promise.all(
-        salon.media.map(async (m) => ({
-          id: m.id,
-          type: m.type,
-          sortOrder: m.sortOrder,
-          url: await this.s3Service.getSignedUrl(m.key),
-        })),
-      ),
+      media: salon.media.map((m) => ({
+        id: m.id,
+        type: m.type,
+        sortOrder: m.sortOrder,
+        key: m.key,
+      })),
     };
   }
 
-  async mapSalonListItem(salon: SalonsWithMedia): Promise<SalonListResponse> {
+  mapSalonListItem(salon: SalonsWithReviews): SalonListResponse {
     const profilePicture = salon.media.find(
       (p) => p.type === MediaType.PROFILE,
     );
+
+    const reviewCount = salon._count.reviews;
+    const avgRating =
+      reviewCount === 0
+        ? 0
+        : salon.reviews.reduce(
+            (ratingSum, review) => ratingSum + review.rating,
+            0,
+          ) / reviewCount;
 
     return {
       id: salon.id,
       name: salon.name,
       city: salon.city,
-      profileImageUrl: profilePicture
-        ? await this.s3Service.getSignedUrl(profilePicture.key)
-        : undefined,
+      street: salon.street,
+      profileImageKey: profilePicture?.key,
+      avgRating,
     };
   }
 }

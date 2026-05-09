@@ -16,6 +16,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PaymentsModule } from './modules/payments/payments.module';
 import { PaymentsService } from './modules/payments/payments.service';
+import { FilesController } from './modules/files/files.controller';
+import { ControllerService } from './modules/controller/controller.service';
+import { FilesService } from './modules/files/files.service';
 
 @Module({
   imports: [
@@ -36,8 +39,8 @@ import { PaymentsService } from './modules/payments/payments.service';
     GeocodingModule,
     PaymentsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService, ResponseInterceptor, PaymentsService],
+  controllers: [AppController, FilesController],
+  providers: [AppService, ResponseInterceptor, PaymentsService, ControllerService, FilesService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

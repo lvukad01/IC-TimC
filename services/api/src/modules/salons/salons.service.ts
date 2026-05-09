@@ -19,7 +19,7 @@ import {
 } from '@nestjs/common';
 import { PaginatedResponse } from '@response/paginated-response.dto';
 import { S3Service } from '@s3/s3.service';
-import { SalonsWithMedia } from '@tstypes/salon';
+import { SalonsWithReviews } from '@tstypes/salon';
 import { UsersService } from '@users/users.service';
 import { paginate } from '@utils/paginate.util';
 import { getBoundsOfDistance, isPointWithinRadius } from 'geolib';
@@ -40,6 +40,20 @@ import { UploadMediaDto } from './dto/upload-media.dto';
 import { SalonsMapper } from './mapper/salons.mapper';
 
 const RADIUS_METERS = 1000;
+
+const SALON_LIST_INCLUDE = {
+  media: true,
+  _count: {
+    select: {
+      reviews: true,
+    },
+  },
+  reviews: {
+    select: {
+      rating: true,
+    },
+  },
+} as const;
 
 @Injectable()
 export class SalonsService {
@@ -76,15 +90,13 @@ export class SalonsService {
       where,
       page,
       limit,
-      include: {
-        media: true,
-      },
+      include: SALON_LIST_INCLUDE,
     });
 
     return {
       ...salons,
       results: await Promise.all(
-        salons.results.map((salon: SalonsWithMedia) =>
+        salons.results.map((salon: SalonsWithReviews) =>
           this.mapper.mapSalonListItem(salon),
         ),
       ),
@@ -280,14 +292,11 @@ export class SalonsService {
   async findPendingSalons(): Promise<SalonListResponseDto[]> {
     const pendingSalons = await this.prisma.salons.findMany({
       where: { status: SalonStatus.PENDING },
-      include: { media: true },
+      include: SALON_LIST_INCLUDE,
     });
 
-    return Promise.all(
-      pendingSalons.map((salon) => this.mapper.mapSalonListItem(salon)),
-    );
+    return pendingSalons.map((salon) => this.mapper.mapSalonListItem(salon));
   }
-
   async createPaymentConfig(salonId: string, dto: CreatePaymentConfigDto) {
     const salon = await this.prisma.salons.findUnique({
       where: { id: salonId },
@@ -370,20 +379,24 @@ export class SalonsService {
 
     const salons = await this.prisma.salons.findMany({
       where,
-      include: { media: true },
+      include: SALON_LIST_INCLUDE,
     });
 
-    return salons.filter((salon) => {
-      if (salon.lat == null || salon.lng == null) return false;
+    return await Promise.all(
+      salons
+        .filter((salon) => {
+          if (salon.lat == null || salon.lng == null) return false;
 
-      return isPointWithinRadius(
-        {
-          latitude: salon.lat,
-          longitude: salon.lng,
-        },
-        center,
-        RADIUS_METERS,
-      );
-    });
+          return isPointWithinRadius(
+            {
+              latitude: salon.lat,
+              longitude: salon.lng,
+            },
+            center,
+            RADIUS_METERS,
+          );
+        })
+        .map((salon) => this.mapper.mapSalonListItem(salon)),
+    );
   }
 }

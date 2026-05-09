@@ -1,13 +1,19 @@
-import { MediaType, SalonListResponse } from '@lumii/types';
+import {
+  MediaType,
+  SalonDetailResponse,
+  SalonListResponse,
+} from '@lumii/types';
 
 export class SalonListResponseDto implements SalonListResponse {
   id: string;
   name: string;
   city: string;
-  profileImageUrl?: string;
+  street: string;
+  profileImageKey?: string;
+  avgRating: number;
 }
 
-export class SalonDetailResponseDto implements SalonListResponse {
+export class SalonDetailResponseDto implements SalonDetailResponse {
   id: string;
   name: string;
   city: string;
@@ -18,6 +24,6 @@ export class SalonDetailResponseDto implements SalonListResponse {
     id: string;
     type: MediaType;
     sortOrder: number;
-    url: string;
+    key: string;
   }[];
 }
