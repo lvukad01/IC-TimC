@@ -1,64 +1,104 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseUUIDPipe,
   Patch,
   Post,
+  Query,
   Req,
 } from '@nestjs/common';
 import { BookingsService } from './bookings.service';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { RolesAuth } from '@decorators/auth.decorator';
 import { UserRole } from '@lumii/types';
-import { CreateBookingDto } from './dto/create-booking.dto';
+import type { CreateBookingDto } from './dto/create-booking.dto';
 import type { RequestWithJwtUser } from '@tstypes/request-types';
+import { BookingResponseDto } from './dto/booking-response.dto';
+import type { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
+import { AvailabilityResponseDto } from './dto/avaliability-response.dto';
+import { AvailabilityRequestDto } from './dto/availability-request.dto';
 
 @ApiTags('bookings')
 @Controller('bookings')
+@RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
 export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Get()
-  @ApiOperation({ description: 'Get all bookings' })
+  @ApiOperation({ summary: 'Get all bookings' })
+  @ApiOkResponse({ type: BookingResponseDto, isArray: true })
   getAllBookings(@Req() req: RequestWithJwtUser) {
-    return this.bookingsService.findAllBookings();
+    return this.bookingsService.findAllBookings(req.user.sub);
   }
 
   @Get(':id')
-  @ApiOperation({ description: 'Get booking by ID' })
+  @ApiOperation({ summary: 'Get booking by ID' })
+  @ApiOkResponse({ type: BookingResponseDto })
   getBookingById(@Param('id', ParseUUIDPipe) bookingId: string) {
     return this.bookingsService.findBookingById(bookingId);
   }
 
   @Post()
   @RolesAuth(UserRole.CLIENT)
+  @ApiOperation({ summary: 'Create a new booking' })
+  @ApiCreatedResponse({ type: BookingResponseDto })
   createBooking(
     @Req() req: RequestWithJwtUser,
     @Body() createBookingDto: CreateBookingDto,
   ) {
     return this.bookingsService.createBooking(req.user.sub, createBookingDto);
   }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Delete a booking' })
+  @ApiOkResponse({ description: 'Booking deleted successfully' })
+  deleteBooking(@Param('id', ParseUUIDPipe) bookingId: string) {
+    return this.bookingsService.deleteBooking(bookingId);
+  }
 }
 
+@ApiTags('salon-bookings')
 @RolesAuth(UserRole.SALON_OWNER, UserRole.ADMIN)
-@Controller('salons/:salonId/employees/:employeeId/bookings')
+@Controller('salons/:salonId/bookings')
 export class SalonBookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Get()
-  @ApiOperation({ description: 'Get all bookings for a specific employee' })
-  getEmployeeBookings(@Param('employeeId', ParseUUIDPipe) employeeId: string) {
-    return this.bookingsService.findBookingsForEmployee(employeeId);
+  @ApiOperation({ summary: 'Get all bookings for a salon' })
+  @ApiOkResponse({ type: BookingResponseDto, isArray: true })
+  getSalonBookings(
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Query('employeeId') employeeId?: string,
+  ) {
+    return this.bookingsService.findBookingsForSalon(salonId, employeeId);
   }
 
   @Patch(':bookingId/status')
-  @ApiOperation({ description: 'Update the status of a specific booking' })
+  @ApiOperation({ summary: 'Update booking status' })
+  @ApiOkResponse({ type: BookingResponseDto })
   updateBookingStatus(
+    @Param('salonId', ParseUUIDPipe) salonId: string,
     @Param('bookingId', ParseUUIDPipe) bookingId: string,
     @Body() dto: UpdateBookingStatusDto,
   ) {
     return this.bookingsService.updateBookingStatus(bookingId, dto.status);
+  }
+
+  @Get('availability/:employeeId')
+  @ApiOperation({ summary: 'Get available time slots for an employee' })
+  @ApiOkResponse({ type: AvailabilityResponseDto, isArray: true })
+  getAvailability(
+    @Param('employeeId', ParseUUIDPipe) employeeId: string,
+    @Query() dto: AvailabilityRequestDto,
+  ) {
+    return this.bookingsService.findAvailability(employeeId, dto);
   }
 }

@@ -32,8 +32,7 @@
       "@constants/*": ["src/common/constants/*"],
       "@response/*": ["src/common/response/*"],
       "@guards/*": ["src/common/guards/*"],
-      "@common/*": ["src/common/dto/*"],
-      "@exceptions/*": ["src/common/exceptions/*"],
+      "@errors/*": ["src/common/errors/*"],
       "@interceptors/*": ["src/common/interceptors/*"],
       "@middleware/*": ["src/common/middleware/*"],
       "@filters/*": ["src/common/filters/*"],
@@ -50,5 +49,7 @@
       "@mails/*": ["src/modules/mails/*"],
       "@bookings/*": ["src/modules/bookings/*"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/**/*.js", "src/**/*.js.map"]
 }
