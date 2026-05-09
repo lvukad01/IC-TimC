@@ -24,8 +24,11 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { PaginatedResponse } from '@response/paginated-response.dto';
-import type { RequestWithJwtUser } from '@tstypes/request-types';
+import { SwaggerPaginatedApiResponse } from '@response/paginated-response.dto';
+import type {
+  RequestWithJwtUser,
+  RequestWithOptionalUser,
+} from '@tstypes/request-types';
 import 'multer';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
@@ -50,17 +53,23 @@ export class SalonsController {
   @Get()
   @ApiOperation({ summary: 'Get all salons' })
   @ApiOkResponse({
-    type: PaginatedResponse<SalonListResponseDto>,
+    type: SwaggerPaginatedApiResponse(
+      SalonListResponseDto,
+      'SalonListResponseDto',
+    ),
   })
-  getAllSalons(@Query() query: FindSalonsQueryDto) {
-    return this.salonsService.findAll(query);
+  getAllSalons(
+    @Query() query: FindSalonsQueryDto,
+    @Req() req: RequestWithOptionalUser,
+  ) {
+    return this.salonsService.findAll(query, req.user?.sub);
   }
 
   @Get('pending')
   @RolesAuth(UserRole.ADMIN)
   @ApiOperation({ summary: 'Get all pending salons' })
-  getPendingSalons() {
-    return this.salonsService.findPendingSalons();
+  getPendingSalons(@Req() req: RequestWithJwtUser) {
+    return this.salonsService.findPendingSalons(req.user.sub);
   }
 
   @Get('nearby')
@@ -73,23 +82,42 @@ export class SalonsController {
 
   @Get('popular')
   @ApiOperation({ summary: 'Get most popular salons based on booking count' })
-  @ApiOkResponse({ type: PaginatedResponse<SalonListResponseDto> })
-  findPopularSalons(@Body() dto: PaginationQueryDto) {
-    return this.salonsService.findPopularSalons(dto);
+  @ApiOkResponse({
+    type: SwaggerPaginatedApiResponse(
+      SalonListResponseDto,
+      'SalonListResponseDto',
+    ),
+  })
+  findPopularSalons(
+    @Body() dto: PaginationQueryDto,
+    @Req() req: RequestWithJwtUser,
+  ) {
+    return this.salonsService.findPopularSalons(dto, req.user?.sub);
   }
 
   @Get('newest')
   @ApiOperation({ summary: 'Get newest added salons' })
-  @ApiOkResponse({ type: PaginatedResponse<SalonListResponseDto> })
-  findNewestSalons(@Body() dto: PaginationQueryDto) {
-    return this.salonsService.findNewestSalons(dto);
+  @ApiOkResponse({
+    type: SwaggerPaginatedApiResponse(
+      SalonListResponseDto,
+      'SalonListResponseDto',
+    ),
+  })
+  findNewestSalons(
+    @Body() dto: PaginationQueryDto,
+    @Req() req: RequestWithJwtUser,
+  ) {
+    return this.salonsService.findNewestSalons(dto, req.user?.sub);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get salon by ID' })
   @ApiOkResponse({ type: SalonDetailResponseDto })
-  getSalonById(@Param('id', ParseUUIDPipe) id: string) {
-    return this.salonsService.getSalonById(id);
+  getSalonById(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Req() req: RequestWithOptionalUser,
+  ) {
+    return this.salonsService.getSalonById(id, req.user?.sub);
   }
 
   @Post('')

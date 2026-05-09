@@ -44,6 +44,7 @@ export interface SalonListResponse {
   street: string;
   profileImageKey?: string;
   avgRating: number;
+  isFavorite?: boolean;
 }
 
 export interface SalonDetailResponse {
@@ -53,6 +54,7 @@ export interface SalonDetailResponse {
   street: string;
   zipcode: string;
   country: string;
+  isFavorite?: boolean;
   media: {
     id: string;
     type: MediaType;

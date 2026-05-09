@@ -9,3 +9,7 @@ export interface RequestWithUser extends Request {
 export interface RequestWithJwtUser extends Request {
   user: AccessTokenPayload;
 }
+
+export interface RequestWithOptionalUser extends Request {
+  user?: AccessTokenPayload;
+}

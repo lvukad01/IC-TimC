@@ -11,6 +11,7 @@ export class SalonListResponseDto implements SalonListResponse {
   street: string;
   profileImageKey?: string;
   avgRating: number;
+  isFavorite?: boolean;
 }
 
 export class SalonDetailResponseDto implements SalonDetailResponse {
@@ -20,6 +21,7 @@ export class SalonDetailResponseDto implements SalonDetailResponse {
   street: string;
   zipcode: string;
   country: string;
+  isFavorite?: boolean;
   media: {
     id: string;
     type: MediaType;

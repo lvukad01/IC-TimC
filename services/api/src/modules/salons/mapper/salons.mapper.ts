@@ -11,9 +11,13 @@ import { SalonsWithMedia, SalonsWithReviews } from '@tstypes/salon';
 export class SalonsMapper {
   constructor(private readonly s3Service: S3Service) {}
 
-  mapSalonDetails(salon: SalonsWithMedia): SalonDetailResponse {
+  mapSalonDetails(
+    salon: SalonsWithMedia,
+    favoriteSet: Set<string>,
+  ): SalonDetailResponse {
     return {
       ...salon,
+      isFavorite: favoriteSet.has(salon.id) ?? undefined,
       media: salon.media.map((m) => ({
         id: m.id,
         type: m.type,
@@ -23,7 +27,10 @@ export class SalonsMapper {
     };
   }
 
-  mapSalonListItem(salon: SalonsWithReviews): SalonListResponse {
+  mapSalonListItem(
+    salon: SalonsWithReviews,
+    favoriteSet: Set<string>,
+  ): SalonListResponse {
     const profilePicture = salon.media.find(
       (p) => p.type === MediaType.PROFILE,
     );
@@ -42,6 +49,7 @@ export class SalonsMapper {
       name: salon.name,
       city: salon.city,
       street: salon.street,
+      isFavorite: favoriteSet.has(salon.id) ?? undefined,
       profileImageKey: profilePicture?.key,
       avgRating,
     };
