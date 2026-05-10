@@ -1,3 +1,4 @@
+import { ActionResponseDto } from '@common/common';
 import { RolesAuth } from '@decorators/auth.decorator';
 import { UserRole } from '@lumii/types';
 import {
@@ -93,6 +94,17 @@ export class SalonBookingsController {
     @Body() dto: UpdateBookingStatusDto,
   ) {
     return this.bookingsService.updateBookingStatus(bookingId, dto.status);
+  }
+
+  @Patch(':bookingId/cancel')
+  @RolesAuth(UserRole.CLIENT)
+  @ApiOperation({ summary: 'Cancel user booking' })
+  @ApiOkResponse({ type: ActionResponseDto })
+  cancelBooking(
+    @Param('bookingId', ParseUUIDPipe) employeeId: string,
+    @Req() req: RequestWithJwtUser,
+  ) {
+    return this.bookingsService.cancelBooking(employeeId, req.user.sub);
   }
 
   @Get('availability/:employeeId')

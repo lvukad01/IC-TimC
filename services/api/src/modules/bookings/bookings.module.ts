@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { PaymentsModule } from '@payments/payments.module';
 import { SalonsModule } from '@salons/salons.module';
+import { NotificationsModule } from '../notifications/notifications.module';
 import {
   BookingsController,
   SalonBookingsController,
@@ -15,6 +16,6 @@ import { BookingReminderOrchestrator } from './orchestrators/booking-reminder.or
     BookingReminderOrchestrator,
     BookingReminderCron,
   ],
-  imports: [PaymentsModule, SalonsModule],
+  imports: [PaymentsModule, SalonsModule, NotificationsModule],
 })
 export class AppointmentsModule {}

@@ -3,7 +3,8 @@ import { calculateDepositAmount } from '@helpers/calculate-deposit.helper';
 import { calculateRefundPolicy } from '@helpers/refund-policy.helper';
 import { validateTimeRange } from '@helpers/time-range.helper';
 import { ErrorMessages, VALIDATION_MESSAGES } from '@lumii/messages';
-import { BookingStatus, PaymentType } from '@lumii/types';
+import { BookingStatus, NotificationType, PaymentType } from '@lumii/types';
+import { toBookingResponse } from '@mappers/booking-response.mapper';
 import {
   BadRequestException,
   ConflictException,
@@ -18,7 +19,9 @@ import { BookingEmailInfo } from '@tstypes/booking-email-info';
 import { BookingWithPayments } from '@tstypes/booking-with-payments';
 import { Refund } from '@tstypes/payment-input';
 import { addDays, endOfDay, startOfDay } from 'date-fns';
+import { NotificationsService } from '../notifications/notifications.service';
 import { AvailabilityRequestDto } from './dto/availability-request.dto';
+import { BookingResponseDto } from './dto/booking-response.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';
 
 @Injectable()
@@ -27,6 +30,7 @@ export class BookingsService {
     private readonly prisma: PrismaService,
     private readonly paymentService: PaymentsService,
     private readonly salonsService: SalonsService,
+    private readonly notificationsService: NotificationsService,
   ) {}
 
   async findAllBookings(userId: string) {
@@ -65,18 +69,6 @@ export class BookingsService {
     return booking;
   }
 
-  async findBookingAndPayments(
-    bookingId: string,
-  ): Promise<BookingWithPayments> {
-    const booking = await this.prisma.bookings.findUnique({
-      where: { id: bookingId },
-      include: { payments: true },
-    });
-    if (!booking)
-      throw new NotFoundException(ErrorMessages.notFound('Booking'));
-    return booking;
-  }
-
   async createBooking(userId: string, createBookingDto: CreateBookingDto) {
     const service = await this.prisma.services.findUnique({
       where: { id: createBookingDto.serviceId },
@@ -84,6 +76,11 @@ export class BookingsService {
 
     if (!service)
       throw new NotFoundException(ErrorMessages.notFound('Service'));
+
+    const salon = await this.salonsService.getSalonById(
+      service?.salonId,
+      userId,
+    );
 
     const employee = await this.getEmployee(createBookingDto.employeeId);
 
@@ -103,7 +100,7 @@ export class BookingsService {
       endTime,
     );
 
-    return this.prisma.$transaction(async (tx) => {
+    const booking = await this.prisma.$transaction(async (tx) => {
       const booking = await tx.bookings.create({
         data: {
           clientId: userId,
@@ -142,6 +139,13 @@ export class BookingsService {
 
       return booking;
     });
+
+    await this.notificationsService.create(userId, {
+      content: `Your booking is confirmed for ${service.name} at ${salon.name} on ${startTime.toLocaleString()} with ${employee.name}.`,
+      type: NotificationType.CONFIRMATION,
+    });
+
+    return booking;
   }
 
   async deleteBooking(bookingId: string) {
@@ -160,13 +164,19 @@ export class BookingsService {
     });
   }
 
-  async updateBookingStatus(bookingId: string, status: BookingStatus) {
+  async updateBookingStatus(
+    bookingId: string,
+    status: BookingStatus,
+  ): Promise<BookingResponseDto> {
     await this.findBookingById(bookingId);
-    return this.prisma.bookings.update({
+
+    const updatedBooking = await this.prisma.bookings.update({
       where: { id: bookingId },
       data: { status: status },
     });
+    return toBookingResponse(updatedBooking);
   }
+
   async findAvailability(
     employeeId: string,
     availabilityRequestDto: AvailabilityRequestDto,
@@ -254,9 +264,9 @@ export class BookingsService {
     bookingId: string,
     clientId: string,
   ): Promise<ActionResponseDto> {
-    return this.prisma.$transaction(async (tx) => {
-      const booking = await this.findBookingAndPayments(bookingId);
+    const booking = await this.getBookingAggregate(bookingId);
 
+    const cancelResponse = await this.prisma.$transaction(async (tx) => {
       await this.validateBookingOwnership(booking, clientId);
 
       await tx.bookings.update({
@@ -284,6 +294,13 @@ export class BookingsService {
 
       return { message: 'Booking succesfully cancelled' };
     });
+
+    await this.notificationsService.create(clientId, {
+      content: `Your booking is confirmed for ${booking.service.name} at ${booking.salon.name} on ${booking.startTime.toLocaleString()} with ${booking.employee.name}.`,
+      type: NotificationType.CANCELLED,
+    });
+
+    return cancelResponse;
   }
 
   private async validateBookingOwnership(booking: any, clientId: string) {
@@ -330,5 +347,23 @@ export class BookingsService {
         method: balancePayment.method,
       },
     ];
+  }
+
+  private async getBookingAggregate(bookingId: string) {
+    const booking = await this.prisma.bookings.findUnique({
+      where: { id: bookingId },
+      include: {
+        service: true,
+        salon: true,
+        employee: true,
+        payments: true,
+      },
+    });
+
+    if (!booking) {
+      throw new NotFoundException(ErrorMessages.notFound('Booking'));
+    }
+
+    return booking;
   }
 }
