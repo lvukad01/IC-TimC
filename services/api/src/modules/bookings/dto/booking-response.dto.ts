@@ -1,4 +1,4 @@
-import { BookingResponse, BookingStatus } from '@lumia/types';
+import { BookingResponse, BookingStatus } from '@lumii/types';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class BookingResponseDto implements BookingResponse {

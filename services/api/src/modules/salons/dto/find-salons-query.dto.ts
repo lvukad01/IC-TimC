@@ -1,6 +1,15 @@
-import { FindSalonsQuery, SalonCategory } from '@lumii/types';
+import { ErrorMessages } from '@lumii/messages';
+import { dateRegex, FindSalonsQuery, SalonCategory } from '@lumii/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import {
+  IsEnum,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsUUID,
+  Matches,
+  Validate,
+} from 'class-validator';
 
 export class FindSalonsQueryDto implements FindSalonsQuery {
   @ApiPropertyOptional({
@@ -45,4 +54,22 @@ export class FindSalonsQueryDto implements FindSalonsQuery {
   @IsOptional()
   @IsNumber()
   limit: number = 10;
+
+  @ApiPropertyOptional({
+    description: 'Filter by availability date',
+    example: '2026-05-10',
+  })
+  @IsOptional()
+  @IsString()
+  @Matches(dateRegex, {
+    message: 'Invalid date format, use YYYY-MM-DD',
+  })
+  date?: string;
+
+  @ApiPropertyOptional({
+    description: 'Filter by service availability',
+  })
+  @IsOptional()
+  @IsUUID()
+  serviceId?: string;
 }

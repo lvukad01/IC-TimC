@@ -69,9 +69,39 @@ export class SalonsService {
   ) {}
 
   async findAll(
-    { search, city, category, page, limit }: FindSalonsQueryDto,
+    {
+      search,
+      city,
+      category,
+      page,
+      limit,
+      date,
+      serviceId,
+    }: FindSalonsQueryDto,
     userId?: string,
   ): Promise<PaginatedResponse<SalonListResponseDto>> {
+    if (date && serviceId) {
+      const availableSalons = await this.findAvailableSalons(
+        date,
+        serviceId,
+        city,
+      );
+      const favorites = await resolveFavorites(userId);
+      return {
+        results: availableSalons.map((salon) =>
+          this.mapper.mapSalonListItem(salon as SalonsWithReviews, favorites),
+        ),
+        meta: {
+          total: availableSalons.length,
+          limit: availableSalons.length,
+          page: 1,
+          lastPage: 1,
+          prev: null,
+          next: null,
+        },
+      };
+    }
+
     const where: any = STATUS_FILTER;
     if (search) {
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
@@ -467,5 +497,46 @@ export class SalonsService {
     });
 
     return new Set(favoriteSalons.map((f) => f.salonId));
+  }
+
+  async findAvailableSalons(date: string, serviceId: string, city?: string) {
+    const salons = await this.prisma.salons.findMany({
+      where: {
+        status: SalonStatus.ACTIVE,
+        ...(city && { city: { contains: city, mode: 'insensitive' } }),
+        services: {
+          some: { id: serviceId, isActive: true },
+        },
+      },
+      include: {
+        ...SALON_LIST_INCLUDE,
+        employees: {
+          where: { isActive: true },
+          include: { workingHours: true },
+        },
+        services: {
+          where: { id: serviceId },
+        },
+      },
+    });
+
+    const availableSalons: typeof salons = [];
+
+    for (const salon of salons) {
+      const dateSalon = new Date(date);
+      const dayOfWeek = dateSalon.getDay();
+
+      for (const employee of salon.employees) {
+        const worksToday = employee.workingHours.some(
+          (wh) => wh.dayOfWeek == dayOfWeek,
+        );
+
+        if (worksToday) {
+          availableSalons.push(salon);
+          break;
+        }
+      }
+    }
+    return availableSalons;
   }
 }

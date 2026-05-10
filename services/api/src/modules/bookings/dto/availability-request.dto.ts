@@ -1,4 +1,4 @@
-import { AvailabilityRequest, DATETIME_REGEX } from '@lumia/types';
+import { AvailabilityRequest, DATETIME_REGEX } from '@lumii/types';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsUUID, Matches } from 'class-validator';
 
