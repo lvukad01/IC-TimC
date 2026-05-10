@@ -1,4 +1,5 @@
 import { DepositType, MediaType, SalonCategory } from '@enums/enum';
+import { PaginationQuery } from './common-dto';
 
 export interface CreateSalonRequest {
   name: string;
@@ -40,7 +41,10 @@ export interface SalonListResponse {
   id: string;
   name: string;
   city: string;
-  profileImageUrl?: string;
+  street: string;
+  profileImageKey?: string;
+  avgRating: number;
+  isFavorite?: boolean;
 }
 
 export interface SalonDetailResponse {
@@ -50,15 +54,16 @@ export interface SalonDetailResponse {
   street: string;
   zipcode: string;
   country: string;
+  isFavorite?: boolean;
   media: {
     id: string;
     type: MediaType;
     sortOrder: number;
-    url: string;
+    key: string;
   }[];
 }
 
-export interface FindSalonsQuery {
+export interface FindSalonsQuery extends PaginationQuery {
   search?: string;
   city?: string;
   category?: SalonCategory;

@@ -1,8 +1,8 @@
-import { PaymentMethod, PaymentType } from '@lumii/types';
+import { PaymentMethod, PaymentStatus, PaymentType } from '@lumii/types';
 import { Injectable } from '@nestjs/common';
+import { Payments } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { PaymentInput, PaymentRefundInput } from '@tstypes/payment-input';
-import { Payments, PaymentStatus } from 'generated/prisma';
 
 @Injectable()
 export class PaymentsService {
