@@ -1,4 +1,4 @@
-import { GeocodingService } from '@geocoding/geocoding.service';
+import { GeocodingModule } from '@geocoding/geocoding.module';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -12,7 +12,7 @@ import { AuthService } from './auth.service';
   imports: [
     UsersModule,
     ConfigModule,
-    GeocodingService,
+    GeocodingModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({

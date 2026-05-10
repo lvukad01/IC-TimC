@@ -1,7 +1,8 @@
-import { ActionResponseDto } from '@common/common';
+import { ActionResponseDto, PaginationQueryDto } from '@common/common';
 import { InvalidDepositException } from '@exceptions/salon.exception';
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
+import { resolveFavorites } from '@helpers/resolve-favorites.helper';
 import { ErrorMessages, VALIDATION_MESSAGES } from '@lumii/messages';
 import {
   DepositType,
@@ -17,14 +18,14 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { PrismaService } from '@prisma/prisma.service';
 import { PaginatedResponse } from '@response/paginated-response.dto';
 import { S3Service } from '@s3/s3.service';
-import { SalonsWithMedia } from '@tstypes/salon';
+import { SalonsWithReviews } from '@tstypes/salon';
 import { UsersService } from '@users/users.service';
 import { paginate } from '@utils/paginate.util';
 import { getBoundsOfDistance, isPointWithinRadius } from 'geolib';
 import 'multer';
-import type { PrismaService } from '../prisma/prisma.service';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
 import { CreateSalonDto } from './dto/create-salon.dto';
@@ -41,6 +42,22 @@ import { SalonsMapper } from './mapper/salons.mapper';
 
 const RADIUS_METERS = 1000;
 
+export const SALON_LIST_INCLUDE = {
+  media: true,
+  _count: {
+    select: {
+      reviews: true,
+    },
+  },
+  reviews: {
+    select: {
+      rating: true,
+    },
+  },
+} as const;
+
+const STATUS_FILTER = { status: SalonStatus.ACTIVE };
+
 @Injectable()
 export class SalonsService {
   constructor(
@@ -51,14 +68,11 @@ export class SalonsService {
     private readonly usersService: UsersService,
   ) {}
 
-  async findAll({
-    search,
-    city,
-    category,
-    page,
-    limit,
-  }: FindSalonsQueryDto): Promise<PaginatedResponse<SalonListResponseDto>> {
-    const where: any = { status: SalonStatus.ACTIVE };
+  async findAll(
+    { search, city, category, page, limit }: FindSalonsQueryDto,
+    userId?: string,
+  ): Promise<PaginatedResponse<SalonListResponseDto>> {
+    const where: any = STATUS_FILTER;
     if (search) {
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
     }
@@ -76,31 +90,34 @@ export class SalonsService {
       where,
       page,
       limit,
-      include: {
-        media: true,
-      },
+      include: SALON_LIST_INCLUDE,
     });
+
+    const favorites = await resolveFavorites(userId);
 
     return {
       ...salons,
-      results: await Promise.all(
-        salons.results.map((salon: SalonsWithMedia) =>
-          this.mapper.mapSalonListItem(salon),
-        ),
+      results: salons.results.map((salon: SalonsWithReviews) =>
+        this.mapper.mapSalonListItem(salon, favorites),
       ),
     };
   }
 
-  async getSalonById(id: string): Promise<SalonDetailResponseDto> {
+  async getSalonById(
+    id: string,
+    userId?: string,
+  ): Promise<SalonDetailResponseDto> {
     const salon = await this.prisma.salons.findUnique({
-      where: { id },
+      where: { id, ...STATUS_FILTER },
       include: { media: true },
     });
     if (!salon) {
       throw new NotFoundException(ErrorMessages.notFound('Salon'));
     }
 
-    return this.mapper.mapSalonDetails(salon);
+    const favorites = await resolveFavorites(userId);
+
+    return this.mapper.mapSalonDetails(salon, favorites);
   }
 
   async createSalon(userId: string, createSalonDto: CreateSalonDto) {
@@ -277,14 +294,16 @@ export class SalonsService {
     };
   }
 
-  async findPendingSalons(): Promise<SalonListResponseDto[]> {
+  async findPendingSalons(userId: string): Promise<SalonListResponseDto[]> {
     const pendingSalons = await this.prisma.salons.findMany({
       where: { status: SalonStatus.PENDING },
-      include: { media: true },
+      include: SALON_LIST_INCLUDE,
     });
 
-    return Promise.all(
-      pendingSalons.map((salon) => this.mapper.mapSalonListItem(salon)),
+    const favorites = await resolveFavorites(userId);
+
+    return pendingSalons.map((salon) =>
+      this.mapper.mapSalonListItem(salon, favorites),
     );
   }
 
@@ -360,30 +379,93 @@ export class SalonsService {
 
   async findNearbySalons(userId: string): Promise<SalonListResponseDto[]> {
     const { lat, lng } = await this.usersService.findUserLocation(userId);
+
     const center = { latitude: lat, longitude: lng };
     const [min, max] = getBoundsOfDistance(center, 10000);
 
-    const where: any = { status: SalonStatus.ACTIVE };
+    const where: any = STATUS_FILTER;
 
     where.lat = { gte: min.latitude, lte: max.latitude };
     where.lng = { gte: min.longitude, lte: max.longitude };
 
     const salons = await this.prisma.salons.findMany({
       where,
-      include: { media: true },
+      include: SALON_LIST_INCLUDE,
     });
 
-    return salons.filter((salon) => {
-      if (salon.lat == null || salon.lng == null) return false;
+    const favorites = await resolveFavorites(userId);
 
-      return isPointWithinRadius(
-        {
-          latitude: salon.lat,
-          longitude: salon.lng,
+    return salons
+      .filter((salon) => {
+        if (salon.lat == null || salon.lng == null) return false;
+
+        return isPointWithinRadius(
+          {
+            latitude: salon.lat,
+            longitude: salon.lng,
+          },
+          center,
+          RADIUS_METERS,
+        );
+      })
+      .map((salon) => this.mapper.mapSalonListItem(salon, favorites));
+  }
+
+  async findNewestSalons(
+    { page, limit }: PaginationQueryDto,
+    userId?: string,
+  ): Promise<PaginatedResponse<SalonListResponseDto>> {
+    const newestSalons = await paginate({
+      model: this.prisma.salons,
+      orderBy: { createdAt: 'desc' },
+      page,
+      limit,
+      include: SALON_LIST_INCLUDE,
+    });
+
+    const favorites = await resolveFavorites(userId);
+
+    return {
+      ...newestSalons,
+      results: newestSalons.results.map((salon: SalonsWithReviews) =>
+        this.mapper.mapSalonListItem(salon, favorites),
+      ),
+    };
+  }
+
+  async findPopularSalons(
+    { page, limit }: PaginationQueryDto,
+    userId?: string,
+  ): Promise<PaginatedResponse<SalonListResponseDto>> {
+    const popularSalons = await paginate({
+      model: this.prisma.salons,
+      where: STATUS_FILTER,
+      orderBy: {
+        bookings: {
+          _count: 'desc',
         },
-        center,
-        RADIUS_METERS,
-      );
+      },
+      page,
+      limit,
+      include: SALON_LIST_INCLUDE,
     });
+
+    const favorites = await resolveFavorites(userId);
+
+    return {
+      ...popularSalons,
+      results: popularSalons.results.map((salon: SalonsWithReviews) =>
+        this.mapper.mapSalonListItem(salon, favorites),
+      ),
+    };
+  }
+
+  async getFavoriteSalonIds(userId: string): Promise<Set<string>> {
+    const favoriteSalons = await this.prisma.favorites.findMany({
+      where: { userId },
+      select: { salonId: true },
+    });
+
+    return new Set(favoriteSalons.map((f) => f.salonId));
   }
 }

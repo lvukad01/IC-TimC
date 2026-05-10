@@ -6,6 +6,7 @@ RUN apt-get update -y && apt-get install -y openssl
 
 COPY package*.json ./
 COPY packages/types/ ./packages/types/
+COPY packages/messages/ ./packages/messages/
 COPY services/api/package*.json ./services/api/
 COPY services/web/package*.json ./services/web/
 
@@ -19,6 +20,7 @@ RUN npx prisma generate
 
 WORKDIR /app
 RUN npm run build --workspace=packages/types \
+&& npm run build --workspace=packages/messages \
 && npm run build --workspace=services/api \
 && npm run build --workspace=services/web
 
@@ -29,6 +31,7 @@ RUN apt-get update -y && apt-get install -y openssl
 
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/packages/types/package.json ./packages/types/
+COPY --from=builder /app/packages/messages/package.json ./packages/messages/
 COPY --from=builder /app/services/api/package.json ./services/api/
 
 RUN npm ci --omit=dev
@@ -36,6 +39,8 @@ RUN npm ci --omit=dev
 COPY --from=builder /app/services/web/dist ./services/web/dist
 COPY --from=builder /app/services/api/dist ./services/api/dist
 COPY --from=builder /app/packages/types/dist ./packages/types/dist
+COPY --from=builder /app/packages/messages/dist ./packages/messages/dist
+
 
 COPY --from=builder /app/services/api/prisma ./services/api/prisma
 
