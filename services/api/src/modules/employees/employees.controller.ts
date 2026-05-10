@@ -1,5 +1,6 @@
 import { ActionResponseDto } from '@common/common';
 import { RolesAuth } from '@decorators/auth.decorator';
+import { UserRole } from '@lumii/types';
 import {
   Body,
   Controller,
@@ -16,7 +17,6 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserRole } from 'generated/prisma/edge';
 import { AddEmployeeDto } from './dto/add-employee.dto';
 import { EmployeeResponseDto } from './dto/employee-response.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';

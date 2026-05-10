@@ -4,13 +4,10 @@ import {
   SalonListResponse,
 } from '@lumii/types';
 import { Injectable } from '@nestjs/common';
-import { S3Service } from '@s3/s3.service';
 import { SalonsWithMedia, SalonsWithReviews } from '@tstypes/salon';
 
 @Injectable()
 export class SalonsMapper {
-  constructor(private readonly s3Service: S3Service) {}
-
   mapSalonDetails(
     salon: SalonsWithMedia,
     favoriteSet: Set<string>,

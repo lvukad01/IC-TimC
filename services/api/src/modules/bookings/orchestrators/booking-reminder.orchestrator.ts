@@ -10,17 +10,15 @@ export class BookingReminderOrchestrator {
   ) {}
 
   async sendDailyReminders() {
-    const bookings = await this.bookingsService.findTomorrowAppointments();
-
-    for (const booking of bookings) {
-      const emailContent = this.buildEmail(booking);
-
-      await this.mailsService.sendMail({
-        to: booking.user.email,
-        subject: 'Appointment reminder',
-        content: emailContent,
-      });
-    }
+    // const bookings = await this.bookingsService.findTomorrowAppointments();
+    // for (const booking of bookings) {
+    //   const emailContent = this.buildEmail(booking);
+    //   await this.mailsService.sendMail({
+    //     to: booking.user.email,
+    //     subject: 'Appointment reminder',
+    //     content: emailContent,
+    //   });
+    // }
   }
 
   private buildEmail(booking: any): string {

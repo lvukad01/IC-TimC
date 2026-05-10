@@ -22,6 +22,7 @@ import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
 import { SwaggerPaginatedApiResponse } from '@response/paginated-response.dto';
@@ -58,6 +59,7 @@ export class SalonsController {
       'SalonListResponseDto',
     ),
   })
+  @ApiQuery({ type: FindSalonsQueryDto })
   getAllSalons(
     @Query() query: FindSalonsQueryDto,
     @Req() req: RequestWithOptionalUser,

@@ -1,4 +1,5 @@
 import { RolesAuth } from '@decorators/auth.decorator';
+import { UserRole } from '@lumii/types';
 import { Body, Controller, Get, Put, Req } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -7,7 +8,6 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import type { RequestWithJwtUser } from '@tstypes/request-types';
-import { UserRole } from 'generated/prisma';
 import type { UpdateUserDto } from './dto/update-user.dto';
 import { UserResponseDto } from './dto/user-response.dto';
 import { UsersService } from './users.service';
