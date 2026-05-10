@@ -1,10 +1,11 @@
-import { BookingStatus } from '../enums/enum';
+import { BookingStatus, PaymentMethod } from '../enums/enum';
 
 export interface CreateBookingRequest {
   serviceId: string;
   employeeId: string;
   startTime: string;
   endTime: string;
+  method: PaymentMethod;
 }
 
 export interface UpdateBookingStatusRequest {

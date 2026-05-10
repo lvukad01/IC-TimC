@@ -9,4 +9,5 @@ export const VALIDATION_MESSAGES = {
   INVALID_START_TIME_END_TIME: 'Start time must be before end time',
   EMPLOYEE_NOT_AVAILABLE: 'Employee is not available on the selected day',
   INVALID_WORKING_HOURS: 'Booking is outside of working hours',
+  EMPLOYEE_ALREADY_BOOKED: 'Employee is already booked in this time slot',
 };

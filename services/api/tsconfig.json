@@ -48,6 +48,9 @@
       "@s3/*": ["src/modules/s3/*"],
       "@mails/*": ["src/modules/mails/*"],
       "@bookings/*": ["src/modules/bookings/*"],
+      "@payments/*": ["src/modules/payments/*"],
+      "@exceptions/*": ["src/common/exceptions/*"],
+      "@common/*": ["src/common/dto/*"],
       "@salons/*": ["src/modules/salons/*"],
       "@shared/*": ["src/modules/shared/*"]
     }

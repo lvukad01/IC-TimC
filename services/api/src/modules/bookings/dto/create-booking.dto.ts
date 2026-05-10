@@ -1,6 +1,10 @@
-import { CreateBookingRequest, DATETIME_REGEX } from '@lumii/types';
+import {
+  CreateBookingRequest,
+  DATETIME_REGEX,
+  PaymentMethod,
+} from '@lumii/types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsUUID, Matches } from 'class-validator';
+import { IsEnum, IsUUID, Matches } from 'class-validator';
 
 export class CreateBookingDto implements CreateBookingRequest {
   @IsUUID()
@@ -16,4 +20,8 @@ export class CreateBookingDto implements CreateBookingRequest {
   @ApiProperty({ example: '2027-01-01T00:29:00Z' })
   @Matches(DATETIME_REGEX, {})
   endTime: string;
+
+  @ApiProperty({ enum: PaymentMethod })
+  @IsEnum(PaymentMethod)
+  method: PaymentMethod;
 }
