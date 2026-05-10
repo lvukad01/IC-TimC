@@ -16,7 +16,7 @@ import { Employees, Payments, WorkingHours } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { SalonsService } from '@salons/salons.service';
 import { BookingEmailInfo } from '@tstypes/booking-email-info';
-import { BookingWithPayments } from '@tstypes/booking-with-payments';
+import { BookingAggregate } from '@tstypes/booking-with-payments';
 import { Refund } from '@tstypes/payment-input';
 import { addDays, endOfDay, startOfDay } from 'date-fns';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -33,10 +33,12 @@ export class BookingsService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  async findAllBookings(userId: string) {
-    return this.prisma.bookings.findMany({
+  async findAllBookings(userId: string): Promise<BookingResponseDto[]> {
+    const bookings = await this.prisma.bookings.findMany({
       where: { clientId: userId },
     });
+
+    return bookings.map((b) => toBookingResponse(b));
   }
 
   async findTomorrowBookings(): Promise<BookingEmailInfo[]> {
@@ -69,7 +71,10 @@ export class BookingsService {
     return booking;
   }
 
-  async createBooking(userId: string, createBookingDto: CreateBookingDto) {
+  async createBooking(
+    userId: string,
+    createBookingDto: CreateBookingDto,
+  ): Promise<BookingResponseDto> {
     const service = await this.prisma.services.findUnique({
       where: { id: createBookingDto.serviceId },
     });
@@ -145,23 +150,30 @@ export class BookingsService {
       type: NotificationType.CONFIRMATION,
     });
 
-    return booking;
+    return toBookingResponse(booking);
   }
 
-  async deleteBooking(bookingId: string) {
+  async deleteBooking(bookingId: string): Promise<ActionResponseDto> {
     const booking = await this.findBookingById(bookingId);
-    return this.prisma.bookings.delete({
+    await this.prisma.bookings.delete({
       where: { id: booking.id },
     });
+
+    return { id: bookingId, message: 'Booking successfully deleted' };
   }
 
-  async findBookingsForSalon(salonId: string, employeeId?: string) {
-    return this.prisma.bookings.findMany({
+  async findBookingsForSalon(
+    salonId: string,
+    employeeId?: string,
+  ): Promise<BookingResponseDto[]> {
+    const salonBookings = await this.prisma.bookings.findMany({
       where: {
         salonId: salonId,
         ...(employeeId && { employeeId }),
       },
     });
+
+    return salonBookings.map((b) => toBookingResponse(b));
   }
 
   async updateBookingStatus(
@@ -310,7 +322,7 @@ export class BookingsService {
       );
   }
 
-  private async extractPayments(booking: BookingWithPayments) {
+  private async extractPayments(booking: BookingAggregate) {
     const depositPayment = booking.payments.find(
       (p) => p.type === PaymentType.DEPOSIT,
     );

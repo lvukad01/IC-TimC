@@ -25,7 +25,6 @@ import { AvailabilityRequestDto } from './dto/availability-request.dto';
 import { AvailabilityResponseDto } from './dto/avaliability-response.dto';
 import { BookingResponseDto } from './dto/booking-response.dto';
 import type { CreateBookingDto } from './dto/create-booking.dto';
-import type { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 
 @ApiTags('bookings')
 @Controller('bookings')
@@ -39,6 +38,16 @@ export class BookingsController {
   @ApiOkResponse({ type: BookingResponseDto, isArray: true })
   getAllBookings(@Req() req: RequestWithJwtUser) {
     return this.bookingsService.findAllBookings(req.user.sub);
+  }
+
+  @Get('availability/:employeeId')
+  @ApiOperation({ summary: 'Get available time slots for an employee' })
+  @ApiOkResponse({ type: AvailabilityResponseDto, isArray: true })
+  getAvailability(
+    @Param('employeeId', ParseUUIDPipe) employeeId: string,
+    @Query() dto: AvailabilityRequestDto,
+  ) {
+    return this.bookingsService.findAvailability(employeeId, dto);
   }
 
   @Get(':id')
@@ -60,10 +69,21 @@ export class BookingsController {
     return this.bookingsService.createBooking(req.user.sub, createBookingDto);
   }
 
+  @Patch(':id/cancel')
+  @RolesAuth(UserRole.CLIENT)
+  @ApiOperation({ summary: 'Cancel user booking' })
+  @ApiOkResponse({ type: ActionResponseDto })
+  cancelBooking(
+    @Param('id', ParseUUIDPipe) bookingId: string,
+    @Req() req: RequestWithJwtUser,
+  ) {
+    return this.bookingsService.cancelBooking(bookingId, req.user.sub);
+  }
+
   @Delete(':id')
   @RolesAuth(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete a booking' })
-  @ApiOkResponse({ description: 'Booking deleted successfully' })
+  @ApiOkResponse({ type: ActionResponseDto })
   deleteBooking(@Param('id', ParseUUIDPipe) bookingId: string) {
     return this.bookingsService.deleteBooking(bookingId);
   }
@@ -83,37 +103,5 @@ export class SalonBookingsController {
     @Query('employeeId') employeeId?: string,
   ) {
     return this.bookingsService.findBookingsForSalon(salonId, employeeId);
-  }
-
-  @Patch(':bookingId/status')
-  @ApiOperation({ summary: 'Update booking status' })
-  @ApiOkResponse({ type: BookingResponseDto })
-  updateBookingStatus(
-    @Param('salonId', ParseUUIDPipe) salonId: string,
-    @Param('bookingId', ParseUUIDPipe) bookingId: string,
-    @Body() dto: UpdateBookingStatusDto,
-  ) {
-    return this.bookingsService.updateBookingStatus(bookingId, dto.status);
-  }
-
-  @Patch(':bookingId/cancel')
-  @RolesAuth(UserRole.CLIENT)
-  @ApiOperation({ summary: 'Cancel user booking' })
-  @ApiOkResponse({ type: ActionResponseDto })
-  cancelBooking(
-    @Param('bookingId', ParseUUIDPipe) employeeId: string,
-    @Req() req: RequestWithJwtUser,
-  ) {
-    return this.bookingsService.cancelBooking(employeeId, req.user.sub);
-  }
-
-  @Get('availability/:employeeId')
-  @ApiOperation({ summary: 'Get available time slots for an employee' })
-  @ApiOkResponse({ type: AvailabilityResponseDto, isArray: true })
-  getAvailability(
-    @Param('employeeId', ParseUUIDPipe) employeeId: string,
-    @Query() dto: AvailabilityRequestDto,
-  ) {
-    return this.bookingsService.findAvailability(employeeId, dto);
   }
 }
