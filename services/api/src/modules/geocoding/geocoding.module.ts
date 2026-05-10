@@ -5,6 +5,7 @@ import { GeocodingService } from './geocoding.service';
 
 @Module({
   providers: [GeocodingService],
+  exports: [GeocodingService],
   imports: [
     HttpModule.registerAsync({
       imports: [ConfigModule],

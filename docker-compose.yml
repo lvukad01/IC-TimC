@@ -1,0 +1,47 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: ./services/api/Dockerfile
+
+    env_file:
+      - ./services/api/.env
+
+    ports:
+      - '3000:3000'
+
+    depends_on:
+      db:
+        condition: service_healthy
+
+    networks:
+      - backend_network
+
+  db:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: beauty_booking
+
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d beauty_booking']
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+    networks:
+      - backend_network
+
+    ports:
+      - 5432:5432
+
+volumes:
+  db_data:
+
+networks:
+  backend_network:
+    driver: bridge

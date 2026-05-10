@@ -1,16 +1,17 @@
-import { ApiProperty } from '@nestjs/swagger';
 import {
+  CreateEmployeeRequest,
+  EmployeeRole,
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
-  EmployeeRole,
-  CreateEmployeeRequest,
+  nameRegex,
 } from '@lumii/types';
-import { IsBoolean, IsEnum, IsString, Length } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean, IsEnum, Length, Matches } from 'class-validator';
 
 export class AddEmployeeDto implements CreateEmployeeRequest {
   @ApiProperty({ example: 'John', required: true })
-  @IsString()
   @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
+  @Matches(nameRegex)
   name: string;
 
   @ApiProperty({ enum: EmployeeRole, required: true })
