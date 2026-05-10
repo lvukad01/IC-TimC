@@ -1,3 +1,5 @@
+import { RolesAuth } from '@decorators/auth.decorator';
+import { UserRole } from '@lumii/types';
 import {
   Body,
   Controller,
@@ -10,21 +12,19 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { BookingsService } from './bookings.service';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { RolesAuth } from '@decorators/auth.decorator';
-import { UserRole } from '@lumii/types';
-import type { CreateBookingDto } from './dto/create-booking.dto';
 import type { RequestWithJwtUser } from '@tstypes/request-types';
-import { BookingResponseDto } from './dto/booking-response.dto';
-import type { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
-import { AvailabilityResponseDto } from './dto/avaliability-response.dto';
+import { BookingsService } from './bookings.service';
 import { AvailabilityRequestDto } from './dto/availability-request.dto';
+import { AvailabilityResponseDto } from './dto/avaliability-response.dto';
+import { BookingResponseDto } from './dto/booking-response.dto';
+import type { CreateBookingDto } from './dto/create-booking.dto';
+import type { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
 
 @ApiTags('bookings')
 @Controller('bookings')
@@ -33,6 +33,7 @@ export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Get()
+  @RolesAuth(UserRole.CLIENT)
   @ApiOperation({ summary: 'Get all bookings' })
   @ApiOkResponse({ type: BookingResponseDto, isArray: true })
   getAllBookings(@Req() req: RequestWithJwtUser) {
@@ -40,6 +41,7 @@ export class BookingsController {
   }
 
   @Get(':id')
+  @RolesAuth(UserRole.CLIENT)
   @ApiOperation({ summary: 'Get booking by ID' })
   @ApiOkResponse({ type: BookingResponseDto })
   getBookingById(@Param('id', ParseUUIDPipe) bookingId: string) {
@@ -58,6 +60,7 @@ export class BookingsController {
   }
 
   @Delete(':id')
+  @RolesAuth(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete a booking' })
   @ApiOkResponse({ description: 'Booking deleted successfully' })
   deleteBooking(@Param('id', ParseUUIDPipe) bookingId: string) {

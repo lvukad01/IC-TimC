@@ -1,16 +1,23 @@
+import { ActionResponseDto } from '@common/common';
 import { calculateDepositAmount } from '@helpers/calculate-deposit.helper';
+import { calculateRefundPolicy } from '@helpers/refund-policy.helper';
 import { validateTimeRange } from '@helpers/time-range.helper';
 import { ErrorMessages, VALIDATION_MESSAGES } from '@lumii/messages';
-import { BookingStatus } from '@lumii/types';
+import { BookingStatus, PaymentType } from '@lumii/types';
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { PaymentsService } from '@payments/payments.service';
-import { Employees, WorkingHours } from '@prisma/client';
+import { Employees, Payments, WorkingHours } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { SalonsService } from '@salons/salons.service';
+import { BookingEmailInfo } from '@tstypes/booking-email-info';
+import { BookingWithPayments } from '@tstypes/booking-with-payments';
+import { Refund } from '@tstypes/payment-input';
+import { addDays, endOfDay, startOfDay } from 'date-fns';
 import { AvailabilityRequestDto } from './dto/availability-request.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';
 
@@ -27,9 +34,43 @@ export class BookingsService {
       where: { clientId: userId },
     });
   }
+
+  async findTomorrowBookings(): Promise<BookingEmailInfo[]> {
+    const tomorrow = addDays(new Date(), 1);
+
+    const startOfTomorrow = startOfDay(tomorrow);
+    const endOfTomorrow = endOfDay(tomorrow);
+    return this.prisma.bookings.findMany({
+      where: {
+        startTime: {
+          gte: startOfTomorrow,
+          lte: endOfTomorrow,
+        },
+      },
+      include: {
+        employee: true,
+        client: true,
+        salon: true,
+        service: true,
+      },
+    });
+  }
+
   async findBookingById(bookingId: string) {
     const booking = await this.prisma.bookings.findUnique({
       where: { id: bookingId },
+    });
+    if (!booking)
+      throw new NotFoundException(ErrorMessages.notFound('Booking'));
+    return booking;
+  }
+
+  async findBookingAndPayments(
+    bookingId: string,
+  ): Promise<BookingWithPayments> {
+    const booking = await this.prisma.bookings.findUnique({
+      where: { id: bookingId },
+      include: { payments: true },
     });
     if (!booking)
       throw new NotFoundException(ErrorMessages.notFound('Booking'));
@@ -129,7 +170,20 @@ export class BookingsService {
   async findAvailability(
     employeeId: string,
     availabilityRequestDto: AvailabilityRequestDto,
-  ) {}
+  ) {
+    const { date } = availabilityRequestDto;
+
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const workingHours = await this.getEmployeeWorkingHours(
+      employeeId,
+      startOfDay,
+    );
+  }
 
   private async getEmployee(employeeId: string): Promise<Employees> {
     const employee = await this.prisma.employees.findUnique({
@@ -194,5 +248,87 @@ export class BookingsService {
         VALIDATION_MESSAGES.EMPLOYEE_ALREADY_BOOKED,
       );
     }
+  }
+
+  async cancelBooking(
+    bookingId: string,
+    clientId: string,
+  ): Promise<ActionResponseDto> {
+    return this.prisma.$transaction(async (tx) => {
+      const booking = await this.findBookingAndPayments(bookingId);
+
+      await this.validateBookingOwnership(booking, clientId);
+
+      await tx.bookings.update({
+        where: { id: bookingId },
+        data: { status: BookingStatus.CANCELLED },
+      });
+
+      const { depositPayment, balancePayment } =
+        await this.extractPayments(booking);
+
+      const refunds = this.buildRefunds(
+        depositPayment,
+        balancePayment,
+        booking.startTime,
+      );
+
+      await this.paymentService.createRefundPayment(
+        {
+          bookingId,
+          clientId,
+          refunds,
+        },
+        tx,
+      );
+
+      return { message: 'Booking succesfully cancelled' };
+    });
+  }
+
+  private async validateBookingOwnership(booking: any, clientId: string) {
+    if (booking.clientId !== clientId)
+      throw new ConflictException(
+        VALIDATION_MESSAGES.BOOKING_DOES_NOT_BELONG_TO_CLIENT,
+      );
+  }
+
+  private async extractPayments(booking: BookingWithPayments) {
+    const depositPayment = booking.payments.find(
+      (p) => p.type === PaymentType.DEPOSIT,
+    );
+
+    if (!depositPayment)
+      throw new BadRequestException(ErrorMessages.notFound('Deposit'));
+
+    const balancePayment = booking.payments.find(
+      (p) => p.type === PaymentType.BALANCE,
+    );
+
+    if (!balancePayment)
+      throw new BadRequestException(ErrorMessages.notFound('Balance'));
+
+    return { depositPayment, balancePayment };
+  }
+
+  private buildRefunds(
+    depositPayment: Payments,
+    balancePayment: Payments,
+    startTime: Date,
+  ): Refund[] {
+    const depositAmount = calculateRefundPolicy(
+      startTime,
+      depositPayment.amount.toNumber(),
+    );
+
+    const balanaceAmount = balancePayment.amount.toNumber();
+
+    return [
+      { amount: depositAmount, method: depositPayment.method },
+      {
+        amount: balanaceAmount,
+        method: balancePayment.method,
+      },
+    ];
   }
 }

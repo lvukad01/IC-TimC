@@ -10,4 +10,5 @@ export const VALIDATION_MESSAGES = {
   EMPLOYEE_NOT_AVAILABLE: 'Employee is not available on the selected day',
   INVALID_WORKING_HOURS: 'Booking is outside of working hours',
   EMPLOYEE_ALREADY_BOOKED: 'Employee is already booked in this time slot',
+  BOOKING_DOES_NOT_BELONG_TO_CLIENT: 'This booking does not belong to client',
 };

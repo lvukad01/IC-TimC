@@ -45,28 +45,23 @@ export class PaymentsService {
     return payments;
   }
 
-  async createRefundPayment({
-    bookingId,
-    clientId,
-    refunds,
-  }: PaymentRefundInput): Promise<Payments[]> {
-    return this.prisma.$transaction(async (tx) => {
-      const refundedPayments = await Promise.all(
-        refunds.map((refund) =>
-          tx.payments.create({
-            data: {
-              bookingId,
-              clientId,
-              amount: refund.amount,
-              type: PaymentType.REFUND,
-              status: PaymentStatus.PAID,
-              method: refund.method,
-            },
-          }),
-        ),
-      );
-
-      return refundedPayments;
-    });
+  async createRefundPayment(
+    { bookingId, clientId, refunds }: PaymentRefundInput,
+    tx: Prisma.TransactionClient,
+  ): Promise<Payments[]> {
+    return await Promise.all(
+      refunds.map((refund) =>
+        tx.payments.create({
+          data: {
+            bookingId,
+            clientId,
+            amount: refund.amount,
+            type: PaymentType.REFUND,
+            status: PaymentStatus.PAID,
+            method: refund.method,
+          },
+        }),
+      ),
+    );
   }
 }
