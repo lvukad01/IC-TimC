@@ -72,4 +72,6 @@ export interface FindSalonsQuery extends PaginationQuery {
   lng?: number;
   page: number;
   limit: number;
+  date?: string;
+  serviceId?: string;
 }

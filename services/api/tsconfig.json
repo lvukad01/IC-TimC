@@ -13,7 +13,7 @@
     "target": "ES2023",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": ".",
+    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": true,
@@ -52,7 +52,8 @@
       "@exceptions/*": ["src/common/exceptions/*"],
       "@common/*": ["src/common/dto/*"],
       "@salons/*": ["src/modules/salons/*"],
-      "@shared/*": ["src/modules/shared/*"]
+      "@shared/*": ["src/modules/shared/*"],
+      "@favorites/*": ["src/modules/favorites/*"]
     }
   },
   "include": ["src/**/*"],
