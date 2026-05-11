@@ -1,3 +1,6 @@
+import { ActionResponseDto } from '@common/common';
+import { RolesAuth } from '@decorators/auth.decorator';
+import { UserRole } from '@lumii/types';
 import {
   Body,
   Controller,
@@ -10,21 +13,18 @@ import {
   Query,
   Req,
 } from '@nestjs/common';
-import { BookingsService } from './bookings.service';
 import {
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { RolesAuth } from '@decorators/auth.decorator';
-import { UserRole } from '@lumii/types';
-import type { CreateBookingDto } from './dto/create-booking.dto';
 import type { RequestWithJwtUser } from '@tstypes/request-types';
-import { BookingResponseDto } from './dto/booking-response.dto';
-import type { UpdateBookingStatusDto } from './dto/update-booking-status.dto';
-import { AvailabilityResponseDto } from './dto/avaliability-response.dto';
+import { BookingsService } from './bookings.service';
 import { AvailabilityRequestDto } from './dto/availability-request.dto';
+import { AvailabilityResponseDto } from './dto/avaliability-response.dto';
+import { BookingResponseDto } from './dto/booking-response.dto';
+import type { CreateBookingDto } from './dto/create-booking.dto';
 
 @ApiTags('bookings')
 @Controller('bookings')
@@ -33,13 +33,25 @@ export class BookingsController {
   constructor(private readonly bookingsService: BookingsService) {}
 
   @Get()
+  @RolesAuth(UserRole.CLIENT)
   @ApiOperation({ summary: 'Get all bookings' })
   @ApiOkResponse({ type: BookingResponseDto, isArray: true })
   getAllBookings(@Req() req: RequestWithJwtUser) {
     return this.bookingsService.findAllBookings(req.user.sub);
   }
 
+  @Get('availability/:employeeId')
+  @ApiOperation({ summary: 'Get available time slots for an employee' })
+  @ApiOkResponse({ type: AvailabilityResponseDto, isArray: true })
+  getAvailability(
+    @Param('employeeId', ParseUUIDPipe) employeeId: string,
+    @Query() dto: AvailabilityRequestDto,
+  ) {
+    return this.bookingsService.findAvailability(employeeId, dto);
+  }
+
   @Get(':id')
+  @RolesAuth(UserRole.CLIENT)
   @ApiOperation({ summary: 'Get booking by ID' })
   @ApiOkResponse({ type: BookingResponseDto })
   getBookingById(@Param('id', ParseUUIDPipe) bookingId: string) {
@@ -57,9 +69,21 @@ export class BookingsController {
     return this.bookingsService.createBooking(req.user.sub, createBookingDto);
   }
 
+  @Patch(':id/cancel')
+  @RolesAuth(UserRole.CLIENT)
+  @ApiOperation({ summary: 'Cancel user booking' })
+  @ApiOkResponse({ type: ActionResponseDto })
+  cancelBooking(
+    @Param('id', ParseUUIDPipe) bookingId: string,
+    @Req() req: RequestWithJwtUser,
+  ) {
+    return this.bookingsService.cancelBooking(bookingId, req.user.sub);
+  }
+
   @Delete(':id')
+  @RolesAuth(UserRole.ADMIN)
   @ApiOperation({ summary: 'Delete a booking' })
-  @ApiOkResponse({ description: 'Booking deleted successfully' })
+  @ApiOkResponse({ type: ActionResponseDto })
   deleteBooking(@Param('id', ParseUUIDPipe) bookingId: string) {
     return this.bookingsService.deleteBooking(bookingId);
   }
@@ -79,26 +103,5 @@ export class SalonBookingsController {
     @Query('employeeId') employeeId?: string,
   ) {
     return this.bookingsService.findBookingsForSalon(salonId, employeeId);
-  }
-
-  @Patch(':bookingId/status')
-  @ApiOperation({ summary: 'Update booking status' })
-  @ApiOkResponse({ type: BookingResponseDto })
-  updateBookingStatus(
-    @Param('salonId', ParseUUIDPipe) salonId: string,
-    @Param('bookingId', ParseUUIDPipe) bookingId: string,
-    @Body() dto: UpdateBookingStatusDto,
-  ) {
-    return this.bookingsService.updateBookingStatus(bookingId, dto.status);
-  }
-
-  @Get('availability/:employeeId')
-  @ApiOperation({ summary: 'Get available time slots for an employee' })
-  @ApiOkResponse({ type: AvailabilityResponseDto, isArray: true })
-  getAvailability(
-    @Param('employeeId', ParseUUIDPipe) employeeId: string,
-    @Query() dto: AvailabilityRequestDto,
-  ) {
-    return this.bookingsService.findAvailability(employeeId, dto);
   }
 }

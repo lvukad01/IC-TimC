@@ -1,6 +1,6 @@
 import { PaymentMethod, PaymentStatus, PaymentType } from '@lumii/types';
 import { Injectable } from '@nestjs/common';
-import { Payments } from '@prisma/client';
+import { Payments, Prisma } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { PaymentInput, PaymentRefundInput } from '@tstypes/payment-input';
 
@@ -8,70 +8,60 @@ import { PaymentInput, PaymentRefundInput } from '@tstypes/payment-input';
 export class PaymentsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createBookingPayments({
-    bookingId,
-    clientId,
-    totalAmount,
-    depositAmount,
-    method,
-  }: PaymentInput): Promise<Payments[]> {
-    return this.prisma.$transaction(async (tx) => {
-      const payments: Payments[] = [];
+  async createBookingPayments(
+    { bookingId, clientId, totalAmount, depositAmount, method }: PaymentInput,
+    tx: Prisma.TransactionClient,
+  ): Promise<Payments[]> {
+    const payments: Payments[] = [];
 
-      const deposit = await tx.payments.create({
+    const deposit = await tx.payments.create({
+      data: {
+        bookingId,
+        clientId,
+        amount: depositAmount,
+        type: PaymentType.DEPOSIT,
+        status: PaymentStatus.PAID,
+        method: PaymentMethod.CARD,
+      },
+    });
+
+    payments.push(deposit);
+
+    if (method !== PaymentMethod.CASH) {
+      const balance = await tx.payments.create({
         data: {
           bookingId,
           clientId,
-          amount: depositAmount,
-          type: PaymentType.DEPOSIT,
+          amount: totalAmount - depositAmount,
+          type: PaymentType.BALANCE,
           status: PaymentStatus.PAID,
-          method: PaymentMethod.CARD,
+          method,
         },
       });
 
-      payments.push(deposit);
+      payments.push(balance);
+    }
 
-      if (method !== PaymentMethod.CASH) {
-        const balance = await tx.payments.create({
+    return payments;
+  }
+
+  async createRefundPayment(
+    { bookingId, clientId, refunds }: PaymentRefundInput,
+    tx: Prisma.TransactionClient,
+  ): Promise<Payments[]> {
+    return await Promise.all(
+      refunds.map((refund) =>
+        tx.payments.create({
           data: {
             bookingId,
             clientId,
-            amount: totalAmount - depositAmount,
-            type: PaymentType.BALANCE,
+            amount: refund.amount,
+            type: PaymentType.REFUND,
             status: PaymentStatus.PAID,
-            method,
+            method: refund.method,
           },
-        });
-
-        payments.push(balance);
-      }
-
-      return payments;
-    });
-  }
-
-  async createRefundPayment({
-    bookingId,
-    clientId,
-    refunds,
-  }: PaymentRefundInput): Promise<Payments[]> {
-    return this.prisma.$transaction(async (tx) => {
-      const refundedPayments = await Promise.all(
-        refunds.map((refund) =>
-          tx.payments.create({
-            data: {
-              bookingId,
-              clientId,
-              amount: refund.amount,
-              type: PaymentType.REFUND,
-              status: PaymentStatus.PAID,
-              method: refund.method,
-            },
-          }),
-        ),
-      );
-
-      return refundedPayments;
-    });
+        }),
+      ),
+    );
   }
 }

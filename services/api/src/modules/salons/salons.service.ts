@@ -2,7 +2,6 @@ import { ActionResponseDto, PaginationQueryDto } from '@common/common';
 import { InvalidDepositException } from '@exceptions/salon.exception';
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
-import { resolveFavorites } from '@helpers/resolve-favorites.helper';
 import { ErrorMessages, VALIDATION_MESSAGES } from '@lumii/messages';
 import {
   DepositType,
@@ -18,6 +17,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { SalonPaymentConfig } from '@prisma/client';
 import { PrismaService } from '@prisma/prisma.service';
 import { PaginatedResponse } from '@response/paginated-response.dto';
 import { S3Service } from '@s3/s3.service';
@@ -26,6 +26,7 @@ import { UsersService } from '@users/users.service';
 import { paginate } from '@utils/paginate.util';
 import { getBoundsOfDistance, isPointWithinRadius } from 'geolib';
 import 'multer';
+import { FavoritesService } from '../favorites/favorites.service';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
 import { CreateSalonDto } from './dto/create-salon.dto';
@@ -66,6 +67,7 @@ export class SalonsService {
     private readonly s3Service: S3Service,
     private readonly mapper: SalonsMapper,
     private readonly usersService: UsersService,
+    private readonly favoritesService: FavoritesService,
   ) {}
 
   async findAll(
@@ -123,7 +125,7 @@ export class SalonsService {
       include: SALON_LIST_INCLUDE,
     });
 
-    const favorites = await resolveFavorites(userId);
+    const favorites = await this.resolveFavorites(userId);
 
     return {
       ...salons,
@@ -145,7 +147,7 @@ export class SalonsService {
       throw new NotFoundException(ErrorMessages.notFound('Salon'));
     }
 
-    const favorites = await resolveFavorites(userId);
+    const favorites = await this.resolveFavorites(userId);
 
     return this.mapper.mapSalonDetails(salon, favorites);
   }
@@ -330,7 +332,7 @@ export class SalonsService {
       include: SALON_LIST_INCLUDE,
     });
 
-    const favorites = await resolveFavorites(userId);
+    const favorites = await this.resolveFavorites(userId);
 
     return pendingSalons.map((salon) =>
       this.mapper.mapSalonListItem(salon, favorites),
@@ -338,14 +340,9 @@ export class SalonsService {
   }
 
   async createPaymentConfig(salonId: string, dto: CreatePaymentConfigDto) {
-    const salon = await this.prisma.salons.findUnique({
-      where: { id: salonId },
-      include: { config: true },
-    });
+    const config = await this.getSalonPaymentConfig(salonId);
 
-    if (!salon) throw new NotFoundException(ErrorMessages.notFound('Salon'));
-
-    if (salon.config)
+    if (config)
       throw new ConflictException(VALIDATION_MESSAGES.PAYMENT_CONFIG_CONFLICT);
 
     if (
@@ -373,14 +370,9 @@ export class SalonsService {
   }
 
   async updatePaymentConfig(salonId: string, dto: UpdatePaymentConfigDto) {
-    const salon = await this.prisma.salons.findUnique({
-      where: { id: salonId },
-      include: { config: true },
-    });
+    const config = await this.getSalonPaymentConfig(salonId);
 
-    if (!salon) throw new NotFoundException(ErrorMessages.notFound('Salon'));
-
-    if (!salon.config)
+    if (!config)
       throw new NotFoundException(ErrorMessages.notFound('Payment config'));
 
     if (
@@ -423,7 +415,7 @@ export class SalonsService {
       include: SALON_LIST_INCLUDE,
     });
 
-    const favorites = await resolveFavorites(userId);
+    const favorites = await this.resolveFavorites(userId);
 
     return salons
       .filter((salon) => {
@@ -453,7 +445,7 @@ export class SalonsService {
       include: SALON_LIST_INCLUDE,
     });
 
-    const favorites = await resolveFavorites(userId);
+    const favorites = await this.resolveFavorites(userId);
 
     return {
       ...newestSalons,
@@ -480,7 +472,7 @@ export class SalonsService {
       include: SALON_LIST_INCLUDE,
     });
 
-    const favorites = await resolveFavorites(userId);
+    const favorites = await this.resolveFavorites(userId);
 
     return {
       ...popularSalons,
@@ -490,13 +482,24 @@ export class SalonsService {
     };
   }
 
-  async getFavoriteSalonIds(userId: string): Promise<Set<string>> {
-    const favoriteSalons = await this.prisma.favorites.findMany({
-      where: { userId },
-      select: { salonId: true },
+  private async resolveFavorites(userId?: string): Promise<Set<string>> {
+    if (!userId) return new Set<string>();
+    return await this.favoritesService.getFavoriteSalonIds(userId);
+  }
+
+  async getSalonPaymentConfig(
+    salonId: string,
+  ): Promise<SalonPaymentConfig | null> {
+    const salon = await this.prisma.salons.findUnique({
+      where: { id: salonId },
+      include: { config: true },
     });
 
-    return new Set(favoriteSalons.map((f) => f.salonId));
+    if (!salon) {
+      throw new NotFoundException('Salon not found');
+    }
+
+    return salon.config;
   }
 
   async findAvailableSalons(date: string, serviceId: string, city?: string) {
