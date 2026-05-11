@@ -1,4 +1,3 @@
-import { ErrorMessages } from '@lumii/messages';
 import { dateRegex, FindSalonsQuery, SalonCategory } from '@lumii/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import {
@@ -8,7 +7,6 @@ import {
   IsString,
   IsUUID,
   Matches,
-  Validate,
 } from 'class-validator';
 
 export class FindSalonsQueryDto implements FindSalonsQuery {
@@ -60,7 +58,6 @@ export class FindSalonsQueryDto implements FindSalonsQuery {
     example: '2026-05-10',
   })
   @IsOptional()
-  @IsString()
   @Matches(dateRegex, {
     message: 'Invalid date format, use YYYY-MM-DD',
   })
