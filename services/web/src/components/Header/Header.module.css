@@ -1,0 +1,26 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 16px 20px;
+}
+
+.logoImage {
+  height: 32px;
+}
+
+.loginButton {
+  border: none;
+  border-radius: 14px;
+
+  padding: 10px 16px;
+
+  color: white;
+  background: white;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  cursor: pointer;
+}
