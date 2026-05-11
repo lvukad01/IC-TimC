@@ -27,7 +27,7 @@ export class MailsService {
       from: `"Lumii" <${from}>`,
       to,
       subject,
-      content,
+      html: content,
     });
   }
 }

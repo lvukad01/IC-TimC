@@ -32,8 +32,7 @@
       "@constants/*": ["src/common/constants/*"],
       "@response/*": ["src/common/response/*"],
       "@guards/*": ["src/common/guards/*"],
-      "@common/*": ["src/common/dto/*"],
-      "@exceptions/*": ["src/common/exceptions/*"],
+      "@errors/*": ["src/common/errors/*"],
       "@interceptors/*": ["src/common/interceptors/*"],
       "@middleware/*": ["src/common/middleware/*"],
       "@filters/*": ["src/common/filters/*"],
@@ -49,8 +48,13 @@
       "@s3/*": ["src/modules/s3/*"],
       "@mails/*": ["src/modules/mails/*"],
       "@bookings/*": ["src/modules/bookings/*"],
+      "@payments/*": ["src/modules/payments/*"],
+      "@exceptions/*": ["src/common/exceptions/*"],
+      "@common/*": ["src/common/dto/*"],
       "@salons/*": ["src/modules/salons/*"],
       "@shared/*": ["src/modules/shared/*"]
     }
-  }
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist", "src/**/*.js", "src/**/*.js.map"]
 }

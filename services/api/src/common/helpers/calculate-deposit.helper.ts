@@ -8,6 +8,5 @@ export function calculateDepositAmount({
 }: DepositInput) {
   if (depositType === DepositType.PERCENTAGE)
     return (totalAmount * depositValue) / 100;
-
-  if (depositType === DepositType.FIXED) return depositValue;
+  else return depositValue;
 }

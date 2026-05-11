@@ -6,4 +6,9 @@ export const VALIDATION_MESSAGES = {
   INVALID_SERVICE_NAME:
     'Name must be 2-50 characters long and can contain letters, numbers, spaces, hyphens, and apostrophes.',
   PAYMENT_CONFIG_CONFLICT: 'Payment config already exists.',
+  INVALID_START_TIME_END_TIME: 'Start time must be before end time',
+  EMPLOYEE_NOT_AVAILABLE: 'Employee is not available on the selected day',
+  INVALID_WORKING_HOURS: 'Booking is outside of working hours',
+  EMPLOYEE_ALREADY_BOOKED: 'Employee is already booked in this time slot',
+  BOOKING_DOES_NOT_BELONG_TO_CLIENT: 'This booking does not belong to client',
 };

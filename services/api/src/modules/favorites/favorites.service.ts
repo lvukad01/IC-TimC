@@ -57,4 +57,13 @@ export class FavoritesService {
       message: 'Product removed from favorites',
     };
   }
+
+  async getFavoriteSalonIds(userId: string): Promise<Set<string>> {
+    const favoriteSalons = await this.prisma.favorites.findMany({
+      where: { userId },
+      select: { salonId: true },
+    });
+
+    return new Set(favoriteSalons.map((f) => f.salonId));
+  }
 }
