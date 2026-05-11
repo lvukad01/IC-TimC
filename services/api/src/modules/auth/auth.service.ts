@@ -11,6 +11,7 @@ import { UsersService } from '@users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Users } from 'generated/prisma';
 import { AccessTokenDto } from './dto/access-token.dto';
+import { CheckMailResponseDto } from './dto/check-mail-response.dto';
 import { MeResponseDto } from './dto/me-response-dto';
 import { RegisterRequestDto } from './dto/register-request.dto';
 @Injectable()
@@ -68,6 +69,14 @@ export class AuthService {
       id: user.sub,
       email: user.email,
       role: user.role,
+    };
+  }
+
+  async checkMail(email: string): Promise<CheckMailResponseDto> {
+    const user = await this.usersService.findOneByEmail(email);
+
+    return {
+      exists: !!user,
     };
   }
 }

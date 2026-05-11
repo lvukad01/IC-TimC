@@ -1,5 +1,6 @@
 import { ActionResponseDto, PaginationQueryDto } from '@common/common';
 import { InvalidDepositException } from '@exceptions/salon.exception';
+import { FavoritesService } from '@favorites/favorites.service';
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
 import { ErrorMessages, VALIDATION_MESSAGES } from '@lumii/messages';
@@ -26,7 +27,6 @@ import { UsersService } from '@users/users.service';
 import { paginate } from '@utils/paginate.util';
 import { getBoundsOfDistance, isPointWithinRadius } from 'geolib';
 import 'multer';
-import { FavoritesService } from '../favorites/favorites.service';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
 import { CreateSalonDto } from './dto/create-salon.dto';
@@ -88,7 +88,7 @@ export class SalonsService {
         serviceId,
         city,
       );
-      const favorites = await resolveFavorites(userId);
+      const favorites = await this.resolveFavorites(userId);
       return {
         results: availableSalons.map((salon) =>
           this.mapper.mapSalonListItem(salon as SalonsWithReviews, favorites),

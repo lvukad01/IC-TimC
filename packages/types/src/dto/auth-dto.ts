@@ -27,3 +27,11 @@ export interface MeResponse {
   email: string;
   role: UserRole;
 }
+
+export interface CheckMailResponse {
+  exists: boolean;
+}
+
+export interface CheckMailRequest {
+  email: string;
+}

@@ -1,4 +1,11 @@
-import type { AccessToken, LoginRequest, MeResponse, RegisterRequest } from '@lumii/types';
+import type {
+  AccessToken,
+  CheckMailRequest,
+  CheckMailResponse,
+  LoginRequest,
+  MeResponse,
+  RegisterRequest,
+} from '@lumii/types';
 import { useQuery } from '@tanstack/react-query';
 import { api } from 'api';
 import { QueryKeys } from './queryKeys';
@@ -9,6 +16,10 @@ export const register = (data: RegisterRequest): Promise<AccessToken> => {
 
 export const login = (data: LoginRequest): Promise<AccessToken> => {
   return api.post<AccessToken>('/auth/login', data);
+};
+
+export const checkMail = ({ email }: CheckMailRequest): Promise<CheckMailResponse> => {
+  return api.get<CheckMailResponse>('/auth/check-mail', { params: { email } });
 };
 
 export const me = async (): Promise<MeResponse> => {
