@@ -1,7 +1,7 @@
 import { UserRole } from '@enums/enum';
 
 export interface AccessToken {
-  access_token: string;
+  accessToken: string;
 }
 
 export interface RegisterRequest {
@@ -15,4 +15,15 @@ export interface RegisterRequest {
   city: string;
   zipcode: string;
   country: string;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface MeResponse {
+  id: string;
+  email: string;
+  role: UserRole;
 }

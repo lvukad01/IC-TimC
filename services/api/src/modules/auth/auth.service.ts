@@ -11,6 +11,7 @@ import { UsersService } from '@users/users.service';
 import * as bcrypt from 'bcrypt';
 import { Users } from 'generated/prisma';
 import { AccessTokenDto } from './dto/access-token.dto';
+import { MeResponseDto } from './dto/me-response-dto';
 import { RegisterRequestDto } from './dto/register-request.dto';
 @Injectable()
 export class AuthService {
@@ -35,7 +36,7 @@ export class AuthService {
       sub: user.id,
       role: user.role,
     };
-    return { access_token: this.jwtService.sign(payload) };
+    return { accessToken: this.jwtService.sign(payload) };
   }
 
   async register(user: RegisterRequestDto): Promise<AccessTokenDto> {
@@ -60,5 +61,13 @@ export class AuthService {
     });
 
     return this.login(newUser);
+  }
+
+  getMe(user: AccessTokenPayload): MeResponseDto {
+    return {
+      id: user.sub,
+      email: user.email,
+      role: user.role,
+    };
   }
 }

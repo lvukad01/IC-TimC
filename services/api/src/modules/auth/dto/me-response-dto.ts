@@ -1,9 +1,13 @@
+import { MeResponse, UserRole } from '@lumii/types';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class MeResponseDto {
-  @ApiProperty({ description: 'True if user is authenticated' })
-  isLoggedIn: boolean;
+export class MeResponseDto implements MeResponse {
+  @ApiProperty()
+  id: string;
 
-  @ApiProperty({ description: 'True if user is authenticated and admin' })
-  isAdmin: boolean;
+  @ApiProperty()
+  email: string;
+
+  @ApiProperty()
+  role: UserRole;
 }

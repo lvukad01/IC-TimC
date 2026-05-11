@@ -71,11 +71,11 @@ export class AuthController {
     return this.authService.register(registerBody);
   }
 
-  @RolesAuth(UserRole.CLIENT, UserRole.ADMIN)
+  @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
   @ApiOkMessage({ message: 'User is authenticated', type: MeResponseDto })
   @Get('me')
   me(@Req() req: RequestWithJwtUser) {
-    const role = req.user.role;
-    return { isLoggedIn: true, isAdmin: role === UserRole.ADMIN };
+    const user = req.user;
+    return this.authService.getMe(user);
   }
 }
