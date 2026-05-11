@@ -19,7 +19,6 @@ const LoginPage = () => {
   const { login } = useAuth();
 
   const [step, setStep] = useState<LoginSteps>(LoginSteps.EMAIL);
-  const [email, setEmail] = useState<string>('');
 
   const navigate = useNavigate();
 
@@ -30,7 +29,7 @@ const LoginPage = () => {
     formState: { errors },
   } = form;
 
-  const onSubmit = async (data: LoginFormSchemaProps) => {
+  const onSubmit = (data: LoginFormSchemaProps) => {
     if (step === LoginSteps.EMAIL) {
       checkMail.mutate(data.email, {
         onSuccess: (exists) => {
@@ -41,12 +40,13 @@ const LoginPage = () => {
             return;
           }
 
-          setEmail(data.email);
           setStep(LoginSteps.PASSWORD);
         },
-        onError: () => toast.error('Something went wrong, please try again'),
+        onError: () => toast.error('Nešto je pošlo po krivu, pokušaj ponovno kasnije'),
       });
     } else if (step === LoginSteps.PASSWORD) {
+      const { email } = getValues();
+
       login.mutate(
         {
           email,
@@ -56,8 +56,6 @@ const LoginPage = () => {
           onSuccess: () => navigate(AppPaths.HOME),
         },
       );
-
-      navigate(AppPaths.HOME);
     }
   };
 
@@ -87,7 +85,7 @@ const LoginPage = () => {
               helperText={errors.password?.message}
             />
           )}
-          <button type="submit">Submit</button>
+          <button type="submit">{step === LoginSteps.EMAIL ? 'Nastavi' : 'Prijavi se'}</button>
         </form>
       </FormProvider>
     </div>

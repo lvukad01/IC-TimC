@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom';
 
 const queryClient = new QueryClient();
 const LoginPage = lazy(() => import('@pages/LoginPage'));
+const RegisterPage = lazy(() => import('@pages/RegisterPage'));
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Layout>
           <Routes>
             <Route path={AppPaths.LOGIN} element={<LoginPage />} />
+            <Route path={AppPaths.REGISTER} element={<RegisterPage />} />
           </Routes>
         </Layout>
       </AuthProvider>
