@@ -9,9 +9,9 @@ export function toUserResponse(user: Users): UserResponseDto {
     lastName: user.lastName,
     phone: user.phone ?? undefined,
     role: user.role,
-    street: user.street,
-    city: user.city,
-    zipcode: user.zipcode,
-    country: user.country,
+    street: user.street ?? undefined,
+    city: user.city ?? undefined,
+    zipcode: user.zipcode ?? undefined,
+    country: user.country ?? undefined,
   };
 }

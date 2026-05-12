@@ -9,12 +9,12 @@ export interface RegisterRequest {
   firstName: string;
   lastName: string;
   password: string;
-  phone: string;
+  phone?: string;
   role: UserRole;
-  street: string;
-  city: string;
-  zipcode: string;
-  country: string;
+  street?: string;
+  city?: string;
+  zipcode?: string;
+  country?: string;
 }
 
 export interface LoginRequest {

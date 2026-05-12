@@ -15,6 +15,8 @@ import {
 } from '@lumii/types';
 import {
   ConflictException,
+  forwardRef,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -67,6 +69,8 @@ export class SalonsService {
     private readonly s3Service: S3Service,
     private readonly mapper: SalonsMapper,
     private readonly usersService: UsersService,
+
+    @Inject(forwardRef(() => FavoritesService))
     private readonly favoritesService: FavoritesService,
   ) {}
 

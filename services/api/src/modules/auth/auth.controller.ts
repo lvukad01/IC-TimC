@@ -20,6 +20,7 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiConflictResponse,
+  ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { seconds, Throttle, ThrottlerGuard } from '@nestjs/throttler';
@@ -82,7 +83,7 @@ export class AuthController {
     return this.authService.getMe(user);
   }
 
-  @ApiOkMessage({ message: 'User mail exists', type: CheckMailResponseDto })
+  @ApiOkResponse({ type: CheckMailResponseDto })
   @Get('check-mail')
   checkMail(@Query() query: CheckMailQuery) {
     return this.authService.checkMail(query.email);

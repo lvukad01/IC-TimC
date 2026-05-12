@@ -1,20 +1,29 @@
+import CountrySelect from '@components/CountrySelect';
 import FormInput from '@components/FormInput';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAuth from '@hooks/useAuth';
 import { UserRole } from '@lumii/types';
-import { registrationFormSchema, type RegisterFormSchemaProps } from '@validation/registrationForm';
+import {
+  clientRegistrationFormSchema,
+  type ClientRegisterFormSchemaProps,
+} from '@validation/clientRegistrationForm';
 import { AppPaths } from 'common/routes/paths';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const RegisterPage = () => {
-  const form = useForm<RegisterFormSchemaProps>({
-    resolver: zodResolver(registrationFormSchema),
+const RegisterClientPage = () => {
+  const location = useLocation();
+  const email: string = location.state?.email;
+  const navigate = useNavigate();
+
+  const form = useForm<ClientRegisterFormSchemaProps>({
+    resolver: zodResolver(clientRegistrationFormSchema),
+    defaultValues: {
+      email,
+    },
   });
 
   const { register: registerMutation } = useAuth();
-
-  const navigate = useNavigate();
 
   const {
     handleSubmit,
@@ -22,7 +31,7 @@ const RegisterPage = () => {
     formState: { errors },
   } = form;
 
-  const onSubmit = (data: RegisterFormSchemaProps) => {
+  const onSubmit = (data: ClientRegisterFormSchemaProps) => {
     registerMutation.mutate(
       { ...data, role: UserRole.CLIENT },
       {
@@ -109,14 +118,7 @@ const RegisterPage = () => {
             helperText={errors.zipcode?.message}
           />
 
-          <FormInput
-            label="Država"
-            fullWidth
-            margin="normal"
-            {...register('country')}
-            error={!!errors.country}
-            helperText={errors.country?.message}
-          />
+          <CountrySelect />
 
           <button type="submit">Registriraj se</button>
         </form>
@@ -125,4 +127,4 @@ const RegisterPage = () => {
   );
 };
 
-export default RegisterPage;
+export default RegisterClientPage;
