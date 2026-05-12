@@ -1,0 +1,67 @@
+.textHolder {
+  width: 100%;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 290px;
+  height: 206px;
+  padding: 33px;
+  border-radius: 23px;
+  background: #4d3d7c35;
+}
+
+.inputWrapper {
+  position: relative;
+}
+
+.icon {
+  position: absolute;
+  top: 50%;
+  left: 14px;
+  width: 16px;
+  height: 16px;
+  transform: translateY(-50%);
+}
+
+.input {
+  width: 225px;
+  height: 40px;
+  padding: 0 16px 0 42px;
+  border: 1px solid #4d3d7c70;
+  border-radius: 13px;
+  background: white;
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+}
+
+.button {
+  width: 225px;
+  height: 40px;
+  border: 1px solid transparent;
+  border-radius: 14px;
+  background: #4d3d7c;
+  color: white;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.todayCount {
+  width: 250px;
+  height: 17px;
+  margin: 30px auto 0;
+  font-family: Inter, sans-serif;
+  font-weight: 548;
+  font-size: 18px;
+  line-height: 100%;
+  color: #000000;
+}

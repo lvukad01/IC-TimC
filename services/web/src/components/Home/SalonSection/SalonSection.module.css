@@ -1,0 +1,36 @@
+.section {
+  padding: 16px 0;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+  margin-left: 36px;
+}
+
+.title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.viewMore {
+  background: none;
+  border: none;
+  color: #c084fc;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.cards {
+  display: flex;
+  padding: 0 36px 8px;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.cards::-webkit-scrollbar {
+  display: none;
+}

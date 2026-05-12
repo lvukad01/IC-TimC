@@ -1,7 +1,9 @@
 .hero {
-  padding: 24px 20px;
+  padding: 0px 20px;
   display: flex;
+  justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .titleWrapper {
@@ -10,21 +12,21 @@
   display: flex;
   align-items: flex-end;
 
-  width: fit-content;
+  width: 290px;
 }
 
 .reserveText {
   position: relative;
   left: 10px;
 
-  width: 230px;
+  width: 200px;
 }
 .dynamicWrapper {
   position: absolute;
-  top: 115px;
-  right: 25px;
+  top: 96px;
+  left: 50px;
 
-  width: 150px;
+  width: 120px;
   height: 50px;
 
   overflow: visible;
@@ -77,7 +79,7 @@
 
 @keyframes inRight {
   from {
-    transform: translateX(100vw);
+    transform: translateX(100px);
     opacity: 0;
   }
 
