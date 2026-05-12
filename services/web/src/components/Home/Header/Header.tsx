@@ -1,19 +1,23 @@
-import { useState } from 'react';
+import cross from '@assets/media/cross.png';
+import loginBtn from '@assets/media/loginBtn.svg';
+import logo from '@assets/media/lumii logo.svg';
 
-import logo from '../../../assets/media/lumii logo.svg';
-import loginBtn from '../../../assets/media/loginBtn.svg';
-import loginBtnClick from '../../../assets/media/loginBtnClick.svg';
-
+import { AppPaths } from 'common/routes/paths';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './Header.module.css';
-import { useNavigate } from 'react-router-dom';
 
-export const Header = () => {
-  const [clicked, setClicked] = useState(false);
+const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  function handleClick() {
-    setClicked(!clicked);
-    navigate('/login');
+  const isLoginPage = location.pathname === AppPaths.LOGIN;
+
+  function goToLogin() {
+    navigate(AppPaths.LOGIN);
+  }
+
+  function goHome() {
+    navigate(AppPaths.HOME);
   }
 
   return (
@@ -22,9 +26,17 @@ export const Header = () => {
         <img src={logo} alt="Lumii" className={styles.logoImage} />
       </div>
 
-      <button className={styles.loginButton} onClick={() => handleClick()}>
-        <img src={clicked ? loginBtnClick : loginBtn} alt="Prijava" />
-      </button>
+      {isLoginPage ? (
+        <button className={styles.loginButton} onClick={goHome}>
+          <img src={cross} alt="Zatvori" />
+        </button>
+      ) : (
+        <button className={styles.loginButton} onClick={goToLogin}>
+          <img src={loginBtn} alt="Prijava" />
+        </button>
+      )}
     </header>
   );
 };
+
+export default Header;

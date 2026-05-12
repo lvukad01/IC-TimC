@@ -1,3 +1,4 @@
+import Header from '@components/Home/Header';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
@@ -31,10 +32,7 @@ const Layout = ({ children }: LayoutProps) => {
           },
         }}
       />
-
-      <header>
-        <nav></nav>
-      </header>
+      <Header />
 
       <main>{children}</main>
     </div>

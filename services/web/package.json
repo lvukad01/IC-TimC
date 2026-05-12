@@ -14,7 +14,6 @@
     "@hookform/resolvers": "^5.2.2",
     "@lumii/messages": "^1.0.0",
     "@lumii/types": "^1.0.0",
-<<<<<<< HEAD
     "@mui/material": "^9.0.1",
     "@mui/styled-engine": "^9.0.0",
     "@tanstack/react-query": "^5.100.10",
@@ -29,14 +28,6 @@
     "react-select-country-list": "^2.2.3",
     "vite-tsconfig-paths": "^6.1.1",
     "zod": "^4.4.3"
-=======
-    "@tanstack/react-query": "^5.100.10",
-    "react": "^19.2.5",
-    "react-dom": "^19.2.5",
-    "react-intersection-observer": "^10.0.3",
-    "react-router-dom": "^7.15.0",
-    "vite-tsconfig-paths": "^6.1.1"
->>>>>>> origin/home-screen
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -49,6 +40,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.5.0",
+    "sass-embedded": "^1.99.0",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.58.2",
     "vite": "^8.0.10"

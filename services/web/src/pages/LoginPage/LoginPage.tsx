@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import styles from './LoginPage.module.scss';
 
 const LoginPage = () => {
   const checkMail = useCheckMail();
@@ -83,6 +84,7 @@ const LoginPage = () => {
 
   return (
     <div>
+      <h1 className={styles.title}>Prijavi se ili registriraj</h1>
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           {step === LoginSteps.EMAIL && (
