@@ -1,0 +1,63 @@
+.section {
+  padding: 72px 32px 0;
+}
+
+.content {
+  max-width: 310px;
+  text-align: left;
+}
+
+.title {
+  margin: 0;
+  font-size: 40px;
+  line-height: 1.08;
+  font-weight: 800;
+  color: #000;
+}
+
+.description {
+  margin: 10px 0 28px;
+  font-size: 15px;
+  line-height: 1.25;
+  font-weight: 500;
+  color: #000;
+}
+
+.button {
+  height: 48px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 14px;
+  background: #4d3d7c;
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.phonesWrapper {
+  position: relative;
+  width: 320px;
+  height: 320px;
+  margin: 40px auto 0;
+}
+
+.phonesWrapper img {
+  width: 106px;
+  height: 258px;
+  margin: 0 20px;
+}
+
+.phoneLeft {
+  position: absolute;
+  left: 10px;
+  bottom: 0;
+  width: 140px;
+}
+
+.phoneRight {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  width: 160px;
+}
