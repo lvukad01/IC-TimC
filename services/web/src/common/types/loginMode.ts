@@ -1,4 +1,4 @@
 export enum LoginMode {
-  OWNER = 'OWNER',
-  CLIENT = 'CLIENT',
+  OWNER = 'owner',
+  CLIENT = 'client',
 }

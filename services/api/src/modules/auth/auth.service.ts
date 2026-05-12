@@ -63,8 +63,8 @@ export class AuthService {
     const newUser = await this.usersService.create({
       ...user,
       password: hashedPassword,
-      lat: coordinates.lat,
-      lng: coordinates.lng,
+      lat: coordinates?.lat,
+      lng: coordinates?.lng,
     });
 
     return this.login(newUser);

@@ -12,4 +12,4 @@ export const MAX_STREET_LENGTH = 100;
 export const MIN_ZIP_LENGTH = 4;
 export const MAX_ZIP_LENGTH = 10;
 export const countryCodeRegex = /^[A-Z]{2}$/;
-export const zipcodeRegex = /^\d+$/;
+export const zipcodeRegex = /^\d{4,10}$/;

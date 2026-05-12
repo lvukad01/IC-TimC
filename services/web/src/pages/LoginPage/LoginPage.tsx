@@ -51,7 +51,7 @@ const LoginPage = () => {
       checkMail.mutate(data.email, {
         onSuccess: (response) => {
           if (!response.exists) {
-            if (loginMode === LoginMode.OWNER)
+            if (loginMode == LoginMode.OWNER)
               navigate(AppPaths.REGISTER_SALON_OWNER, {
                 state: { email: data.email },
               });
@@ -116,16 +116,21 @@ const LoginPage = () => {
           </button>
         </form>
       </FormProvider>
-      <div className={styles.ownerContainer}>
-        <img className={styles.rectangle} src={rectangle} alt="rectangle" />
-        <div className={styles.wrapper}>
-          <h2>Imaš svoj salon?</h2>
-          <button className={styles.ownerRegisterButton}>
-            <span>lumii za poduzeća </span>
-            <FaArrowRight className={styles.arrow} />
-          </button>
+      {(!loginMode || loginMode === LoginMode.CLIENT) && (
+        <div className={styles.ownerContainer}>
+          <img className={styles.rectangle} src={rectangle} alt="rectangle" />
+          <div className={styles.wrapper}>
+            <h2>Imaš svoj salon?</h2>
+            <button
+              className={styles.ownerRegisterButton}
+              onClick={() => navigate(`${AppPaths.LOGIN}?mode=owner`)}
+            >
+              <span>lumii za poduzeća </span>
+              <FaArrowRight className={styles.arrow} />
+            </button>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

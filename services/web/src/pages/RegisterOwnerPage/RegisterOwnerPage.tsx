@@ -9,49 +9,24 @@ import {
   OwnerRegistrationFormTypeEnum,
   type OwnerRegistrationFormSchemaProps,
 } from '@validation/ownerRegistrationForm';
-import { AppPaths } from 'common/routes/paths';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+import styles from './RegisterOwnerPage.module.scss';
 
 const RegisterOwnerPage = () => {
   const location = useLocation();
   const email: string = location.state?.email;
-  const navigate = useNavigate();
+  const { register: registerMutation } = useAuth();
 
   const form = useForm<OwnerRegistrationFormSchemaProps>({
     resolver: zodResolver(ownerRegistrationFormSchema) as any,
     defaultValues: {
-      formType: OwnerRegistrationFormTypeEnum.PersonalInformation,
+      formType: OwnerRegistrationFormTypeEnum.CategorySelection,
       ownerPersonalInformation: { email },
     },
   });
 
-  const { register: registerMutation } = useAuth();
-
-  const { watch, handleSubmit, setValue } = form;
-
-  const formType = watch('formType');
-
-  const setFormType = (type: OwnerRegistrationFormTypeEnum) => {
-    setValue('formType', type);
-  };
-
-  const handleNextFormType = () => {
-    switch (formType) {
-      case OwnerRegistrationFormTypeEnum.PersonalInformation:
-        setFormType(OwnerRegistrationFormTypeEnum.SalonLocation);
-        break;
-
-      case OwnerRegistrationFormTypeEnum.SalonLocation:
-        setFormType(OwnerRegistrationFormTypeEnum.CategorySelection);
-        break;
-
-      case OwnerRegistrationFormTypeEnum.CategorySelection:
-        break;
-    }
-  };
-
-  const onSubmit = (data: OwnerRegistrationFormSchemaProps) => {
+  const onRegister = (data: OwnerRegistrationFormSchemaProps) => {
     const { ownerPersonalInformation } = data;
     registerMutation.mutate(
       {
@@ -64,21 +39,49 @@ const RegisterOwnerPage = () => {
       },
       {
         onSuccess: () => {
-          navigate(AppPaths.HOME);
+          setFormType(OwnerRegistrationFormTypeEnum.SalonLocation);
         },
       },
     );
   };
 
+  const { watch, handleSubmit, setValue } = form;
+
+  const formType = watch('formType');
+
+  const setFormType = (type: OwnerRegistrationFormTypeEnum) => {
+    setValue('formType', type);
+  };
+
+  const handleNextFormType = (data: OwnerRegistrationFormSchemaProps) => {
+    switch (formType) {
+      case OwnerRegistrationFormTypeEnum.PersonalInformation:
+        setFormType(OwnerRegistrationFormTypeEnum.SalonLocation);
+        onRegister(data);
+        break;
+
+      case OwnerRegistrationFormTypeEnum.SalonLocation:
+        setFormType(OwnerRegistrationFormTypeEnum.CategorySelection);
+        break;
+
+      case OwnerRegistrationFormTypeEnum.CategorySelection:
+        break;
+    }
+  };
+
   return (
-    <div>
+    <div className={styles.container}>
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(handleNextFormType)}>
-          <OwnerPersonalInformation />
-          <SalonLocation />
-          <CategorySelect />
+          {formType === OwnerRegistrationFormTypeEnum.PersonalInformation && (
+            <OwnerPersonalInformation />
+          )}
+          {formType === OwnerRegistrationFormTypeEnum.SalonLocation && <SalonLocation />}
+          {formType === OwnerRegistrationFormTypeEnum.CategorySelection && <CategorySelect />}
 
-          <button type="submit">Nastavi</button>
+          <button className={styles.submitButton} type="submit">
+            Nastavi
+          </button>
         </form>
       </FormProvider>
     </div>

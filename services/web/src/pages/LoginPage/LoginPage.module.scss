@@ -5,7 +5,7 @@
 }
 
 .title {
-  margin-bottom: 24px;
+  margin: 24px 0px;
 }
 
 .continueButton {
@@ -13,6 +13,7 @@
   width: 100%;
   height: 40px;
   font-size: 16px;
+  font-weight: bold;
   border-radius: var(--main-border-radius);
   background-color: var(--color-purple);
 
@@ -59,6 +60,7 @@
   padding: 10px;
   border-radius: var(--main-border-radius);
   font-size: 16px;
+  font-weight: bold;
   color: black;
 }
 
