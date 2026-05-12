@@ -3,7 +3,6 @@ import configuration from '@config/configuration';
 import { GeocodingModule } from '@geocoding/geocoding.module';
 import { UserThrottlerGuard } from '@guards/user-throttler.guard';
 import { ResponseInterceptor } from '@interceptors/response.interceptor';
-import { MailsService } from '@mails/mails.service';
 import { LoggerMiddleware } from '@middleware/logger.middleware';
 import { SecurityHeadersMiddleware } from '@middleware/security-headers-middleware';
 import {
@@ -27,10 +26,8 @@ import { EmployeesModule } from './modules/employees/employees.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
 import { FilesController } from './modules/files/files.controller';
 import { FilesModule } from './modules/files/files.module';
-import { FilesService } from './modules/files/files.service';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PaymentsModule } from './modules/payments/payments.module';
-import { PaymentsService } from './modules/payments/payments.service';
 
 @Module({
   imports: [
@@ -65,14 +62,11 @@ import { PaymentsService } from './modules/payments/payments.service';
   controllers: [AppController, FilesController],
   providers: [
     ResponseInterceptor,
-    PaymentsService,
-    FilesService,
     AppService,
     {
       provide: APP_GUARD,
       useClass: UserThrottlerGuard,
     },
-    MailsService,
   ],
 })
 export class AppModule implements NestModule {

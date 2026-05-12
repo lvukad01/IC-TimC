@@ -1,8 +1,13 @@
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
 import { ErrorMessages } from '@lumii/messages';
+import { UserRole } from '@lumii/types';
 import { toUserResponse } from '@mappers/user-response.mapper';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '@prisma/prisma.service';
 import { Coordinates } from '@tstypes/coordinates';
 import { CreateUserInput } from '@tstypes/create-user';
@@ -31,6 +36,11 @@ export class UsersService {
     });
 
     if (!user) throw new NotFoundException(ErrorMessages.notFound('User'));
+    if (user.role === UserRole.SALON_OWNER)
+      throw new BadRequestException('Salon owner does not have user location');
+
+    if (!user.city || !user.street || !user.zipcode || !user.country)
+      throw new BadRequestException('User does not have full location');
 
     return await this.geocodingService.geocode({
       street: user.street,
@@ -50,6 +60,13 @@ export class UsersService {
     return user;
   }
 
+  async findOneByEmailWithoutThrow(email: string) {
+    const user = await this.prisma.users.findUnique({
+      where: { email },
+    });
+    return user;
+  }
+
   async create(data: CreateUserInput) {
     return this.prisma.users.create({
       data: {
@@ -57,10 +74,10 @@ export class UsersService {
         firstName: data.firstName,
         lastName: data.lastName,
         phone: data.phone,
-        street: data.street,
-        city: data.city,
-        zipcode: data.zipcode,
-        country: data.country,
+        street: data.street ?? undefined,
+        city: data.city ?? undefined,
+        zipcode: data.zipcode ?? undefined,
+        country: data.country ?? undefined,
         password: data.password,
         role: data.role,
       },
@@ -73,25 +90,39 @@ export class UsersService {
   ): Promise<UserResponseDto> {
     const user = await this.findOne(id);
 
-    if (!user) throw new NotFoundException(ErrorMessages.notFound('User'));
+    if (!user) {
+      throw new NotFoundException(ErrorMessages.notFound('User'));
+    }
 
-    const existingAddress = {
-      street: user.street,
-      city: user.city,
-      zipcode: user.zipcode,
-      country: user.country,
-    };
+    const isClient = user.role === UserRole.CLIENT;
 
-    const mergedAdress = buildFullAdress(updateUserDto, existingAddress);
-    const addressChanged = isAddressChanged(updateUserDto);
+    let coordinates: { lat: number; lng: number } | undefined;
 
-    let coordinates;
-    if (addressChanged)
-      coordinates = await this.geocodingService.geocode(mergedAdress);
+    if (isClient) {
+      const existingAddress = {
+        street: user.street ?? '',
+        city: user.city ?? '',
+        zipcode: user.zipcode ?? '',
+        country: user.country ?? '',
+      };
+
+      const addressChanged = isAddressChanged(updateUserDto);
+
+      if (addressChanged) {
+        const mergedAddress = buildFullAdress(updateUserDto, existingAddress);
+        coordinates = await this.geocodingService.geocode(mergedAddress);
+      }
+    }
 
     const updatedUser = await this.prisma.users.update({
       where: { id },
-      data: { ...updateUserDto, ...coordinates },
+      data: {
+        ...updateUserDto,
+        ...(coordinates && {
+          lat: coordinates.lat,
+          lng: coordinates.lng,
+        }),
+      },
     });
 
     return toUserResponse(updatedUser);

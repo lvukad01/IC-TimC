@@ -21,14 +21,14 @@ export class UserResponseDto implements UserResponse {
   role: string;
 
   @ApiProperty()
-  street: string;
+  street?: string;
 
   @ApiProperty()
-  city: string;
+  city?: string;
 
   @ApiProperty()
-  zipcode: string;
+  zipcode?: string;
 
   @ApiProperty()
-  country: string;
+  country?: string;
 }

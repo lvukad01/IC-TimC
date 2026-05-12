@@ -1,5 +1,6 @@
 import { GeocodingService } from '@geocoding/geocoding.service';
 import { AUTH_MESSAGES } from '@lumii/messages';
+import { UserRole } from '@lumii/types';
 import {
   ConflictException,
   Injectable,
@@ -9,8 +10,11 @@ import { JwtService } from '@nestjs/jwt';
 import { AccessTokenPayload } from '@tstypes/access-token';
 import { UsersService } from '@users/users.service';
 import * as bcrypt from 'bcrypt';
-import { Users } from 'generated/prisma';
+
+import { Users } from '@prisma/client';
 import { AccessTokenDto } from './dto/access-token.dto';
+import { CheckMailResponseDto } from './dto/check-mail-response.dto';
+import { MeResponseDto } from './dto/me-response-dto';
 import { RegisterRequestDto } from './dto/register-request.dto';
 @Injectable()
 export class AuthService {
@@ -35,7 +39,7 @@ export class AuthService {
       sub: user.id,
       role: user.role,
     };
-    return { access_token: this.jwtService.sign(payload) };
+    return { accessToken: this.jwtService.sign(payload) };
   }
 
   async register(user: RegisterRequestDto): Promise<AccessTokenDto> {
@@ -44,12 +48,14 @@ export class AuthService {
       throw new ConflictException(AUTH_MESSAGES.EMAIL_EXISTS);
     }
 
-    const coordinates = await this.geocodingService.geocode({
-      street: user.street,
-      city: user.city,
-      zipcode: user.zipcode,
-      country: user.country,
-    });
+    let coordinates;
+    if (user.role === UserRole.CLIENT)
+      coordinates = await this.geocodingService.geocode({
+        street: user.street!,
+        city: user.city!,
+        zipcode: user.zipcode!,
+        country: user.country!,
+      });
 
     const hashedPassword = await bcrypt.hash(user.password, 10);
     const newUser = await this.usersService.create({
@@ -60,5 +66,21 @@ export class AuthService {
     });
 
     return this.login(newUser);
+  }
+
+  getMe(user: AccessTokenPayload): MeResponseDto {
+    return {
+      id: user.sub,
+      email: user.email,
+      role: user.role,
+    };
+  }
+
+  async checkMail(email: string): Promise<CheckMailResponseDto> {
+    const user = await this.usersService.findOneByEmailWithoutThrow(email);
+
+    return {
+      exists: !!user,
+    };
   }
 }

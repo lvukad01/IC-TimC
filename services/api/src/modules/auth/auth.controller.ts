@@ -10,6 +10,7 @@ import {
   Get,
   HttpCode,
   Post,
+  Query,
   Req,
   Request,
   UseGuards,
@@ -19,6 +20,7 @@ import {
   ApiBadRequestResponse,
   ApiBody,
   ApiConflictResponse,
+  ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { seconds, Throttle, ThrottlerGuard } from '@nestjs/throttler';
@@ -28,6 +30,8 @@ import type {
 } from '@tstypes/request-types';
 import { AuthService } from './auth.service';
 import { AccessTokenDto } from './dto/access-token.dto';
+import { CheckMailQuery } from './dto/check-mail-query';
+import { CheckMailResponseDto } from './dto/check-mail-response.dto';
 import { LoginRequestDto } from './dto/login-request.dto';
 import { MeResponseDto } from './dto/me-response-dto';
 import { RegisterRequestDto } from './dto/register-request.dto';
@@ -71,11 +75,17 @@ export class AuthController {
     return this.authService.register(registerBody);
   }
 
-  @RolesAuth(UserRole.CLIENT, UserRole.ADMIN)
+  @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
   @ApiOkMessage({ message: 'User is authenticated', type: MeResponseDto })
   @Get('me')
   me(@Req() req: RequestWithJwtUser) {
-    const role = req.user.role;
-    return { isLoggedIn: true, isAdmin: role === UserRole.ADMIN };
+    const user = req.user;
+    return this.authService.getMe(user);
+  }
+
+  @ApiOkResponse({ type: CheckMailResponseDto })
+  @Get('check-mail')
+  checkMail(@Query() query: CheckMailQuery) {
+    return this.authService.checkMail(query.email);
   }
 }

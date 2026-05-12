@@ -1,0 +1,71 @@
+.card {
+  border: 2px solid;
+  border-radius: 16px;
+  overflow: hidden;
+  width: fit-content;
+  height: 100%;
+  flex-shrink: 0;
+  background: white;
+}
+
+.imageWrapper {
+  position: relative;
+}
+
+.image {
+  width: 222;
+  height: 152;
+  gap: 10px;
+  border-radius: 15px;
+  opacity: 1;
+  padding: 8px;
+}
+
+.heartBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: white;
+  border: none;
+  border-radius: 50%;
+  width: 34px;
+  height: 34px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.info {
+  color: #000;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.nameRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 48px;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.rating {
+  font-size: 13px;
+}
+
+.type {
+  font-size: 12px;
+  color: #000;
+  margin: 6px 0 2px;
+  line-height: 0;
+}
+
+.address {
+  font-size: 12px;
+  color: #000;
+}

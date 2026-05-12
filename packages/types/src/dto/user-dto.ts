@@ -22,8 +22,8 @@ export interface UserResponse {
   lastName: string;
   phone?: string;
   role: string;
-  street: string;
-  city: string;
-  zipcode: string;
-  country: string;
+  street?: string;
+  city?: string;
+  zipcode?: string;
+  country?: string;
 }

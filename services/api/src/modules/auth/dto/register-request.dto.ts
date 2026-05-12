@@ -17,7 +17,15 @@ import {
 import { ApiProperty } from '@nestjs/swagger';
 import { IsValidName } from '@validators/name.validator';
 import { IsStrongPassword } from '@validators/password.validator';
-import { IsEmail, IsEnum, Length, Matches, MinLength } from 'class-validator';
+import {
+  IsDefined,
+  IsEmail,
+  IsEnum,
+  Length,
+  Matches,
+  MinLength,
+  ValidateIf,
+} from 'class-validator';
 
 export class RegisterRequestDto implements RegisterRequest {
   @ApiProperty({ description: 'User email, must be unique' })
@@ -50,21 +58,29 @@ export class RegisterRequestDto implements RegisterRequest {
   @IsEnum(UserRole)
   role: UserRole;
 
+  @ValidateIf((o) => o.role === UserRole.CLIENT)
+  @IsDefined()
   @ApiProperty({ description: 'Street and number' })
   @Length(MIN_STREET_LENGTH, MAX_STREET_LENGTH)
-  street: string;
+  street?: string;
 
+  @ValidateIf((o) => o.role === UserRole.CLIENT)
+  @IsDefined()
   @ApiProperty({ description: 'City' })
   @Length(MIN_CITY_LENGTH, MAX_CITY_LENGTH)
-  city: string;
+  city?: string;
 
+  @ValidateIf((o) => o.role === UserRole.CLIENT)
+  @IsDefined()
   @ApiProperty({ description: 'Postal code' })
   @Matches(zipcodeRegex, {
     message: VALIDATION_MESSAGES.INVALID_ZIPCODE_FORMAT,
   })
-  zipcode: string;
+  zipcode?: string;
 
+  @ValidateIf((o) => o.role === UserRole.CLIENT)
+  @IsDefined()
   @ApiProperty({ description: 'Country' })
   @Length(MIN_COUNTRY_LENGTH, MAX_COUNTRY_LENGTH)
-  country: string;
+  country?: string;
 }

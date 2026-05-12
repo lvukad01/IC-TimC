@@ -91,10 +91,10 @@ model Users{
   password String
   phone String?
   role UserRole @default(CLIENT)
-  city String
-  zipcode String
-  country String
-  street String
+  city String?
+  zipcode String?
+  country String?
+  street String?
   lat Float?
   lng Float?
   createdAt DateTime @default(now())

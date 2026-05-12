@@ -1,5 +1,6 @@
 export const VALIDATION_MESSAGES = {
   PASSWORD_WEAK: 'Password must contain at least one letter, one number and one special character',
+  EMAIL_INVALID: 'Invalid email format',
   NAME_INVALID: 'Name can contain only letters, spaces, apostrophes, or hyphens',
   INVALID_PHONE_FORMAT: 'Phone number must be in valid international format (+123...)',
   INVALID_ZIPCODE_FORMAT: 'ZIP code must be numeric only and have between 4 and 10 characters',
@@ -11,4 +12,6 @@ export const VALIDATION_MESSAGES = {
   INVALID_WORKING_HOURS: 'Booking is outside of working hours',
   EMPLOYEE_ALREADY_BOOKED: 'Employee is already booked in this time slot',
   BOOKING_DOES_NOT_BELONG_TO_CLIENT: 'This booking does not belong to client',
+  minMsg: (n: number) => `Must be at least ${n} characters`,
+  maxMsg: (n: number) => `Must be at most ${n} characters`,
 };
