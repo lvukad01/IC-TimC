@@ -7,7 +7,7 @@ export class LoginRequestDto implements LoginRequest {
 
   @ApiProperty({
     description:
-      "The user's password. Must match the password used during registration.",
+      "The user's password must match the password used during registration.",
   })
   password: string;
 }

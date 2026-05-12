@@ -14,14 +14,13 @@ import {
   UserRole,
   zipcodeRegex,
 } from '@lumii/types';
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty } from '@nestjs/swagger';
 import { IsValidName } from '@validators/name.validator';
 import { IsStrongPassword } from '@validators/password.validator';
 import {
   IsDefined,
   IsEmail,
   IsEnum,
-  IsOptional,
   Length,
   Matches,
   MinLength,
@@ -51,10 +50,9 @@ export class RegisterRequestDto implements RegisterRequest {
   @IsStrongPassword()
   password: string;
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @Matches(phoneRegex, { message: VALIDATION_MESSAGES.INVALID_PHONE_FORMAT })
-  phone?: string;
+  phone: string;
 
   @ApiProperty({ enum: UserRole })
   @IsEnum(UserRole)

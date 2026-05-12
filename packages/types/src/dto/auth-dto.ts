@@ -9,7 +9,7 @@ export interface RegisterRequest {
   firstName: string;
   lastName: string;
   password: string;
-  phone?: string;
+  phone: string;
   role: UserRole;
   street?: string;
   city?: string;
