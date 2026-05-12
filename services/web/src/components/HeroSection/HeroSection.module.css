@@ -1,0 +1,88 @@
+.hero {
+  padding: 24px 20px;
+  display: flex;
+  align-items: center;
+}
+
+.titleWrapper {
+  position: relative;
+
+  display: flex;
+  align-items: flex-end;
+
+  width: fit-content;
+}
+
+.reserveText {
+  position: relative;
+  left: 10px;
+
+  width: 230px;
+}
+.dynamicWrapper {
+  position: absolute;
+  top: 115px;
+  right: 25px;
+
+  width: 150px;
+  height: 50px;
+
+  overflow: visible;
+}
+.dynamicText {
+  width: 130px;
+  height: 33px;
+  margin-left: 20px;
+  transition:
+    transform 0.4s ease,
+    opacity 0.4s ease;
+}
+.currentText {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 33px;
+
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.slideOut {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  animation: outLeft 0.4s ease forwards;
+}
+
+.slideInFromRight {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  animation: inRight 0.4s ease forwards;
+}
+
+@keyframes outLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-130px);
+    opacity: 0;
+  }
+}
+
+@keyframes inRight {
+  from {
+    transform: translateX(100vw);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

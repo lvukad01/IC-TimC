@@ -1,6 +1,7 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
+import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -16,6 +17,13 @@ export default defineConfig({
   },
   optimizeDeps: {
     include: ['@lumii/types', '@lumii/messages'],
+  },
+  resolve: {
+    alias: {
+      '@components': path.resolve(__dirname, './src/components'),
+      '@pages': path.resolve(__dirname, './src/pages'),
+      '@context': path.resolve(__dirname, './src/context'),
+    },
   },
   build: {
     commonjsOptions: {
