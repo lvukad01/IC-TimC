@@ -3,7 +3,7 @@
   align-items: center;
   justify-content: space-between;
 
-  padding: 16px 20px;
+  padding: 5px 20px;
 }
 
 .logoImage {
@@ -13,14 +13,13 @@
 .loginButton {
   border: none;
   border-radius: 14px;
-
   padding: 10px 16px;
-
   color: white;
   background: white;
-
-  font-size: 14px;
+  font-size: 10px;
   font-weight: 600;
-
   cursor: pointer;
+}
+.loginButton img {
+  height: 35;
 }

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
 import logo from '../../../assets/media/lumii logo.svg';
-import loginBtn from '../../../assets/media/state=default (2).svg';
-import loginBtnClick from '../../../assets/media/state=selected (2).svg';
+import loginBtn from '../../../assets/media/loginBtn.svg';
+import loginBtnClick from '../../../assets/media/loginBtnClick.svg';
 
 import styles from './Header.module.css';
 import { useNavigate } from 'react-router-dom';

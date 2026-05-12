@@ -3,6 +3,8 @@ import { Header } from '../components/Home/Header/Header';
 import { SalonSection } from '../components/Home/SalonSection/SalonSection';
 import { SearchBar } from '../components/Home/SearchBar/SearchBar';
 import { HeroSection } from '../components/Home/HeroSection/HeroSection';
+import { BusinessSection } from '@components/Home/BusinessSection/BusinessSection';
+
 import salonImg from '../assets/media/frizer 1.png';
 import useInfiniteScroll from '@hooks/useInfiniteScroll';
 
@@ -59,6 +61,7 @@ const HomePage = () => {
         loadMoreRef={loadMoreRef}
       />
       <SalonSection title="Novo" borderColor="#029ED8" salons={salons} loadMoreRef={loadMoreRef} />
+      <BusinessSection />
       <Footer />
     </>
   );
