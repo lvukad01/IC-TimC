@@ -12,7 +12,14 @@ import {
   zipcodeRegex,
 } from '@lumii/types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsEnum, IsString, Length, Matches } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsEnum,
+  IsString,
+  Length,
+  Matches,
+} from 'class-validator';
 
 export class CreateSalonDto implements CreateSalonRequest {
   @ApiProperty({ example: 'Salon ljepote' })
@@ -49,6 +56,7 @@ export class CreateSalonDto implements CreateSalonRequest {
     example: ['HAIR', 'NAILS'],
   })
   @IsArray()
+  @ArrayMinSize(1)
   @IsEnum(SalonCategory, { each: true })
   categories: SalonCategory[];
 }

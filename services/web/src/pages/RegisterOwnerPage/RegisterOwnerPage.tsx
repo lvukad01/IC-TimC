@@ -2,6 +2,8 @@ import CategorySelect from '@components/CategorySelect';
 import OwnerPersonalInformation from '@components/Forms/OwnerPersonalInformation';
 import SalonLocation from '@components/Forms/SalonLocation';
 import { zodResolver } from '@hookform/resolvers/zod';
+import useAddEmployees from '@hooks/useAddEmployees';
+import useAddSalon from '@hooks/useAddSalon';
 import useAuth from '@hooks/useAuth';
 import { UserRole } from '@lumii/types';
 import {
@@ -18,12 +20,27 @@ const RegisterOwnerPage = () => {
   const email: string = location.state?.email;
   const { register: registerMutation } = useAuth();
 
+  const addSalonMutation = useAddSalon();
+  const addEmployeesMutation = useAddEmployees();
+
   const form = useForm<OwnerRegistrationFormSchemaProps>({
     resolver: zodResolver(ownerRegistrationFormSchema) as any,
     defaultValues: {
-      formType: OwnerRegistrationFormTypeEnum.CategorySelection,
-      ownerPersonalInformation: { email },
+      formType: OwnerRegistrationFormTypeEnum.SalonLocation,
+
+      salonLocation: {
+        name: '',
+        street: '',
+        city: '',
+        zipcode: '',
+        country: '',
+      },
+
+      categorySelection: {
+        categories: [],
+      },
     },
+    shouldUnregister: false,
   });
 
   const onRegister = (data: OwnerRegistrationFormSchemaProps) => {
@@ -45,7 +62,7 @@ const RegisterOwnerPage = () => {
     );
   };
 
-  const { watch, handleSubmit, setValue } = form;
+  const { watch, handleSubmit, setValue, getValues } = form;
 
   const formType = watch('formType');
 
@@ -64,8 +81,18 @@ const RegisterOwnerPage = () => {
         setFormType(OwnerRegistrationFormTypeEnum.CategorySelection);
         break;
 
-      case OwnerRegistrationFormTypeEnum.CategorySelection:
+      case OwnerRegistrationFormTypeEnum.CategorySelection: {
+        const values = getValues();
+        addSalonMutation.mutate(
+          { ...values.salonLocation, ...values.categorySelection },
+          {
+            onSuccess: () => {
+              setFormType(OwnerRegistrationFormTypeEnum.CategorySelection);
+            },
+          },
+        );
         break;
+      }
     }
   };
 

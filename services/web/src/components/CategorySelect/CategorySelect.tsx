@@ -18,10 +18,14 @@ const CategorySelect = () => {
     setValue,
     formState: { errors },
   } = useFormContext<OwnerRegistrationFormSchemaProps>();
-  const selected = watch('categorySelection.categories');
+  const selected = watch('categorySelection.categories') || [];
 
   const selectCategory = (value: SalonCategory) => {
-    setValue('categorySelection.categories', value, {
+    const categorySelected = selected.includes(value);
+
+    const newValue = categorySelected ? selected.filter((c) => c !== value) : [...selected, value];
+
+    setValue('categorySelection.categories', newValue, {
       shouldValidate: true,
     });
   };
@@ -38,7 +42,7 @@ const CategorySelect = () => {
       )}
       <div className={styles.categoryWrapper}>
         {CATEGORY_OPTIONS.map((c) => {
-          const active = selected === c.value;
+          const active = selected.includes(c.value);
           return (
             <button
               className={`${styles.categoryButton} ${active ? styles.active : ''}`}
