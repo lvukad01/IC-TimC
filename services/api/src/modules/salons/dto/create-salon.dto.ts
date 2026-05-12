@@ -1,11 +1,10 @@
 import { VALIDATION_MESSAGES } from '@lumii/messages';
 import {
+  countryCodeRegex,
   CreateSalonRequest,
   MAX_CITY_LENGTH,
-  MAX_COUNTRY_LENGTH,
   MAX_STREET_LENGTH,
   MIN_CITY_LENGTH,
-  MIN_COUNTRY_LENGTH,
   MIN_STREET_LENGTH,
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
@@ -38,9 +37,10 @@ export class CreateSalonDto implements CreateSalonRequest {
   })
   zipcode: string;
 
-  @ApiProperty({ example: 'Croatia' })
-  @IsString()
-  @Length(MIN_COUNTRY_LENGTH, MAX_COUNTRY_LENGTH)
+  @ApiProperty({ example: 'HR' })
+  @Matches(countryCodeRegex, {
+    message: VALIDATION_MESSAGES.INVALID_COUNTRY_NAME,
+  })
   country: string;
 
   @ApiProperty({

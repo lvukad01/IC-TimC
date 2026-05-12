@@ -1,15 +1,14 @@
 import { VALIDATION_MESSAGES } from '@lumii/messages';
 import {
   MAX_CITY_LENGTH,
-  MAX_COUNTRY_LENGTH,
   MAX_STREET_LENGTH,
   MIN_CITY_LENGTH,
-  MIN_COUNTRY_LENGTH,
   MIN_STREET_LENGTH,
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
-  zipcodeRegex,
   UpdateSalonRequest,
+  countryCodeRegex,
+  zipcodeRegex,
 } from '@lumii/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsOptional, IsString, Length, Matches } from 'class-validator';
@@ -41,9 +40,10 @@ export class UpdateSalonDto implements UpdateSalonRequest {
   @IsOptional()
   zipcode?: string;
 
-  @ApiPropertyOptional({ example: 'Croatia' })
-  @IsString()
-  @Length(MIN_COUNTRY_LENGTH, MAX_COUNTRY_LENGTH)
+  @ApiPropertyOptional({ example: 'HR' })
+  @Matches(countryCodeRegex, {
+    message: VALIDATION_MESSAGES.INVALID_COUNTRY_NAME,
+  })
   @IsOptional()
   country?: string;
 }

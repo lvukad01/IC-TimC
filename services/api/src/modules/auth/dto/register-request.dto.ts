@@ -1,10 +1,9 @@
 import { VALIDATION_MESSAGES } from '@lumii/messages';
 import {
+  countryCodeRegex,
   MAX_CITY_LENGTH,
-  MAX_COUNTRY_LENGTH,
   MAX_STREET_LENGTH,
   MIN_CITY_LENGTH,
-  MIN_COUNTRY_LENGTH,
   MIN_PASSWORD_LENGTH,
   MIN_STREET_LENGTH,
   NAME_MAX_LENGTH,
@@ -80,7 +79,9 @@ export class RegisterRequestDto implements RegisterRequest {
 
   @ValidateIf((o) => o.role === UserRole.CLIENT)
   @IsDefined()
-  @ApiProperty({ description: 'Country' })
-  @Length(MIN_COUNTRY_LENGTH, MAX_COUNTRY_LENGTH)
+  @ApiProperty({ description: 'Country code' })
+  @Matches(countryCodeRegex, {
+    message: VALIDATION_MESSAGES.INVALID_COUNTRY_NAME,
+  })
   country?: string;
 }

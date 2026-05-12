@@ -1,4 +1,4 @@
-export const nameRegex = /^[a-zA-ZčćšđžČĆŠĐŽ\s]$/;
+export const nameRegex = /^[a-zA-ZčćšđžČĆŠĐŽ\s]+$/;
 export const NAME_MIN_LENGTH = 3;
 export const NAME_MAX_LENGTH = 50;
 export const MIN_PASSWORD_LENGTH = 8;
@@ -11,6 +11,5 @@ export const MIN_STREET_LENGTH = 5;
 export const MAX_STREET_LENGTH = 100;
 export const MIN_ZIP_LENGTH = 4;
 export const MAX_ZIP_LENGTH = 10;
-export const MIN_COUNTRY_LENGTH = 2;
-export const MAX_COUNTRY_LENGTH = 100;
+export const countryCodeRegex = /^[A-Z]{2}$/;
 export const zipcodeRegex = /^\d+$/;

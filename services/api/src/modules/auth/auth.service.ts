@@ -43,7 +43,9 @@ export class AuthService {
   }
 
   async register(user: RegisterRequestDto): Promise<AccessTokenDto> {
-    const existingUser = await this.usersService.findOneByEmail(user.email);
+    const existingUser = await this.usersService.findOneByEmailWithoutThrow(
+      user.email,
+    );
     if (existingUser) {
       throw new ConflictException(AUTH_MESSAGES.EMAIL_EXISTS);
     }

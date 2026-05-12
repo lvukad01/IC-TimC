@@ -1,10 +1,9 @@
 import { VALIDATION_MESSAGES } from '@lumii/messages';
 import {
+  countryCodeRegex,
   MAX_CITY_LENGTH,
-  MAX_COUNTRY_LENGTH,
   MAX_STREET_LENGTH,
   MIN_CITY_LENGTH,
-  MIN_COUNTRY_LENGTH,
   MIN_STREET_LENGTH,
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
@@ -12,6 +11,7 @@ import {
 } from '@lumii/types';
 import { z } from 'zod';
 
+console.log(countryCodeRegex);
 export const salonLocationSchema = z.object({
   name: z
     .string()
@@ -28,10 +28,7 @@ export const salonLocationSchema = z.object({
     .min(MIN_CITY_LENGTH, VALIDATION_MESSAGES.minMsg(MIN_CITY_LENGTH))
     .max(MAX_STREET_LENGTH, VALIDATION_MESSAGES.maxMsg(MAX_CITY_LENGTH)),
   zipcode: z.string().regex(zipcodeRegex, VALIDATION_MESSAGES.INVALID_ZIPCODE_FORMAT),
-  country: z
-    .string()
-    .min(MIN_COUNTRY_LENGTH, VALIDATION_MESSAGES.minMsg(MIN_COUNTRY_LENGTH))
-    .max(MAX_COUNTRY_LENGTH, VALIDATION_MESSAGES.maxMsg(MAX_COUNTRY_LENGTH)),
+  country: z.string().regex(countryCodeRegex, VALIDATION_MESSAGES.INVALID_COUNTRY_NAME),
 });
 
 export type SalonLocationFormSchemaProps = z.infer<typeof salonLocationSchema>;

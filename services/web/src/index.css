@@ -1,3 +1,5 @@
+@import './styles/variables.scss';
+
 @font-face {
   font-family: 'Outfit';
   src: url('/src/assets/fonts/OutfitBold.ttf') format('truetype');
@@ -5,6 +7,30 @@
   font-style: normal;
 }
 
-h1 {
+@font-face {
+  font-family: 'Inter';
+  src: url('/src/assets/fonts/Inter-SemiBold.otf');
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: 'Inter';
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: 'Outfit', sans-serif;
+}
+
+button {
+  color: white;
+  outline: none;
+  border: none;
+  cursor: pointer;
 }

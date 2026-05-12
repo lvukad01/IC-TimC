@@ -6,39 +6,42 @@ const FormInput = (props: TextFieldProps) => {
       {...props}
       sx={{
         '& .MuiOutlinedInput-root': {
-          borderRadius: 2,
-          fontSize: '22px',
+          borderRadius: 'var(--main-border-radius)',
+          height: 40,
+          display: 'flex',
+          alignItems: 'center',
 
           '& fieldset': {
             borderWidth: '2px',
-            borderColor: 'var(--bg-color-brown)',
+            borderColor: '#A59DBD',
           },
           '& .MuiInput-underline:before': {
             borderBottomColor: 'red',
           },
           '&:hover fieldset': {
-            borderColor: 'var(--color-peach)',
+            borderColor: 'var(--color-purple)',
             transition: 'border-color 0.2s ease',
           },
 
           '&.Mui-focused fieldset': {
-            borderColor: 'var(--color-peach)',
-            borderWidth: 4,
+            borderColor: 'var(--color-purple)',
+            borderWidth: 3,
           },
         },
 
         '& label.MuiInputLabel-root': {
+          fontSize: '18px',
           color: 'rgba(0,0,0,0.7)',
-          fontSize: '22px',
         },
 
         '& .MuiInputBase-input': {
           color: 'black',
         },
+
         '& .MuiFormHelperText-root': {
           color: 'red',
           fontWeight: 'bold',
-          fontSize: '16px',
+          fontSize: '14px',
         },
         '& label.Mui-focused': {
           color: 'black',
