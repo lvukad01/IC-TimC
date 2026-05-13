@@ -1,14 +1,4 @@
-.container {
-  position: relative;
-  padding: 0px 45px;
-  min-height: 100vh;
-}
-
-.title {
-  margin: 24px 0px;
-}
-
-.submitButton {
+.modalButton {
   margin-top: 24px;
   width: 100%;
   height: 40px;
@@ -20,6 +10,6 @@
   transition: background-color 0.2s ease;
 }
 
-.submitButton:hover {
+.modalButton:hover {
   background-color: var(--color-purple-hover);
 }

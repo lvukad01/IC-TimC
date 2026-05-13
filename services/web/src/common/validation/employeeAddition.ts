@@ -2,7 +2,7 @@ import { VALIDATION_MESSAGES } from '@lumii/messages';
 import { EmployeeRole, NAME_MAX_LENGTH, NAME_MIN_LENGTH } from '@lumii/types';
 import { z } from 'zod';
 
-export const employeeAdditionInformationSchema = z.object({
+export const employeeAdditionSchema = z.object({
   name: z
     .string()
     .min(NAME_MIN_LENGTH, VALIDATION_MESSAGES.minMsg(NAME_MIN_LENGTH))
@@ -13,4 +13,9 @@ export const employeeAdditionInformationSchema = z.object({
   isActive: z.boolean(),
 });
 
-export type EmployeeAdditionFormSchemaProps = z.infer<typeof employeeAdditionInformationSchema>;
+export const employeesAdditionSchema = z.object({
+  employees: z.array(employeeAdditionSchema),
+});
+
+export type EmployeesAdditionFormSchemaProps = z.infer<typeof employeesAdditionSchema>;
+export type EmployeeAdditionFormSchemaProps = z.infer<typeof employeeAdditionSchema>;

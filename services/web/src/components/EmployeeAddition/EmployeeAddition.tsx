@@ -1,56 +1,47 @@
-import CountrySelect from '@components/CountrySelect';
-import FormInput from '@components/FormInput';
-import styles from '@pages/RegisterOwnerPage/RegisterOwnerPage.module.scss';
+import plus from '@assets/media/plus.svg';
+import profileIcon from '@assets/media/profile_icon.svg';
+import AddEmployeeModal from '@components/AddEmployeeModal';
 import type { OwnerRegistrationFormSchemaProps } from '@validation/ownerRegistrationForm';
-import { useFormContext } from 'react-hook-form';
+import { useState } from 'react';
+import { useFieldArray, useFormContext } from 'react-hook-form';
+import styles from './EmployeeAddition.module.scss';
 
 const EmployeeAddition = () => {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext<OwnerRegistrationFormSchemaProps>();
+  const { getValues } = useFormContext<OwnerRegistrationFormSchemaProps>();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { control } = useFormContext<OwnerRegistrationFormSchemaProps>();
 
+  const { fields, append, remove } = useFieldArray<OwnerRegistrationFormSchemaProps>({
+    control,
+    name: 'employeesAddition.employees',
+  });
+
+  const owner = getValues('ownerPersonalInformation');
   return (
-    <>
-      <h1 className={styles.title}>Unesi ime i lokaciju svog salona</h1>
-      <FormInput
-        label="Ime salona"
-        fullWidth
-        margin="normal"
-        {...register('salonLocation.name')}
-        error={!!errors.salonLocation?.name}
-        helperText={errors.salonLocation?.name?.message}
-      />
+    <div className={styles.additionWrapper}>
+      <h1 className={styles.title}>Unesi zaposlenike</h1>
+      <h2 className={styles.subtitle}>Unesi jednog ili više zaposlenika ako radiš u timu</h2>
+      <div className={styles.ownerInfo}>
+        <img className={styles.icon} src={profileIcon} alt="profil ikona" />
+        <div className={styles.ownerInfoWrapper}>
+          <span className={styles.ownerName}>
+            {owner.firstName} {owner.lastName}
+          </span>
+          <span className={styles.role}>vlasnik</span>
+        </div>
+      </div>
+      <button className={styles.plusIcon} onClick={() => setIsModalOpen(true)}>
+        <img src={plus} alt="plus" />
+      </button>
 
-      <FormInput
-        label="Ulica"
-        fullWidth
-        margin="normal"
-        {...register('salonLocation.street')}
-        error={!!errors.salonLocation?.street}
-        helperText={errors.salonLocation?.street?.message}
+      <AddEmployeeModal
+        onAdd={(employee) => {
+          append(employee);
+        }}
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
       />
-
-      <FormInput
-        label="Grad"
-        fullWidth
-        margin="normal"
-        {...register('salonLocation.city')}
-        error={!!errors.salonLocation?.city}
-        helperText={errors.salonLocation?.city?.message}
-      />
-
-      <FormInput
-        label="Poštanski broj"
-        fullWidth
-        margin="normal"
-        {...register('salonLocation.zipcode')}
-        error={!!errors.salonLocation?.zipcode}
-        helperText={errors.salonLocation?.zipcode?.message}
-      />
-
-      <CountrySelect name="salonLocation.country" />
-    </>
+    </div>
   );
 };
 

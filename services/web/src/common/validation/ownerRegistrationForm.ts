@@ -3,6 +3,7 @@ import {
   categorySelectionSchema,
   type CategorySelectionFormSchemaProps,
 } from './categorySelection';
+import { employeesAdditionSchema, type EmployeesAdditionFormSchemaProps } from './employeeAddition';
 import {
   ownerPersonalInformationSchema,
   type PersonalInformationFormSchemaProps,
@@ -29,6 +30,10 @@ export const ownerRegistrationFormSchema = z.discriminatedUnion('formType', [
     formType: z.literal(OwnerRegistrationFormTypeEnum.CategorySelection),
     categorySelection: categorySelectionSchema,
   }),
+  z.object({
+    formType: z.literal(OwnerRegistrationFormTypeEnum.EmployeeAddition),
+    employees: employeesAdditionSchema,
+  }),
 ]);
 
 export type OwnerRegistrationFormSchemaProps = {
@@ -36,4 +41,5 @@ export type OwnerRegistrationFormSchemaProps = {
   ownerPersonalInformation: PersonalInformationFormSchemaProps;
   salonLocation: SalonLocationFormSchemaProps;
   categorySelection: CategorySelectionFormSchemaProps;
+  employeesAddition: EmployeesAdditionFormSchemaProps;
 };

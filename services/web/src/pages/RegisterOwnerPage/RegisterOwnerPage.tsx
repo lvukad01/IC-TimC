@@ -1,4 +1,5 @@
 import CategorySelect from '@components/CategorySelect';
+import EmployeeAddition from '@components/EmployeeAddition';
 import OwnerPersonalInformation from '@components/Forms/OwnerPersonalInformation';
 import SalonLocation from '@components/Forms/SalonLocation';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -11,6 +12,7 @@ import {
   OwnerRegistrationFormTypeEnum,
   type OwnerRegistrationFormSchemaProps,
 } from '@validation/ownerRegistrationForm';
+import { useRef } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation } from 'react-router-dom';
 import styles from './RegisterOwnerPage.module.scss';
@@ -22,11 +24,16 @@ const RegisterOwnerPage = () => {
 
   const addSalonMutation = useAddSalon();
   const addEmployeesMutation = useAddEmployees();
+  const salonIdRef = useRef<string | null>(null);
 
   const form = useForm<OwnerRegistrationFormSchemaProps>({
     resolver: zodResolver(ownerRegistrationFormSchema) as any,
     defaultValues: {
       formType: OwnerRegistrationFormTypeEnum.EmployeeAddition,
+
+      ownerPersonalInformation: {
+        email,
+      },
 
       salonLocation: {
         name: '',
@@ -86,11 +93,24 @@ const RegisterOwnerPage = () => {
         addSalonMutation.mutate(
           { ...values.salonLocation, ...values.categorySelection },
           {
-            onSuccess: () => {
-              setFormType(OwnerRegistrationFormTypeEnum.CategorySelection);
+            onSuccess: (response) => {
+              salonIdRef.current = response.id;
+              setFormType(OwnerRegistrationFormTypeEnum.EmployeeAddition);
             },
           },
         );
+        break;
+      }
+      case OwnerRegistrationFormTypeEnum.EmployeeAddition: {
+        const values = getValues();
+
+        addEmployeesMutation.mutate({
+          salonId: salonIdRef.current!,
+          data: {
+            employees: values.employeesAddition?.employees ?? [],
+          },
+        });
+
         break;
       }
     }
@@ -105,7 +125,7 @@ const RegisterOwnerPage = () => {
           )}
           {formType === OwnerRegistrationFormTypeEnum.SalonLocation && <SalonLocation />}
           {formType === OwnerRegistrationFormTypeEnum.CategorySelection && <CategorySelect />}
-
+          {formType === OwnerRegistrationFormTypeEnum.EmployeeAddition && <EmployeeAddition />}
           <button className={styles.submitButton} type="submit">
             Nastavi
           </button>

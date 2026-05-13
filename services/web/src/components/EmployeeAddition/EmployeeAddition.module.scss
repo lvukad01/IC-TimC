@@ -1,0 +1,57 @@
+.additionWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+}
+
+.title {
+  margin-top: 24px;
+}
+
+.subtitle {
+  font-size: 12px;
+  font-weight: 300;
+  margin-bottom: 24px;
+}
+
+.ownerInfo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 18px 20px;
+  border: 2px solid var(--color-purple);
+  border-radius: var(--main-border-radius);
+}
+
+.ownerInfoWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.ownerName {
+  font-size: 24px;
+  color: var(--color-purple);
+}
+
+.role {
+  align-self: flex-start;
+  color: gray;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.error {
+  font-size: 12px;
+  color: red;
+  margin-bottom: 12px;
+}
+
+.plusIcon {
+  background: none;
+  width: 48px;
+}
