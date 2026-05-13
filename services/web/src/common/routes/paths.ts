@@ -4,4 +4,5 @@ export enum AppPaths {
   LOGIN = '/login',
   HOME = '/',
   UNAUTHORIZED = '/unauthorized',
+  OWNER_SALON_INTRO = '/owner-salon-intrp',
 }

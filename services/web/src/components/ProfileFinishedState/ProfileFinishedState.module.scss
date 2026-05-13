@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.check {
+  width: 90px;
+}
+
+.message {
+  margin-bottom: 12px;
+}

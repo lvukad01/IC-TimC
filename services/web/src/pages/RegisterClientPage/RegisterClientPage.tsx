@@ -56,23 +56,25 @@ const RegisterClientPage = () => {
             helperText={errors.email?.message}
           />
 
-          <FormInput
-            label="Ime"
-            fullWidth
-            margin="normal"
-            {...register('firstName')}
-            error={!!errors.firstName}
-            helperText={errors.firstName?.message}
-          />
+          <div className={styles.nameRow}>
+            <FormInput
+              label="Ime"
+              fullWidth
+              margin="normal"
+              {...register('firstName')}
+              error={!!errors.firstName}
+              helperText={errors.firstName?.message}
+            />
 
-          <FormInput
-            label="Prezime"
-            fullWidth
-            margin="normal"
-            {...register('lastName')}
-            error={!!errors.lastName}
-            helperText={errors.lastName?.message}
-          />
+            <FormInput
+              label="Prezime"
+              fullWidth
+              margin="normal"
+              {...register('lastName')}
+              error={!!errors.lastName}
+              helperText={errors.lastName?.message}
+            />
+          </div>
 
           <FormInput
             label="Broj mobitela"
@@ -84,7 +86,7 @@ const RegisterClientPage = () => {
           />
 
           <FormInput
-            label="Password"
+            label="Lozinka"
             type="password"
             fullWidth
             margin="normal"

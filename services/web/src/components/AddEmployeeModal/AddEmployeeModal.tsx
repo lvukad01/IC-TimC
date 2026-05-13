@@ -40,7 +40,6 @@ const AddEmployeeModal = ({ isOpen, onClose, onAdd }: AddEmployeeModalProps) => 
   if (!isOpen) return null;
 
   const onSubmit = (data: EmployeeAdditionFormSchemaProps) => {
-    console.log('Add data: ', data);
     onAdd(data);
     onClose();
     reset();
@@ -51,7 +50,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onAdd }: AddEmployeeModalProps) => 
       <div className={styles.employeeModal}>
         <h2 className={styles.modalTitle}>Dodaj zaposlenika</h2>
 
-        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
+        <div className={styles.form}>
           <FormInput
             label="Ime zaposlenika"
             fullWidth
@@ -108,14 +107,14 @@ const AddEmployeeModal = ({ isOpen, onClose, onAdd }: AddEmployeeModalProps) => 
             <span className={styles.spanText}>Aktivan</span>
           </label>
 
-          <button className={styles.modalButton} type="submit">
+          <button className={styles.modalButton} type="button" onClick={handleSubmit(onSubmit)}>
             Dodaj
           </button>
 
           <button className={styles.modalButton} type="button" onClick={onClose}>
             Odustani
           </button>
-        </form>
+        </div>
       </div>
     </Modal>
   );

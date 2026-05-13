@@ -15,6 +15,7 @@ export enum OwnerRegistrationFormTypeEnum {
   SalonLocation = 'salonLocation',
   CategorySelection = 'categorySelection',
   EmployeeAddition = 'employeeAddition',
+  Completed = 'completed',
 }
 
 export const ownerRegistrationFormSchema = z.discriminatedUnion('formType', [
