@@ -48,10 +48,10 @@ const AddEmployeeModal = ({ isOpen, onClose, onAdd }: AddEmployeeModalProps) => 
 
   return (
     <Modal>
-      <div className={styles.modal}>
-        <h2>Dodaj zaposlenika</h2>
+      <div className={styles.employeeModal}>
+        <h2 className={styles.modalTitle}>Dodaj zaposlenika</h2>
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form className={styles.form} onSubmit={handleSubmit(onSubmit)}>
           <FormInput
             label="Ime zaposlenika"
             fullWidth
@@ -66,6 +66,36 @@ const AddEmployeeModal = ({ isOpen, onClose, onAdd }: AddEmployeeModalProps) => 
             control={control}
             render={({ field }) => (
               <Select
+                styles={{
+                  control: (base, state) => ({
+                    ...base,
+                    borderColor: state.isFocused
+                      ? 'var(--color-purple)'
+                      : 'var(--input-border-color)',
+                    borderRadius: 'var(--main-border-radius)',
+                    borderWidth: '2px',
+                    padding: '0px 16.5px',
+
+                    '&:hover': {
+                      borderColor: 'var(--color-purple)',
+                    },
+                  }),
+
+                  option: (base, state) => {
+                    let backgroundColor = 'white';
+
+                    if (state.isSelected) {
+                      backgroundColor = 'var(--color-purple)';
+                    } else if (state.isFocused) {
+                      backgroundColor = '#f3f0ff';
+                    }
+
+                    return {
+                      ...base,
+                      backgroundColor,
+                    };
+                  },
+                }}
                 options={categories}
                 onChange={(option) => field.onChange(option?.value)}
                 value={categories.find((c) => c.value === field.value)}
@@ -75,7 +105,7 @@ const AddEmployeeModal = ({ isOpen, onClose, onAdd }: AddEmployeeModalProps) => 
           />
           <label>
             <input type="checkbox" {...register('isActive')} />
-            <span>Active</span>
+            <span className={styles.spanText}>Aktivan</span>
           </label>
 
           <button className={styles.modalButton} type="submit">

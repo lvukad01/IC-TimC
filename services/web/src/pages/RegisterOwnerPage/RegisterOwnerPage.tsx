@@ -29,7 +29,7 @@ const RegisterOwnerPage = () => {
   const form = useForm<OwnerRegistrationFormSchemaProps>({
     resolver: zodResolver(ownerRegistrationFormSchema) as any,
     defaultValues: {
-      formType: OwnerRegistrationFormTypeEnum.EmployeeAddition,
+      formType: OwnerRegistrationFormTypeEnum.PersonalInformation,
 
       ownerPersonalInformation: {
         email,
@@ -45,6 +45,9 @@ const RegisterOwnerPage = () => {
 
       categorySelection: {
         categories: [],
+      },
+      employeesAddition: {
+        employees: [],
       },
     },
     shouldUnregister: false,
@@ -103,7 +106,6 @@ const RegisterOwnerPage = () => {
       }
       case OwnerRegistrationFormTypeEnum.EmployeeAddition: {
         const values = getValues();
-
         addEmployeesMutation.mutate({
           salonId: salonIdRef.current!,
           data: {

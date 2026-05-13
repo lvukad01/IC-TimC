@@ -3,6 +3,7 @@
   flex-direction: column;
   align-items: center;
   gap: 24px;
+  margin-top: 48px;
 }
 
 .title {
@@ -54,4 +55,47 @@
 .plusIcon {
   background: none;
   width: 48px;
+}
+
+.employeeList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 18px 20px;
+  border: 2px solid var(--color-purple);
+  border-radius: var(--main-border-radius);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.removeButton {
+  position: absolute;
+  top: -10px;
+  right: -5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  will-change: transform;
+  transform-origin: center center;
+  transition: transform 0.1s linear;
+}
+
+.removeButton:hover {
+  transform: scale(1.05);
 }

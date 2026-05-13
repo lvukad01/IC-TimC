@@ -32,7 +32,7 @@ export const ownerRegistrationFormSchema = z.discriminatedUnion('formType', [
   }),
   z.object({
     formType: z.literal(OwnerRegistrationFormTypeEnum.EmployeeAddition),
-    employees: employeesAdditionSchema,
+    employeesAddition: employeesAdditionSchema,
   }),
 ]);
 
