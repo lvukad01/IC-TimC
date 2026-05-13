@@ -24,7 +24,6 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { EmployeesModule } from './modules/employees/employees.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
-import { FilesController } from './modules/files/files.controller';
 import { FilesModule } from './modules/files/files.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { PaymentsModule } from './modules/payments/payments.module';
@@ -65,7 +64,7 @@ import { ServiceCategoriesModule } from './modules/service-categories/service-ca
       rootPath: join(__dirname, '..', '..', '..', 'web', 'dist'),
     }),
   ],
-  controllers: [AppController, FilesController],
+  controllers: [AppController],
   providers: [
     ResponseInterceptor,
     AppService,

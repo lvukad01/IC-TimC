@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import styles from './SearchPage.module.css';
+import { getSalons } from '@api/salons';
 
 const SearchLocationPage = () => {
   const navigate = useNavigate();
@@ -9,7 +10,7 @@ const SearchLocationPage = () => {
   const [filtered, setFiltered] = useState<string[]>([]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/salons')
+    getSalons()
       .then((res) => res.json())
       .then((data) => {
         const uniqueCities = [...new Set<string>(data.results?.map((s: any) => s.city) ?? [])];

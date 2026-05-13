@@ -121,12 +121,12 @@ async function main() {
       media: {
         create: [
           {
-            key: 'salons/lumii/profile.jpg',
+            key: 'lumii_beauty_studio.svg',
             type: MediaType.PROFILE,
             sortOrder: 1,
           },
           {
-            key: 'salons/lumii/gallery-1.jpg',
+            key: 'lumii_beauty_studio_1.svg',
             type: MediaType.GALLERY,
             sortOrder: 2,
           },
@@ -161,9 +161,14 @@ async function main() {
       media: {
         create: [
           {
-            key: 'salons/glow/profile.jpg',
+            key: 'glow_studio_profile.svg',
             type: MediaType.PROFILE,
             sortOrder: 1,
+          },
+          {
+            key: 'glow_studio_1.svg',
+            type: MediaType.GALLERY,
+            sortOrder: 2,
           },
         ],
       },
@@ -188,9 +193,14 @@ async function main() {
       media: {
         create: [
           {
-            key: 'salons/barber/profile.jpg',
+            key: 'barber_house_profile.svg',
             type: MediaType.PROFILE,
             sortOrder: 1,
+          },
+          {
+            key: 'barber_house_1.svg',
+            type: MediaType.GALLERY,
+            sortOrder: 2,
           },
         ],
       },
@@ -215,9 +225,14 @@ async function main() {
       media: {
         create: [
           {
-            key: 'salons/luxe/profile.jpg',
+            key: 'luxe_hair_profile.svg',
             type: MediaType.PROFILE,
             sortOrder: 1,
+          },
+          {
+            key: 'luxe_hair_1.svg',
+            type: MediaType.GALLERY,
+            sortOrder: 2,
           },
         ],
       },
@@ -242,9 +257,14 @@ async function main() {
       media: {
         create: [
           {
-            key: 'salons/atelier/profile.jpg',
+            key: 'makeup_atelier_profile.svg',
             type: MediaType.PROFILE,
             sortOrder: 1,
+          },
+          {
+            key: 'makeup_atelier_1.svg',
+            type: MediaType.GALLERY,
+            sortOrder: 2,
           },
         ],
       },
@@ -354,6 +374,61 @@ async function main() {
       comment: 'Great service and friendly staff!',
     },
   });
+
+  const salons = [salon, salon2, salon3, salon4, salon5];
+
+  const reviewComments = [
+    'Amazing experience!',
+    'Very professional staff.',
+    'Would definitely come again.',
+    'Super clean and modern salon.',
+    'Loved the result!',
+    'Friendly atmosphere and great service.',
+    'Best salon experience so far.',
+    'Highly recommended.',
+    'Everything was perfect.',
+    'Fast and quality service.',
+  ];
+
+  for (let i = 0; i < 10; i++) {
+    const selectedSalon = salons[Math.floor(Math.random() * salons.length)];
+
+    const employee = await prisma.employees.findFirst({
+      where: {
+        salonId: selectedSalon.id,
+      },
+    });
+
+    const service = await prisma.services.findFirst({
+      where: {
+        salonId: selectedSalon.id,
+      },
+    });
+
+    if (!employee || !service) continue;
+
+    const booking = await prisma.bookings.create({
+      data: {
+        clientId: client.id,
+        salonId: selectedSalon.id,
+        serviceId: service.id,
+        employeeId: employee.id,
+        startTime: new Date(),
+        endTime: new Date(Date.now() + 60 * 60 * 1000),
+        status: BookingStatus.COMPLETED,
+      },
+    });
+
+    await prisma.reviews.create({
+      data: {
+        bookingId: booking.id,
+        clientId: client.id,
+        salonId: selectedSalon.id,
+        rating: Math.floor(Math.random() * 2) + 4,
+        comment: reviewComments[i],
+      },
+    });
+  }
 
   await prisma.favorites.create({
     data: {

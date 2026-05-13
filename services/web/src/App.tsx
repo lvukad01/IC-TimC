@@ -10,6 +10,7 @@ import ErrorBoundary from 'common/boundary/ErrorBoundary';
 import { AppPaths } from 'common/routes/paths';
 import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import DateTimePage from '@pages/DateTimePage/DateTimePage';
 
 const queryClient = new QueryClient();
 const LoginPage = lazy(() => import('@pages/LoginPage'));
@@ -30,6 +31,7 @@ function App() {
               <Route path={AppPaths.SEARCH_SERVICE} element={<SearchServicePage />} />
               <Route path={AppPaths.SEARCH_LOCATION} element={<SearchLocationPage />} />
               <Route path={AppPaths.SEARCH_RESULTS} element={<SearchResultsPage />} />{' '}
+              <Route path="/search/date-time" element={<DateTimePage />} />
             </Routes>
           </Layout>
         </AuthProvider>

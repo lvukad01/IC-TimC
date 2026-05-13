@@ -18,7 +18,11 @@ export const SalonCard = ({ image, name, rating, type, address, borderColor }: S
   return (
     <div className={styles.card} style={{ borderColor: borderColor ?? '#e0e0e0' }}>
       <div className={styles.imageWrapper}>
-        <img src={image} alt={name} className={styles.image} />
+        {image ? (
+          <img src={image} alt={name} className={styles.image} />
+        ) : (
+          <div className={styles.image} />
+        )}{' '}
         <button className={styles.heartBtn} onClick={() => setLiked((prev) => !prev)} type="button">
           <img
             src={liked ? favoriteOn : favoriteOff}

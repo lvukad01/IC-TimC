@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './SearchPage.module.css';
 import { api } from '../../api';
+import { SalonCard } from '../../components/Home/SalonCard/SalonCard';
+import { AppPaths } from 'common/routes/paths';
+import { getSignedFiles } from '@api/files';
 
 const SearchResultsPage = () => {
   const navigate = useNavigate();
@@ -14,14 +17,31 @@ const SearchResultsPage = () => {
 
     if (state?.search) params.append('search', state.search);
     if (state?.city) params.append('city', state.city);
-    if (state?.category && state.category !== 'Sve') {
+    if (state?.category && state.category !== 'Sve' && state.category !== 'ALL') {
       params.append('category', state.category.toUpperCase().replace(' ', '_'));
     }
+    if (state?.date) params.append('date', state.date);
+    if (state?.serviceId) params.append('serviceId', state.serviceId);
 
     api
       .get(`/salons?${params.toString()}`)
-      .then((data) => {
-        setSalons(data?.results ?? data ?? []);
+      .then(async (data) => {
+        const results = data?.results ?? data ?? [];
+
+        const keys = results.map((salon: any) => salon.profileImageKey).filter(Boolean);
+
+        const signedData = keys.length > 0 ? await getSignedFiles(keys) : { files: [] };
+
+        const urlMap = new Map<string, string>(
+          signedData.files.map((file) => [file.key, file.url]),
+        );
+
+        const salonsWithImages = results.map((salon: any) => ({
+          ...salon,
+          imageUrl: salon.profileImageKey ? (urlMap.get(salon.profileImageKey) ?? null) : null,
+        }));
+
+        setSalons(salonsWithImages);
       })
       .catch((error) => {
         console.error(error);
@@ -38,9 +58,22 @@ const SearchResultsPage = () => {
         <button className={styles.backButton} onClick={() => navigate(-1)}>
           ←
         </button>
-        <span className={styles.filterLabel}>
-          {state?.category || 'Sve'} • {state?.city || 'Bilo gdje'}
-        </span>
+
+        <span className={styles.filterLabel}>{state?.category || 'Sve'}</span>
+
+        <button
+          className={styles.timeFilter}
+          onClick={() =>
+            navigate('/search/date-time', {
+              state: {
+                ...state,
+                returnTo: AppPaths.SEARCH_RESULTS,
+              },
+            })
+          }
+        >
+          ◷ {state?.date ? state.date : 'Bilo kada'}
+        </button>
       </div>
 
       {loading ? (
@@ -50,24 +83,16 @@ const SearchResultsPage = () => {
       ) : (
         <div className={styles.list}>
           {salons.map((salon) => (
-            <article
-              key={salon.id}
-              className={styles.card}
-              onClick={() => navigate(`/salons/${salon.id}`)}
-            >
-              <div className={styles.imageWrapper}>
-                <img src={salon.media?.[0]?.url ?? ''} alt={salon.name} className={styles.image} />
-                <button className={styles.heart}>♡</button>
-              </div>
-              <div className={styles.info}>
-                <div className={styles.nameRow}>
-                  <h2>{salon.name}</h2>
-                  <span>★ {salon.avgRating?.toFixed(1) ?? '—'}</span>
-                </div>
-                <p>{salon.city}</p>
-                <p>{salon.street}</p>
-              </div>
-            </article>
+            <div key={salon.id} onClick={() => navigate(`/salons/${salon.id}`)}>
+              <SalonCard
+                image={salon.imageUrl ?? ''}
+                name={salon.name}
+                rating={salon.avgRating ?? 0}
+                type={salon.type ?? ''}
+                address={`${salon.street}, ${salon.city}`}
+                borderColor="#DC6AB8"
+              />
+            </div>
           ))}
         </div>
       )}
