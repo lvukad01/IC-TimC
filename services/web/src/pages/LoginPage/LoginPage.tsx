@@ -1,3 +1,4 @@
+import rectangle from '@assets/media/Rectangle 24.png';
 import FormInput from '@components/FormInput';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAuth from '@hooks/useAuth';
@@ -9,6 +10,7 @@ import { AppPaths } from 'common/routes/paths';
 import { useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { FaArrowRight } from 'react-icons/fa';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import styles from './LoginPage.module.scss';
 
@@ -49,7 +51,7 @@ const LoginPage = () => {
       checkMail.mutate(data.email, {
         onSuccess: (response) => {
           if (!response.exists) {
-            if (loginMode === LoginMode.OWNER)
+            if (loginMode == LoginMode.OWNER)
               navigate(AppPaths.REGISTER_SALON_OWNER, {
                 state: { email: data.email },
               });
@@ -83,7 +85,7 @@ const LoginPage = () => {
   console.log(errors);
 
   return (
-    <div>
+    <div className={styles.container}>
       <h1 className={styles.title}>Prijavi se ili registriraj</h1>
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -109,9 +111,26 @@ const LoginPage = () => {
               helperText={errors.password?.message}
             />
           )}
-          <button type="submit">{step === LoginSteps.EMAIL ? 'Nastavi' : 'Prijavi se'}</button>
+          <button className={styles.continueButton} type="submit">
+            {step === LoginSteps.EMAIL ? 'Nastavi' : 'Prijavi se'}
+          </button>
         </form>
       </FormProvider>
+      {(!loginMode || loginMode === LoginMode.CLIENT) && (
+        <div className={styles.ownerContainer}>
+          <img className={styles.rectangle} src={rectangle} alt="rectangle" />
+          <div className={styles.wrapper}>
+            <h2>Imaš svoj salon?</h2>
+            <button
+              className={styles.ownerRegisterButton}
+              onClick={() => navigate(`${AppPaths.LOGIN}?mode=owner`)}
+            >
+              <span>lumii za poduzeća </span>
+              <FaArrowRight className={styles.arrow} />
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

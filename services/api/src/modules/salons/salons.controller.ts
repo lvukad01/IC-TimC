@@ -33,7 +33,7 @@ import type {
 import 'multer';
 import { AddCategoryDto } from './dto/add-category.dto';
 import { CreatePaymentConfigDto } from './dto/create-payment-config.dto';
-import type { CreateSalonDto } from './dto/create-salon.dto';
+import { CreateSalonDto } from './dto/create-salon.dto';
 import { FindSalonsQueryDto } from './dto/find-salons-query.dto';
 import {
   SalonDetailResponseDto,

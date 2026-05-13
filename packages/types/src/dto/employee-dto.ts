@@ -1,6 +1,11 @@
 export interface CreateEmployeeRequest {
   name: string;
   role: string;
+  isActive: boolean;
+}
+
+export interface CreateEmployeesRequest {
+  employees: CreateEmployeeRequest[];
 }
 
 export interface UpdateEmployeeRequest {

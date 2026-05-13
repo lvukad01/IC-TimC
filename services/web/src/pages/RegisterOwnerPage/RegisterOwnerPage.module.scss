@@ -1,0 +1,25 @@
+.container {
+  position: relative;
+  padding: 0px 40px;
+  min-height: 100vh;
+}
+
+.title {
+  margin: 24px 0px;
+}
+
+.submitButton {
+  margin-top: 24px;
+  width: 100%;
+  height: 40px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: var(--main-border-radius);
+  background-color: var(--color-purple);
+
+  transition: background-color 0.2s ease;
+}
+
+.submitButton:hover {
+  background-color: var(--color-purple-hover);
+}

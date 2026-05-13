@@ -1,5 +1,6 @@
 import { VALIDATION_MESSAGES } from '@lumii/messages';
 import {
+  countryCodeRegex,
   MAX_CITY_LENGTH,
   MAX_STREET_LENGTH,
   MIN_CITY_LENGTH,
@@ -51,9 +52,11 @@ export class UpdateUserDto {
   @Matches(phoneRegex, { message: VALIDATION_MESSAGES.INVALID_PHONE_FORMAT })
   phone?: string;
 
-  @ApiProperty({ example: 'Croatia', required: false })
+  @ApiProperty({ example: 'HR', required: false })
   @IsOptional()
-  @IsString()
+  @Matches(countryCodeRegex, {
+    message: VALIDATION_MESSAGES.INVALID_COUNTRY_NAME,
+  })
   country?: string;
 
   @ApiProperty({ example: 'Zagreb', required: false })
