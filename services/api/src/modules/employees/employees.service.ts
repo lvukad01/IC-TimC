@@ -1,7 +1,9 @@
+import { ActionResponseDto } from '@common/common';
 import { ErrorMessages } from '@lumii/messages';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AddEmployeeDto } from './dto/add-employee.dto';
+import { AddEmployeesDto } from './dto/add-employees.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 
 @Injectable()
@@ -43,6 +45,22 @@ export class EmployeesService {
         isActive: addEmployeeDto.isActive,
       },
     });
+  }
+
+  async addEmployees(
+    salonId: string,
+    addEmployeesDto: AddEmployeesDto,
+  ): Promise<ActionResponseDto> {
+    await this.prisma.employees.createMany({
+      data: addEmployeesDto.employees.map((e) => ({
+        salonId: salonId,
+        name: e.name,
+        role: e.role,
+        isActive: e.isActive,
+      })),
+    });
+
+    return { message: 'Employees successfully added' };
   }
 
   updateEmployee(

@@ -18,20 +18,19 @@ export class GeocodingService {
   }
 
   async geocode(address: AddressInput): Promise<Coordinates> {
-    const url = 'https://geocode.googleapis.com/v4/geocode/address';
+    const url = 'https://maps.googleapis.com/maps/api/geocode/json';
+    const fullAddress = `${address.street}, ${address.zipcode} ${address.city}, ${address.country}`;
 
-    const params = {
-      addressLines: address.street,
-      postalCode: address.zipcode,
-      locality: address.city,
-      countryCode: address.country,
-      key: this.apiKey,
-    };
-
-    const response = await firstValueFrom(this.http.get(url, { params }));
+    const response = await firstValueFrom(
+      this.http.get(url, {
+        params: { address: fullAddress, key: this.apiKey },
+      }),
+    );
 
     const data = response.data;
     const result = data?.results?.[0];
+
+    console.log(result);
 
     if (result?.location)
       throw new GeocodingException(
@@ -39,8 +38,8 @@ export class GeocodingService {
       );
 
     return {
-      lat: result.location.latitude,
-      lng: result.location.longitude,
+      lat: result.geometry.location.lat,
+      lng: result.geometry.location.lng,
     };
   }
 }

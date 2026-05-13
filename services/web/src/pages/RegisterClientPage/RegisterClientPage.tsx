@@ -10,6 +10,7 @@ import {
 import { AppPaths } from 'common/routes/paths';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
+import styles from './RegisterClientPage.module.scss';
 
 const RegisterClientPage = () => {
   const location = useLocation();
@@ -42,7 +43,8 @@ const RegisterClientPage = () => {
     );
   };
   return (
-    <div>
+    <div className={styles.container}>
+      <h1 className={styles.title}>Napravi račun</h1>
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <FormInput
@@ -118,9 +120,11 @@ const RegisterClientPage = () => {
             helperText={errors.zipcode?.message}
           />
 
-          <CountrySelect />
+          <CountrySelect name="country" />
 
-          <button type="submit">Registriraj se</button>
+          <button className={styles.registerButton} type="submit">
+            Registriraj se
+          </button>
         </form>
       </FormProvider>
     </div>

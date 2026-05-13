@@ -7,7 +7,7 @@ export interface CreateSalonRequest {
   city: string;
   zipcode: string;
   country: string;
-  categories: string[];
+  categories: SalonCategory;
   lat?: number;
   lng?: number;
 }
@@ -74,4 +74,8 @@ export interface FindSalonsQuery extends PaginationQuery {
   limit: number;
   date?: string;
   serviceId?: string;
+}
+
+export interface AddCategoriesRequest {
+  categories: SalonCategory;
 }

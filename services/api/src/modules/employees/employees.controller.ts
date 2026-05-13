@@ -18,6 +18,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { AddEmployeeDto } from './dto/add-employee.dto';
+import { AddEmployeesDto } from './dto/add-employees.dto';
 import { EmployeeResponseDto } from './dto/employee-response.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeesService } from './employees.service';
@@ -55,6 +56,17 @@ export class EmployeesController {
     @Body() addEmployeeDto: AddEmployeeDto,
   ) {
     return this.employeesService.addEmployee(salonId, addEmployeeDto);
+  }
+
+  @Post('batch')
+  @ApiOperation({ summary: 'Add new employees to a salon' })
+  @ApiOkResponse({ type: ActionResponseDto })
+  @RolesAuth(UserRole.SALON_OWNER)
+  addEmployees(
+    @Param('salonId', ParseUUIDPipe) salonId: string,
+    @Body() addEmployeesDto: AddEmployeesDto,
+  ) {
+    return this.employeesService.addEmployees(salonId, addEmployeesDto);
   }
 
   @Patch(':id')

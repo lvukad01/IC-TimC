@@ -1,7 +1,7 @@
 import FormInput from '@components/FormInput';
+import styles from '@pages/RegisterOwnerPage/RegisterOwnerPage.module.scss';
 import type { OwnerRegistrationFormSchemaProps } from '@validation/ownerRegistrationForm';
 import { useFormContext } from 'react-hook-form';
-import styles from '../RegistrationForm/RegistrationForm.module.scss';
 
 const OwnerPersonalInformation = () => {
   const {
@@ -10,7 +10,8 @@ const OwnerPersonalInformation = () => {
   } = useFormContext<OwnerRegistrationFormSchemaProps>();
 
   return (
-    <fieldset className={styles.formInner}>
+    <>
+      <h1 className={styles.title}>Napravi račun</h1>
       <FormInput
         label="Email"
         fullWidth
@@ -56,7 +57,7 @@ const OwnerPersonalInformation = () => {
         error={!!errors.ownerPersonalInformation?.password}
         helperText={errors.ownerPersonalInformation?.password?.message}
       />
-    </fieldset>
+    </>
   );
 };
 

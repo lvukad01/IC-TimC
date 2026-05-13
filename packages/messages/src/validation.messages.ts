@@ -4,6 +4,7 @@ export const VALIDATION_MESSAGES = {
   NAME_INVALID: 'Name can contain only letters, spaces, apostrophes, or hyphens',
   INVALID_PHONE_FORMAT: 'Phone number must be in valid international format (+123...)',
   INVALID_ZIPCODE_FORMAT: 'ZIP code must be numeric only and have between 4 and 10 characters',
+  INVALID_COUNTRY_NAME: 'Country must be a valid ISO 3166-1 alpha-2 code (e.g. HR)',
   INVALID_SERVICE_NAME:
     'Name must be 2-50 characters long and can contain letters, numbers, spaces, hyphens, and apostrophes.',
   PAYMENT_CONFIG_CONFLICT: 'Payment config already exists.',

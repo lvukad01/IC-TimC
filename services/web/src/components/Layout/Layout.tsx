@@ -19,15 +19,15 @@ const Layout = ({ children }: LayoutProps) => {
       <Toaster
         position="top-right"
         containerStyle={{
-          top: 130,
+          top: 20,
           right: 20,
         }}
         toastOptions={{
           style: {
-            fontSize: '20px',
+            fontSize: '16px',
             color: 'white',
             background: 'rgba(30,30,30,0.8)',
-            boxShadow: '0px 2px 10px #ffb3b3',
+            boxShadow: '0px 4px 4px var(--color-purple)',
             backdropFilter: 'blur(10px)',
           },
         }}
