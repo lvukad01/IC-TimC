@@ -1,34 +1,66 @@
-.inputGroup {
-  position: relative;
+.page {
+  min-height: 100vh;
+  background: #ffffff;
+  padding: 0px 34px 24px;
+  box-sizing: border-box;
+}
+
+.backButton {
+  border: none;
+  background: transparent;
+  font-size: 28px;
+  line-height: 1;
+  padding: 0;
+  margin-bottom: 34px;
+  cursor: pointer;
+  color: #000;
+}
+
+.title {
+  margin: 0 0 22px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #000;
 }
 
 .input {
-  width: 288;
-  height: 40;
-  border-radius: 13px;
-  padding-left: 16px;
-  angle: 0 deg;
-  opacity: 1;
-  border-width: 1px;
-  border: 1px solid var(--purple-200, #a59dbd);
+  width: 100%;
+  height: 28px;
+  border-radius: 8px;
+  border: 1px solid #a59dbd;
+  padding: 0 12px;
+  box-sizing: border-box;
+  font-size: 11px;
+  outline: none;
 }
 
-.suggestions {
+.input::placeholder {
+  color: #8f8f8f;
+}
+
+.input:focus {
+  border-color: #9786ca;
+}
+
+.chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-
-  margin-top: 12px;
+  gap: 6px;
+  margin-top: 11px;
 }
 
 .chip {
-  padding: 4px 10px;
-
+  height: 18px;
+  padding: 0 8px;
   border: 1px solid #b8a8df;
-  border-radius: 8px;
-
-  background: white;
+  border-radius: 7px;
+  background: #fff;
   color: #9786ca;
+  font-size: 11px;
+  line-height: 16px;
+  cursor: pointer;
+}
 
-  font-size: 14px;
+.chip:hover {
+  background: #f7f4ff;
 }

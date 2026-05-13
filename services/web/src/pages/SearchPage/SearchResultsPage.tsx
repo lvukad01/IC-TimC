@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import styles from './SearchPage.module.css';
+import { api } from '../../api';
 
 const SearchResultsPage = () => {
   const navigate = useNavigate();
@@ -10,19 +11,26 @@ const SearchResultsPage = () => {
 
   useEffect(() => {
     const params = new URLSearchParams();
+
     if (state?.search) params.append('search', state.search);
     if (state?.city) params.append('city', state.city);
     if (state?.category && state.category !== 'Sve') {
       params.append('category', state.category.toUpperCase().replace(' ', '_'));
     }
 
-    fetch(`http://localhost:3000/api/salons?${params}`)
-      .then((res) => res.json())
+    api
+      .get(`/salons?${params.toString()}`)
       .then((data) => {
-        setSalons(data.results ?? []);
+        setSalons(data?.results ?? data ?? []);
+      })
+      .catch((error) => {
+        console.error(error);
+        setSalons([]);
+      })
+      .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [state]);
 
   return (
     <section className={styles.page}>

@@ -1,23 +1,56 @@
 import { useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './SearchPage.module.css';
+import { getServiceCategories, type ServiceCategory } from '../../api/serviceCategories';
 
-const categories = ['Sve', 'Kosa', 'Nokti', 'Make up', 'Brijanje'];
+const allCategory: ServiceCategory = {
+  id: 'all',
+  name: 'Sve',
+  slug: 'all',
+};
 
 const SearchServicePage = () => {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+  const [categories, setCategories] = useState<ServiceCategory[]>([allCategory]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const handleSelect = (category: string) => {
-    navigate('/', { state: { category } });
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getServiceCategories();
+        setCategories([allCategory, ...data]);
+      } catch (error) {
+        console.error('Failed to fetch service categories:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  const handleSelect = (category: ServiceCategory) => {
+    navigate('/', {
+      state: {
+        category: category.slug,
+        categoryName: category.name,
+      },
+    });
   };
+
+  const filteredCategories = categories.filter((category) =>
+    category.name.toLowerCase().includes(search.toLowerCase()),
+  );
 
   return (
     <section className={styles.page}>
       <button className={styles.backButton} onClick={() => navigate(-1)}>
         ←
       </button>
+
       <h1 className={styles.title}>Pretraga</h1>
+
       <input
         className={styles.input}
         placeholder="Usluga, salon..."
@@ -25,12 +58,18 @@ const SearchServicePage = () => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
+
       <div className={styles.chips}>
-        {categories
-          .filter((c) => c.toLowerCase().includes(search.toLowerCase()) || search === '')
-          .map((category) => (
-            <button key={category} className={styles.chip} onClick={() => handleSelect(category)}>
-              {category}
+        {isLoading && <p>Učitavanje...</p>}
+
+        {!isLoading &&
+          filteredCategories.map((category) => (
+            <button
+              key={category.id}
+              className={styles.chip}
+              onClick={() => handleSelect(category)}
+            >
+              {category.name}
             </button>
           ))}
       </div>

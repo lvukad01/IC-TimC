@@ -140,6 +140,116 @@ async function main() {
       },
     },
   });
+  const salon2 = await prisma.salons.create({
+    data: {
+      ownerId: owner.id,
+      name: 'Glow Beauty',
+      country: 'Croatia',
+      city: 'Split',
+      zipcode: '21000',
+      street: 'Marmontova 10',
+      lat: 43.5081,
+      lng: 16.4402,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-01'),
+      categories: {
+        create: [
+          { category: SalonCategory.NAILS },
+          { category: SalonCategory.MAKEUP },
+        ],
+      },
+      media: {
+        create: [
+          {
+            key: 'salons/glow/profile.jpg',
+            type: MediaType.PROFILE,
+            sortOrder: 1,
+          },
+        ],
+      },
+    },
+  });
+
+  const salon3 = await prisma.salons.create({
+    data: {
+      ownerId: owner.id,
+      name: 'Barber House',
+      country: 'Croatia',
+      city: 'Rijeka',
+      zipcode: '51000',
+      street: 'Korzo 5',
+      lat: 45.3271,
+      lng: 14.4422,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-10'),
+      categories: {
+        create: [{ category: SalonCategory.BARBERSHOP }],
+      },
+      media: {
+        create: [
+          {
+            key: 'salons/barber/profile.jpg',
+            type: MediaType.PROFILE,
+            sortOrder: 1,
+          },
+        ],
+      },
+    },
+  });
+
+  const salon4 = await prisma.salons.create({
+    data: {
+      ownerId: owner.id,
+      name: 'Luxe Hair Studio',
+      country: 'Croatia',
+      city: 'Zagreb',
+      zipcode: '10000',
+      street: 'Savska 40',
+      lat: 45.805,
+      lng: 15.97,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-15'),
+      categories: {
+        create: [{ category: SalonCategory.HAIR }],
+      },
+      media: {
+        create: [
+          {
+            key: 'salons/luxe/profile.jpg',
+            type: MediaType.PROFILE,
+            sortOrder: 1,
+          },
+        ],
+      },
+    },
+  });
+
+  const salon5 = await prisma.salons.create({
+    data: {
+      ownerId: owner.id,
+      name: 'Makeup Atelier',
+      country: 'Croatia',
+      city: 'Osijek',
+      zipcode: '31000',
+      street: 'Europska avenija 12',
+      lat: 45.554,
+      lng: 18.695,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-18'),
+      categories: {
+        create: [{ category: SalonCategory.MAKEUP }],
+      },
+      media: {
+        create: [
+          {
+            key: 'salons/atelier/profile.jpg',
+            type: MediaType.PROFILE,
+            sortOrder: 1,
+          },
+        ],
+      },
+    },
+  });
 
   const haircut = await prisma.services.create({
     data: {
@@ -268,6 +378,38 @@ async function main() {
         userId: admin.id,
         type: NotificationType.CONFIRMATION,
         content: 'Mock data seeded successfully.',
+      },
+    ],
+  });
+  await prisma.services.createMany({
+    data: [
+      {
+        salonId: salon2.id,
+        categoryId: nails.id,
+        name: 'Russian Manicure',
+        price: 40,
+        durationMin: 90,
+      },
+      {
+        salonId: salon3.id,
+        categoryId: barber.id,
+        name: 'Fade Cut',
+        price: 20,
+        durationMin: 30,
+      },
+      {
+        salonId: salon4.id,
+        categoryId: hair.id,
+        name: 'Hair Coloring',
+        price: 70,
+        durationMin: 120,
+      },
+      {
+        salonId: salon5.id,
+        categoryId: makeup.id,
+        name: 'Bridal Makeup',
+        price: 120,
+        durationMin: 120,
       },
     ],
   });
