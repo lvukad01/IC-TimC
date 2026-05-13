@@ -9,6 +9,7 @@ import {
 import { BookingsService } from './bookings.service';
 import { BookingReminderCron } from './cron/booking-cron.service';
 import { BookingReminderOrchestrator } from './orchestrators/booking-reminder.orchestrator';
+import { MailsModule } from '@mails/mails.module';
 @Module({
   controllers: [BookingsController, SalonBookingsController],
   providers: [
@@ -16,6 +17,6 @@ import { BookingReminderOrchestrator } from './orchestrators/booking-reminder.or
     BookingReminderOrchestrator,
     BookingReminderCron,
   ],
-  imports: [PaymentsModule, SalonsModule, NotificationsModule],
+  imports: [PaymentsModule, SalonsModule, NotificationsModule, MailsModule],
 })
 export class AppointmentsModule {}

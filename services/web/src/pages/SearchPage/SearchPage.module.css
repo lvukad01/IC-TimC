@@ -1,0 +1,34 @@
+.inputGroup {
+  position: relative;
+}
+
+.input {
+  width: 288;
+  height: 40;
+  border-radius: 13px;
+  padding-left: 16px;
+  angle: 0 deg;
+  opacity: 1;
+  border-width: 1px;
+  border: 1px solid var(--purple-200, #a59dbd);
+}
+
+.suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+
+  margin-top: 12px;
+}
+
+.chip {
+  padding: 4px 10px;
+
+  border: 1px solid #b8a8df;
+  border-radius: 8px;
+
+  background: white;
+  color: #9786ca;
+
+  font-size: 14px;
+}

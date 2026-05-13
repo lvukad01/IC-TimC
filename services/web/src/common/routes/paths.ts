@@ -4,4 +4,7 @@ export enum AppPaths {
   LOGIN = '/login',
   HOME = '/',
   UNAUTHORIZED = '/unauthorized',
+  SEARCH_SERVICE = '/search/service',
+  SEARCH_LOCATION = '/search/location',
+  SEARCH_RESULTS = '/search/results',
 }

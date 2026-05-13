@@ -10,7 +10,7 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  width: 290px;
+  width: 260px;
   height: 100%;
   padding: 33px;
   border-radius: 23px;
@@ -31,7 +31,7 @@
 }
 
 .input {
-  width: 225px;
+  width: 205px;
   height: 35px;
   padding: 0 16px 0 42px;
   border: 1px solid #4d3d7c70;
@@ -45,7 +45,7 @@
 }
 
 .button {
-  width: 225px;
+  width: 265px;
   height: 35px;
   border: 1px solid transparent;
   border-radius: 14px;

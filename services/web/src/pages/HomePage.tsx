@@ -1,5 +1,4 @@
 import { Footer } from '../components/Home/Footer/Footer';
-import { Header } from '../components/Home/Header/Header';
 import { SalonSection } from '../components/Home/SalonSection/SalonSection';
 import { SearchBar } from '../components/Home/SearchBar/SearchBar';
 import { HeroSection } from '../components/Home/HeroSection/HeroSection';
@@ -7,6 +6,8 @@ import { BusinessSection } from '@components/Home/BusinessSection/BusinessSectio
 
 import salonImg from '../assets/media/frizer 1.png';
 import useInfiniteScroll from '@hooks/useInfiniteScroll';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 export const salons = [
   {
@@ -34,6 +35,7 @@ export const salons = [
     address: 'Rijeka',
   },
 ];
+
 const HomePage = () => {
   const loadMoreRef = useInfiniteScroll({
     fetchNextPage: () => {
@@ -44,7 +46,6 @@ const HomePage = () => {
   });
   return (
     <>
-      <Header />
       <HeroSection />
       <SearchBar />
 
