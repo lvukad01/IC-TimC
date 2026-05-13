@@ -26,7 +26,7 @@ const RegisterOwnerPage = () => {
   const form = useForm<OwnerRegistrationFormSchemaProps>({
     resolver: zodResolver(ownerRegistrationFormSchema) as any,
     defaultValues: {
-      formType: OwnerRegistrationFormTypeEnum.SalonLocation,
+      formType: OwnerRegistrationFormTypeEnum.EmployeeAddition,
 
       salonLocation: {
         name: '',
