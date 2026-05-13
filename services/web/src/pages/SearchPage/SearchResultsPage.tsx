@@ -90,7 +90,7 @@ const SearchResultsPage = () => {
                 rating={salon.avgRating ?? 0}
                 type={salon.type ?? ''}
                 address={`${salon.street}, ${salon.city}`}
-                borderColor="#DC6AB8"
+                borderColor="#A59DBD"
               />
             </div>
           ))}

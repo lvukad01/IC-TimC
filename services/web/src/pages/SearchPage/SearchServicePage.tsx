@@ -45,11 +45,12 @@ const SearchServicePage = () => {
 
   return (
     <section className={styles.page}>
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
-        ←
-      </button>
-
-      <h1 className={styles.title}>Pretraga</h1>
+      <div className={styles.header}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
+          ←
+        </button>
+        <h1 className={styles.title}>Pretraga</h1>
+      </div>
 
       <input
         className={styles.input}

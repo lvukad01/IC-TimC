@@ -11,14 +11,24 @@ const SearchLocationPage = () => {
 
   useEffect(() => {
     getSalons()
-      .then((res) => res.json())
       .then((data) => {
-        const uniqueCities = [...new Set<string>(data.results?.map((s: any) => s.city) ?? [])];
+        console.log('getSalons data', data);
+
+        const results = data?.results ?? data?.data?.results ?? data?.data ?? [];
+
+        const uniqueCities = [...new Set<string>(results.map((s: any) => s.city).filter(Boolean))];
+
+        console.log('cities', uniqueCities);
+
         setCities(uniqueCities);
         setFiltered(uniqueCities);
+      })
+      .catch((error) => {
+        console.error('Failed to fetch cities:', error);
+        setCities([]);
+        setFiltered([]);
       });
   }, []);
-
   useEffect(() => {
     if (search === '') {
       setFiltered(cities);
@@ -39,10 +49,12 @@ const SearchLocationPage = () => {
 
   return (
     <section className={styles.page}>
-      <button className={styles.backButton} onClick={() => navigate(-1)}>
-        ←
-      </button>
-      <h1 className={styles.title}>Lokacija</h1>
+      <div className={styles.header}>
+        <button className={styles.backButton} onClick={() => navigate(-1)}>
+          ←
+        </button>
+        <h1 className={styles.title}>Lokacija</h1>
+      </div>
       <input
         className={styles.input}
         placeholder="Bilo gdje"
