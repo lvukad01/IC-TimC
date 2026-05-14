@@ -52,6 +52,7 @@ const SearchLocationPage = () => {
       navigate('/', {
         state: {
           ...location.state,
+          city: 'Moja lokacija',
           lat: pos.coords.latitude,
           lng: pos.coords.longitude,
         },

@@ -85,6 +85,7 @@ const SearchResultsPage = () => {
           {salons.map((salon) => (
             <div key={salon.id} onClick={() => navigate(`/salons/${salon.id}`)}>
               <SalonCard
+                id={salon.id}
                 image={salon.imageUrl ?? ''}
                 name={salon.name}
                 rating={salon.avgRating ?? 0}

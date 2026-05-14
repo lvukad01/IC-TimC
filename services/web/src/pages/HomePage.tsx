@@ -9,6 +9,7 @@ import { BusinessSection } from '@components/Home/BusinessSection/BusinessSectio
 import useInfiniteScroll from '@hooks/useInfiniteScroll';
 import { api } from '../api';
 import { getSignedFiles } from '@api/files';
+import { AppPaths } from 'common/routes/paths';
 
 type SalonCardData = {
   id: string;
@@ -105,6 +106,7 @@ const HomePage = () => {
         borderColor="#DC6AB8"
         salons={recommended}
         loadMoreRef={loadMoreRef}
+        viewMorePath={AppPaths.VIEW_MORE_RECOMMENDED}
       />
 
       <SalonSection
@@ -112,9 +114,16 @@ const HomePage = () => {
         borderColor="#9786CA"
         salons={popular}
         loadMoreRef={loadMoreRef}
+        viewMorePath={AppPaths.VIEW_MORE_POPULAR}
       />
 
-      <SalonSection title="Novo" borderColor="#029ED8" salons={newest} loadMoreRef={loadMoreRef} />
+      <SalonSection
+        title="Novo"
+        borderColor="#029ED8"
+        salons={newest}
+        loadMoreRef={loadMoreRef}
+        viewMorePath={AppPaths.VIEW_MORE_NEWEST}
+      />
 
       <BusinessSection />
       <Footer />
