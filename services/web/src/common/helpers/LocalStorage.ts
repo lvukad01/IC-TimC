@@ -12,6 +12,9 @@ class LocalStorage {
       return stored;
     }
   }
+  static removeAccessToken() {
+    localStorage.removeItem('accessToken');
+  }
 }
 
 export default LocalStorage;

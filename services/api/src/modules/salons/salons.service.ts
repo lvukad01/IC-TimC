@@ -59,7 +59,7 @@ export const SALON_LIST_INCLUDE = {
   },
 } as const;
 
-const STATUS_FILTER = { status: SalonStatus.ACTIVE };
+const getStatusFilter = () => ({ status: SalonStatus.ACTIVE });
 
 @Injectable()
 export class SalonsService {
@@ -108,7 +108,7 @@ export class SalonsService {
       };
     }
 
-    const where: any = STATUS_FILTER;
+    const where: any = getStatusFilter();
     if (search) {
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
     }
@@ -144,7 +144,7 @@ export class SalonsService {
     userId?: string,
   ): Promise<SalonDetailResponseDto> {
     const salon = await this.prisma.salons.findUnique({
-      where: { id, ...STATUS_FILTER },
+      where: { id, ...getStatusFilter() },
       include: { media: true },
     });
     if (!salon) {
@@ -409,7 +409,7 @@ export class SalonsService {
     const center = { latitude: lat, longitude: lng };
     const [min, max] = getBoundsOfDistance(center, 10000);
 
-    const where: any = STATUS_FILTER;
+    const where: any = getStatusFilter();
 
     where.lat = { gte: min.latitude, lte: max.latitude };
     where.lng = { gte: min.longitude, lte: max.longitude };
@@ -443,6 +443,7 @@ export class SalonsService {
   ): Promise<PaginatedResponse<SalonListResponseDto>> {
     const newestSalons = await paginate({
       model: this.prisma.salons,
+      where: getStatusFilter(),
       orderBy: { createdAt: 'desc' },
       page,
       limit,
@@ -459,13 +460,39 @@ export class SalonsService {
     };
   }
 
+  async findRecommendedSalons(
+    { page, limit }: PaginationQueryDto,
+    userId?: string,
+  ): Promise<PaginatedResponse<SalonListResponseDto>> {
+    const salons = await paginate({
+      model: this.prisma.salons,
+      where: getStatusFilter(),
+      page,
+      limit,
+      include: SALON_LIST_INCLUDE,
+    });
+
+    const favorites = await this.resolveFavorites(userId);
+
+    const mapped = salons.results
+      .map((salon: SalonsWithReviews) =>
+        this.mapper.mapSalonListItem(salon, favorites),
+      )
+      .sort((a, b) => b.avgRating - a.avgRating);
+
+    return {
+      ...salons,
+      results: mapped,
+    };
+  }
+
   async findPopularSalons(
     { page, limit }: PaginationQueryDto,
     userId?: string,
   ): Promise<PaginatedResponse<SalonListResponseDto>> {
     const popularSalons = await paginate({
       model: this.prisma.salons,
-      where: STATUS_FILTER,
+      where: getStatusFilter(),
       orderBy: {
         bookings: {
           _count: 'desc',

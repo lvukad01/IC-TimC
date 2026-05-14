@@ -19,5 +19,6 @@ import { SalonsService } from './salons.service';
   ],
   controllers: [SalonsController],
   providers: [SalonsService],
+  exports: [SalonsService],
 })
 export class SalonsModule {}

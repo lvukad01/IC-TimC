@@ -1,9 +1,9 @@
-import styles from './HeroSection.module.css';
+import styles from './HeroSection.module.scss';
 
-import reserveTxt from '../../../assets/media/Rezerviraj svoj termin za.svg';
-import hairTxt from '../../../assets/media/frizuru.svg';
-import makeupTxt from '../../../assets/media/šminku.svg';
-import nailsTxt from '../../../assets/media/nokte.svg';
+import reserveTxt from '@assets/media/Rezerviraj svoj termin za.svg';
+import hairTxt from '@assets/media/frizuru.svg';
+import makeupTxt from '@assets/media/šminku.svg';
+import nailsTxt from '@assets/media/nokte.svg';
 import { useEffect, useState } from 'react';
 
 const texts = [hairTxt, makeupTxt, nailsTxt];

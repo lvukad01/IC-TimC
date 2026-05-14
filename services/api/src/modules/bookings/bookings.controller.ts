@@ -25,6 +25,7 @@ import { AvailabilityRequestDto } from './dto/availability-request.dto';
 import { AvailabilityResponseDto } from './dto/avaliability-response.dto';
 import { BookingResponseDto } from './dto/booking-response.dto';
 import type { CreateBookingDto } from './dto/create-booking.dto';
+import { TodayBookingsCountResponseDto } from './dto/today-bookings-count-response.dto';
 
 @ApiTags('bookings')
 @Controller('bookings')
@@ -103,5 +104,18 @@ export class SalonBookingsController {
     @Query('employeeId') employeeId?: string,
   ) {
     return this.bookingsService.findBookingsForSalon(salonId, employeeId);
+  }
+}
+
+@ApiTags('booking-stats')
+@Controller('booking-stats')
+export class BookingsCountController {
+  constructor(private readonly bookingsService: BookingsService) {}
+
+  @Get('today-count')
+  @ApiOperation({ summary: 'Get number of bookings created today' })
+  @ApiOkResponse({ type: TodayBookingsCountResponseDto })
+  getTodayBookingsCount(): Promise<TodayBookingsCountResponseDto> {
+    return this.bookingsService.countTodayBookings();
   }
 }

@@ -1,6 +1,6 @@
-import styles from './BusinessSection.module.css';
-import businessPhone2 from '../../../assets/media/phone kalendar.svg';
-import businessPhone1 from '../../../assets/media/2.svg';
+import styles from './BusinessSection.module.scss';
+import businessPhone2 from '@assets/media/phone kalendar.svg';
+import businessPhone1 from '@assets/media/2.svg';
 
 export const BusinessSection = () => {
   return (

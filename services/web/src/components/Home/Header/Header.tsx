@@ -4,7 +4,7 @@ import logo from '@assets/media/lumii logo.svg';
 
 import { AppPaths } from 'common/routes/paths';
 import { useLocation, useNavigate } from 'react-router-dom';
-import styles from './Header.module.css';
+import styles from './Header.module.scss';
 
 const Header = () => {
   const navigate = useNavigate();
