@@ -105,3 +105,15 @@ export class SalonBookingsController {
     return this.bookingsService.findBookingsForSalon(salonId, employeeId);
   }
 }
+
+@ApiTags('booking-stats')
+@Controller('booking-stats')
+export class BookingsCountController {
+  constructor(private readonly bookingsService: BookingsService) {}
+
+  @Get('today-count')
+  @ApiOperation({ summary: 'Get number of bookings created today' })
+  getTodayBookingsCount() {
+    return this.bookingsService.countTodayBookings();
+  }
+}

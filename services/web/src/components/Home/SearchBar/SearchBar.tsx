@@ -1,3 +1,4 @@
+import { getTodayBookingsCount } from '@api/todayBookingCount';
 import styles from './SearchBar.module.css';
 import locationIcon from '@assets/media/location1.svg';
 import searchIcon from '@assets/media/search.svg';
@@ -6,6 +7,8 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export const SearchBar = () => {
+  const [todayCount, setTodayCount] = useState(0);
+
   const navigate = useNavigate();
   const location = useLocation();
   const [category, setCategory] = useState('');
@@ -19,6 +22,12 @@ export const SearchBar = () => {
     navigate(AppPaths.SEARCH_RESULTS, { state: { category, city } });
   };
 
+  useEffect(() => {
+    getTodayBookingsCount()
+      .then((data) => setTodayCount(data.count ?? 0))
+      .catch(() => setTodayCount(0));
+  }, []);
+
   return (
     <div className={styles.textHolder}>
       <section className={styles.wrapper}>
@@ -26,7 +35,14 @@ export const SearchBar = () => {
           <img src={searchIcon} alt="" className={styles.icon} />
 
           <input
-            onFocus={() => navigate(AppPaths.SEARCH_SERVICE)}
+            onFocus={() =>
+              navigate(AppPaths.SEARCH_SERVICE, {
+                state: {
+                  category,
+                  city,
+                },
+              })
+            }
             type="text"
             placeholder="Usluga, salon..."
             className={styles.input}
@@ -39,7 +55,14 @@ export const SearchBar = () => {
           <img src={locationIcon} alt="" className={styles.icon} />
 
           <input
-            onFocus={() => navigate(AppPaths.SEARCH_LOCATION)}
+            onFocus={() =>
+              navigate(AppPaths.SEARCH_LOCATION, {
+                state: {
+                  category,
+                  city,
+                },
+              })
+            }
             type="text"
             placeholder="Bilo gdje"
             className={styles.input}
@@ -54,7 +77,7 @@ export const SearchBar = () => {
       </section>
 
       <p className={styles.todayCount}>
-        <b>128</b> termina zakazano danas
+        <b>{todayCount}</b> termina zakazano danas
       </p>
     </div>
   );

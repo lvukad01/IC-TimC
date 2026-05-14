@@ -17,7 +17,7 @@ const SearchResultsPage = () => {
 
     if (state?.search) params.append('search', state.search);
     if (state?.city) params.append('city', state.city);
-    if (state?.category && state.category !== 'Sve' && state.category !== 'ALL') {
+    if (state?.category && state.category !== 'Sve' && state.category.toLowerCase() !== 'all') {
       params.append('category', state.category.toUpperCase().replace(' ', '_'));
     }
     if (state?.date) params.append('date', state.date);

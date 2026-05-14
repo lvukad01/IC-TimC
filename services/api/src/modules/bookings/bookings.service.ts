@@ -378,4 +378,20 @@ export class BookingsService {
 
     return booking;
   }
+
+  async countTodayBookings(): Promise<{ count: number }> {
+    const start = startOfDay(new Date());
+    const end = endOfDay(new Date());
+
+    const count = await this.prisma.bookings.count({
+      where: {
+        createdAt: {
+          gte: start,
+          lte: end,
+        },
+      },
+    });
+
+    return { count };
+  }
 }

@@ -1,9 +1,10 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import styles from './SearchPage.module.css';
 import { getSalons } from '@api/salons';
 
 const SearchLocationPage = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [cities, setCities] = useState<string[]>([]);
@@ -38,12 +39,23 @@ const SearchLocationPage = () => {
   }, [search, cities]);
 
   const handleSelect = (city: string) => {
-    navigate('/', { state: { city } });
+    navigate('/', {
+      state: {
+        ...location.state,
+        city,
+      },
+    });
   };
 
   const handleMyLocation = () => {
     navigator.geolocation.getCurrentPosition((pos) => {
-      navigate('/', { state: { lat: pos.coords.latitude, lng: pos.coords.longitude } });
+      navigate('/', {
+        state: {
+          ...location.state,
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude,
+        },
+      });
     });
   };
 

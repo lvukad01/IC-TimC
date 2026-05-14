@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styles from './SalonCard.module.css';
-import favoriteOn from '../../../assets/media/Vector.svg';
-import favoriteOff from '../../../assets/media/Frame 117 (1).svg';
+import favoriteOn from '@assets/media/Vector.svg';
+import favoriteOff from '@assets/media/Frame 117 (1).svg';
 
 interface SalonCardProps {
   image: string;

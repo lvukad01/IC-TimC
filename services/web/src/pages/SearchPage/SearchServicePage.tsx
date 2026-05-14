@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import styles from './SearchPage.module.css';
 import { getServiceCategories, type ServiceCategory } from '../../api/serviceCategories';
@@ -10,6 +10,7 @@ const allCategory: ServiceCategory = {
 };
 
 const SearchServicePage = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
   const [categories, setCategories] = useState<ServiceCategory[]>([allCategory]);
@@ -33,6 +34,7 @@ const SearchServicePage = () => {
   const handleSelect = (category: ServiceCategory) => {
     navigate('/', {
       state: {
+        ...location.state,
         category: category.slug,
         categoryName: category.name,
       },
