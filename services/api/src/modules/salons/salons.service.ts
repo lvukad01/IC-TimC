@@ -57,6 +57,7 @@ export const SALON_LIST_INCLUDE = {
       rating: true,
     },
   },
+  categories: true,
 } as const;
 
 const getStatusFilter = () => ({ status: SalonStatus.ACTIVE });
@@ -145,7 +146,7 @@ export class SalonsService {
   ): Promise<SalonDetailResponseDto> {
     const salon = await this.prisma.salons.findUnique({
       where: { id, ...getStatusFilter() },
-      include: { media: true },
+      include: { media: true, categories: true },
     });
     if (!salon) {
       throw new NotFoundException(ErrorMessages.notFound('Salon'));

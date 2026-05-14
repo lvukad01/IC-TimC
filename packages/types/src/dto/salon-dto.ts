@@ -45,6 +45,7 @@ export interface SalonListResponse {
   profileImageKey?: string;
   avgRating: number;
   isFavorite?: boolean;
+  categories: SalonCategory[];
 }
 
 export interface SalonDetailResponse {
@@ -55,6 +56,7 @@ export interface SalonDetailResponse {
   zipcode: string;
   country: string;
   isFavorite?: boolean;
+  categories: SalonCategory[];
   media: {
     id: string;
     type: MediaType;

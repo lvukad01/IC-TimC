@@ -118,6 +118,12 @@ export class SalonsController {
 
   @Get('recommended')
   @ApiOperation({ summary: 'Get recommended salons based on rating' })
+  @ApiOkResponse({
+    type: SwaggerPaginatedApiResponse(
+      SalonListResponseDto,
+      'SalonListResponseDto',
+    ),
+  })
   findRecommendedSalons(
     @Query() dto: PaginationQueryDto,
     @Req() req: RequestWithOptionalUser,

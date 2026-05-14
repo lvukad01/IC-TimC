@@ -7,18 +7,12 @@ import { SalonSection } from '@components/Home/SalonSection/SalonSection';
 import { SearchBar } from '@components/Home/SearchBar/SearchBar';
 
 import { getSignedFiles } from '@api/files';
+import { mapSalonForCard } from '@helpers/salonMapper';
 import useInfiniteScroll from '@hooks/useInfiniteScroll';
+import type { SalonListResponse } from '@lumii/types';
+import type { SalonCardData } from '@tstypes/SalonCard';
 import { AppPaths } from 'common/routes/paths';
-import { api } from '../api';
-
-type SalonCardData = {
-  id: string;
-  image: string;
-  name: string;
-  rating: number;
-  type: string;
-  address: string;
-};
+import { api } from '../../api';
 
 const getResults = (response: any) =>
   response?.data?.results ?? response?.results ?? response?.data?.data?.results ?? [];
@@ -57,18 +51,11 @@ const HomePage = () => {
           signedData.files.map((file: any) => [file.key, file.url]),
         );
 
-        const mapSalonForCard = (salon: any): SalonCardData => ({
-          id: salon.id,
-          image: salon.profileImageKey ? (urlMap.get(salon.profileImageKey) ?? '') : '',
-          name: salon.name,
-          rating: salon.avgRating ?? 0,
-          type: salon.type ?? '',
-          address: `${salon.street}, ${salon.city}`,
-        });
-
-        setRecommended(recommendedResults.map(mapSalonForCard));
-        setPopular(popularResults.map(mapSalonForCard));
-        setNewest(newestResults.map(mapSalonForCard));
+        setRecommended(
+          recommendedResults.map((s: SalonListResponse) => mapSalonForCard(s, urlMap)),
+        );
+        setPopular(popularResults.map((s: SalonListResponse) => mapSalonForCard(s, urlMap)));
+        setNewest(newestResults.map((s: SalonListResponse) => mapSalonForCard(s, urlMap)));
       } catch (error) {
         console.error('Failed to fetch salons:', error);
       }

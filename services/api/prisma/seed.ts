@@ -1,18 +1,4 @@
 import {
-<<<<<<< HEAD
-  PrismaClient,
-  UserRole,
-  SalonStatus,
-  SalonCategory,
-  EmployeeRole,
-  MediaType,
-  DepositType,
-  PaymentMethod,
-  PaymentType,
-  PaymentStatus,
-  BookingStatus,
-  NotificationType,
-=======
   BookingStatus,
   DepositType,
   EmployeeRole,
@@ -25,7 +11,6 @@ import {
   SalonCategory,
   SalonStatus,
   UserRole,
->>>>>>> salon-images-and-employees
 } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
@@ -67,15 +52,9 @@ async function main() {
     data: { name: 'Barbershop', slug: 'barbershop' },
   });
 
-<<<<<<< HEAD
-  const owner = await prisma.users.create({
-    data: {
-      email: 'owner@lumii.test',
-=======
   const owner1 = await prisma.users.create({
     data: {
       email: 'owner1@lumii.test',
->>>>>>> salon-images-and-employees
       firstName: 'Mia',
       lastName: 'Horvat',
       password,
@@ -90,8 +69,6 @@ async function main() {
     },
   });
 
-<<<<<<< HEAD
-=======
   const owner2 = await prisma.users.create({
     data: {
       email: 'owner2@lumii.test',
@@ -228,7 +205,6 @@ async function main() {
     },
   });
 
->>>>>>> salon-images-and-employees
   const client = await prisma.users.create({
     data: {
       email: 'client@lumii.test',
@@ -262,11 +238,7 @@ async function main() {
 
   const salon = await prisma.salons.create({
     data: {
-<<<<<<< HEAD
-      ownerId: owner.id,
-=======
       ownerId: owner1.id,
->>>>>>> salon-images-and-employees
       name: 'Lumii Beauty Studio',
       country: 'Croatia',
       city: 'Zagreb',
@@ -287,20 +259,12 @@ async function main() {
           {
             key: 'lumii_beauty_studio.svg',
             type: MediaType.PROFILE,
-<<<<<<< HEAD
-            sortOrder: 1,
-=======
             sortOrder: 0,
->>>>>>> salon-images-and-employees
           },
           {
             key: 'lumii_beauty_studio_1.svg',
             type: MediaType.GALLERY,
-<<<<<<< HEAD
-            sortOrder: 2,
-=======
             sortOrder: 1,
->>>>>>> salon-images-and-employees
           },
         ],
       },
@@ -314,11 +278,7 @@ async function main() {
   });
   const salon2 = await prisma.salons.create({
     data: {
-<<<<<<< HEAD
-      ownerId: owner.id,
-=======
       ownerId: owner1.id,
->>>>>>> salon-images-and-employees
       name: 'Glow Beauty',
       country: 'Croatia',
       city: 'Split',
@@ -339,20 +299,12 @@ async function main() {
           {
             key: 'glow_studio_profile.svg',
             type: MediaType.PROFILE,
-<<<<<<< HEAD
-            sortOrder: 1,
-=======
             sortOrder: 0,
->>>>>>> salon-images-and-employees
           },
           {
             key: 'glow_studio_1.svg',
             type: MediaType.GALLERY,
-<<<<<<< HEAD
-            sortOrder: 2,
-=======
             sortOrder: 1,
->>>>>>> salon-images-and-employees
           },
         ],
       },
@@ -361,11 +313,7 @@ async function main() {
 
   const salon3 = await prisma.salons.create({
     data: {
-<<<<<<< HEAD
-      ownerId: owner.id,
-=======
       ownerId: owner2.id,
->>>>>>> salon-images-and-employees
       name: 'Barber House',
       country: 'Croatia',
       city: 'Rijeka',
@@ -383,20 +331,12 @@ async function main() {
           {
             key: 'barber_house_profile.svg',
             type: MediaType.PROFILE,
-<<<<<<< HEAD
-            sortOrder: 1,
-=======
             sortOrder: 0,
->>>>>>> salon-images-and-employees
           },
           {
             key: 'barber_house_1.svg',
             type: MediaType.GALLERY,
-<<<<<<< HEAD
-            sortOrder: 2,
-=======
             sortOrder: 1,
->>>>>>> salon-images-and-employees
           },
         ],
       },
@@ -405,11 +345,7 @@ async function main() {
 
   const salon4 = await prisma.salons.create({
     data: {
-<<<<<<< HEAD
-      ownerId: owner.id,
-=======
       ownerId: owner2.id,
->>>>>>> salon-images-and-employees
       name: 'Luxe Hair Studio',
       country: 'Croatia',
       city: 'Zagreb',
@@ -427,20 +363,12 @@ async function main() {
           {
             key: 'luxe_hair_profile.svg',
             type: MediaType.PROFILE,
-<<<<<<< HEAD
-            sortOrder: 1,
-=======
             sortOrder: 0,
->>>>>>> salon-images-and-employees
           },
           {
             key: 'luxe_hair_1.svg',
             type: MediaType.GALLERY,
-<<<<<<< HEAD
-            sortOrder: 2,
-=======
             sortOrder: 1,
->>>>>>> salon-images-and-employees
           },
         ],
       },
@@ -449,11 +377,7 @@ async function main() {
 
   const salon5 = await prisma.salons.create({
     data: {
-<<<<<<< HEAD
-      ownerId: owner.id,
-=======
       ownerId: owner3.id,
->>>>>>> salon-images-and-employees
       name: 'Makeup Atelier',
       country: 'Croatia',
       city: 'Osijek',
@@ -471,18 +395,11 @@ async function main() {
           {
             key: 'makeup_atelier_profile.svg',
             type: MediaType.PROFILE,
-<<<<<<< HEAD
-            sortOrder: 1,
-=======
             sortOrder: 0,
->>>>>>> salon-images-and-employees
           },
           {
             key: 'makeup_atelier_1.svg',
             type: MediaType.GALLERY,
-<<<<<<< HEAD
-            sortOrder: 2,
-=======
             sortOrder: 1,
           },
         ],
@@ -669,7 +586,6 @@ async function main() {
             key: 'studio_elegance_1.svg',
             type: MediaType.GALLERY,
             sortOrder: 1,
->>>>>>> salon-images-and-employees
           },
         ],
       },
@@ -850,11 +766,7 @@ async function main() {
         content: 'Your booking has been confirmed.',
       },
       {
-<<<<<<< HEAD
-        userId: owner.id,
-=======
         userId: owner1.id,
->>>>>>> salon-images-and-employees
         type: NotificationType.REMINDER,
         content: 'You have an upcoming appointment.',
       },

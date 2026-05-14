@@ -4,7 +4,6 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from 'common/boundary/ErrorBoundary';
 import { AppPaths } from 'common/routes/paths';
 import { lazy } from 'react';
-import { Toaster } from 'react-hot-toast';
 import { Route, Routes } from 'react-router-dom';
 
 const queryClient = new QueryClient();
@@ -25,7 +24,6 @@ function App() {
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Toaster position="top-center" />
           <Layout>
             <Routes>
               <Route path={AppPaths.LOGIN} element={<LoginPage />} />

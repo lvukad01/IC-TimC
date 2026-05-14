@@ -1,7 +1,7 @@
 import { Prisma } from 'generated/prisma';
 
 export type SalonsWithMedia = Prisma.SalonsGetPayload<{
-  include: { media: true };
+  include: { media: true; categories: true };
 }>;
 
 export type SalonsWithReviews = Prisma.SalonsGetPayload<{
@@ -13,5 +13,6 @@ export type SalonsWithReviews = Prisma.SalonsGetPayload<{
     reviews: {
       select: { rating: true };
     };
+    categories: true;
   };
 }>;

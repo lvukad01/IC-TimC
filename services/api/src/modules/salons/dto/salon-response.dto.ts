@@ -1,5 +1,6 @@
 import {
   MediaType,
+  SalonCategory,
   SalonDetailResponse,
   SalonListResponse,
 } from '@lumii/types';
@@ -24,6 +25,10 @@ export class SalonListResponseDto implements SalonListResponse {
   @ApiProperty()
   avgRating: number;
 
+  @ApiProperty({ enum: SalonCategory, isArray: true })
+  categories: SalonCategory[];
+
+  @ApiProperty()
   @ApiPropertyOptional()
   isFavorite?: boolean;
 }
@@ -63,6 +68,9 @@ export class SalonDetailResponseDto implements SalonDetailResponse {
 
   @ApiPropertyOptional()
   isFavorite?: boolean;
+
+  @ApiProperty({ enum: SalonCategory, isArray: true })
+  categories: SalonCategory[];
 
   @ApiProperty({ type: SalonMediaDto })
   media: SalonMediaDto[];

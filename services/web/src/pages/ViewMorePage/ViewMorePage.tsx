@@ -1,23 +1,16 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import { api } from '../../api';
 import { getSignedFiles } from '@api/files';
 import { SalonCard } from '@components/Home/SalonCard/SalonCard';
-import styles from './SearchPage/SearchPage.module.scss';
+import { mapSalonForCard } from '@helpers/salonMapper';
+import type { SalonListResponse } from '@lumii/types';
+import type { SalonCardData } from '@tstypes/SalonCard';
 import { AppPaths } from 'common/routes/paths';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate, useParams } from 'react-router-dom';
+import { api } from '../../api';
+import styles from '../SearchPage/SearchPage.module.scss';
 
 type ViewMoreType = 'recommended' | 'popular' | 'newest';
-
-type SalonCardData = {
-  id: string;
-  image: string;
-  name: string;
-  rating: number;
-  type: string;
-  address: string;
-  isFavorite?: boolean;
-};
 
 const getResults = (response: any) =>
   response?.data?.results ?? response?.results ?? response?.data?.data?.results ?? [];
@@ -66,17 +59,7 @@ const ViewMorePage = () => {
           signedData.files.map((file: any) => [file.key, file.url]),
         );
 
-        const mappedSalons = results.map((salon: any) => ({
-          id: salon.id,
-          image: salon.profileImageKey ? (urlMap.get(salon.profileImageKey) ?? '') : '',
-          name: salon.name,
-          rating: salon.avgRating ?? 0,
-          type: salon.type ?? '',
-          address: `${salon.street}, ${salon.city}`,
-          isFavorite: salon.isFavorite,
-        }));
-
-        setSalons(mappedSalons);
+        setSalons(results.map((s: SalonListResponse) => mapSalonForCard(s, urlMap)));
       } catch (error) {
         toast.error('Greška pri dohvaćanju salona');
         setSalons([]);
