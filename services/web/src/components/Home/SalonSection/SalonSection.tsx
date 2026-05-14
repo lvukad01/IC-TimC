@@ -16,16 +16,9 @@ interface SalonSectionProps {
     address: string;
     isFavorite?: boolean;
   }[];
-  loadMoreRef?: React.Ref<HTMLDivElement>;
 }
 
-export const SalonSection = ({
-  title,
-  borderColor,
-  salons,
-  loadMoreRef,
-  viewMorePath,
-}: SalonSectionProps) => {
+export const SalonSection = ({ title, borderColor, salons, viewMorePath }: SalonSectionProps) => {
   const navigate = useNavigate();
 
   return (
@@ -49,7 +42,6 @@ export const SalonSection = ({
             isFavorite={salon.isFavorite}
           />
         ))}
-        <div ref={loadMoreRef} className={styles.loaderTrigger} />
       </div>
     </section>
   );

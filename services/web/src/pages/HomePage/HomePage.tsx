@@ -8,7 +8,6 @@ import { SearchBar } from '@components/Home/SearchBar/SearchBar';
 
 import { getSignedFiles } from '@api/files';
 import { mapSalonForCard } from '@helpers/salonMapper';
-import useInfiniteScroll from '@hooks/useInfiniteScroll';
 import type { SalonListResponse } from '@lumii/types';
 import type { SalonCardData } from '@tstypes/SalonCard';
 import { AppPaths } from 'common/routes/paths';
@@ -17,24 +16,20 @@ import { api } from '../../api';
 const getResults = (response: any) =>
   response?.data?.results ?? response?.results ?? response?.data?.data?.results ?? [];
 
+const LIMIT = 6;
+
 const HomePage = () => {
   const [recommended, setRecommended] = useState<SalonCardData[]>([]);
   const [popular, setPopular] = useState<SalonCardData[]>([]);
   const [newest, setNewest] = useState<SalonCardData[]>([]);
 
-  const loadMoreRef = useInfiniteScroll({
-    fetchNextPage: () => {},
-    hasNextPage: false,
-    isFetchingNextPage: false,
-  });
-
   useEffect(() => {
     const fetchHomeSalons = async () => {
       try {
         const [recommendedResponse, popularResponse, newestResponse] = await Promise.all([
-          api.get('/salons/recommended'),
-          api.get('/salons/popular'),
-          api.get('/salons/newest'),
+          api.get(`/salons/recommended?page=1&limit=${LIMIT}`),
+          api.get(`/salons/popular?page=1&limit=${LIMIT}`),
+          api.get(`/salons/newest?page=1&limit=${LIMIT}`),
         ]);
 
         const recommendedResults = getResults(recommendedResponse);
@@ -73,7 +68,6 @@ const HomePage = () => {
         title="Preporuke"
         borderColor="#DC6AB8"
         salons={recommended}
-        loadMoreRef={loadMoreRef}
         viewMorePath={AppPaths.VIEW_MORE_RECOMMENDED}
       />
 
@@ -81,7 +75,6 @@ const HomePage = () => {
         title="Popularno"
         borderColor="#9786CA"
         salons={popular}
-        loadMoreRef={loadMoreRef}
         viewMorePath={AppPaths.VIEW_MORE_POPULAR}
       />
 
@@ -89,7 +82,6 @@ const HomePage = () => {
         title="Novo"
         borderColor="#029ED8"
         salons={newest}
-        loadMoreRef={loadMoreRef}
         viewMorePath={AppPaths.VIEW_MORE_NEWEST}
       />
 

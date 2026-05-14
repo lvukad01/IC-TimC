@@ -54,8 +54,6 @@ export const SalonCard = ({
     }
   };
 
-  console.log(categories);
-
   return (
     <div className={styles.card} style={{ borderColor: borderColor ?? '#e0e0e0' }}>
       <div className={styles.imageWrapper}>

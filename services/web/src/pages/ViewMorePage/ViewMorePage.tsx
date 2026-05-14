@@ -1,19 +1,17 @@
-import { getSignedFiles } from '@api/files';
+import { useMoreSalonsInfinite } from '@api/salons';
 import { SalonCard } from '@components/Home/SalonCard/SalonCard';
-import { mapSalonForCard } from '@helpers/salonMapper';
-import type { SalonListResponse } from '@lumii/types';
-import type { SalonCardData } from '@tstypes/SalonCard';
+import useInfiniteScroll from '@hooks/useInfiniteScroll';
+import type { PaginatedResponse } from '@lumii/types';
+import type { InfiniteData } from '@tanstack/react-query';
+import { type SalonCardData } from '@tstypes/SalonCard';
 import { AppPaths } from 'common/routes/paths';
-import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
 import { useNavigate, useParams } from 'react-router-dom';
-import { api } from '../../api';
 import styles from '../SearchPage/SearchPage.module.scss';
 
 type ViewMoreType = 'recommended' | 'popular' | 'newest';
 
-const getResults = (response: any) =>
-  response?.data?.results ?? response?.results ?? response?.data?.data?.results ?? [];
+const getResults = <T,>(data?: InfiniteData<PaginatedResponse<T>>): T[] =>
+  data?.pages.flatMap((page) => page.results) ?? [];
 
 const borderColor = '#A59DBD';
 const pageConfig: Record<ViewMoreType, { title: string; endpoint: string; borderColor: string }> = {
@@ -34,42 +32,23 @@ const pageConfig: Record<ViewMoreType, { title: string; endpoint: string; border
   },
 };
 
+const LIMIT = 2;
+
 const ViewMorePage = () => {
   const navigate = useNavigate();
   const { type } = useParams<{ type: ViewMoreType }>();
 
-  const [salons, setSalons] = useState<SalonCardData[]>([]);
-  const [loading, setLoading] = useState(true);
-
   const config = pageConfig[type ?? 'recommended'];
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
+    useMoreSalonsInfinite(config.endpoint, LIMIT);
 
-  useEffect(() => {
-    const fetchSalons = async () => {
-      try {
-        const response = await api.get(config.endpoint);
-        const results = getResults(response);
+  const salons = getResults<SalonCardData>(data);
 
-        const keys = [
-          ...new Set(results.map((salon: any) => salon.profileImageKey).filter(Boolean)),
-        ];
-
-        const signedData = keys.length > 0 ? await getSignedFiles(keys) : { files: [] };
-
-        const urlMap = new Map<string, string>(
-          signedData.files.map((file: any) => [file.key, file.url]),
-        );
-
-        setSalons(results.map((s: SalonListResponse) => mapSalonForCard(s, urlMap)));
-      } catch (error) {
-        toast.error('Greška pri dohvaćanju salona');
-        setSalons([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchSalons();
-  }, [config.endpoint]);
+  const loadMoreRef = useInfiniteScroll({
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  });
 
   return (
     <section className={styles.page}>
@@ -80,7 +59,7 @@ const ViewMorePage = () => {
         <h1 className={styles.title}>{config.title}</h1>
       </div>
 
-      {loading ? (
+      {isLoading ? (
         <p className={styles.loading}>Učitavanje...</p>
       ) : salons.length === 0 ? (
         <p className={styles.empty}>Nema salona</p>
@@ -93,6 +72,8 @@ const ViewMorePage = () => {
           ))}
         </div>
       )}
+
+      <div ref={loadMoreRef} />
     </section>
   );
 };

@@ -94,8 +94,6 @@ export class SalonsController {
     @Query() dto: PaginationQueryDto,
     @Req() req: RequestWithOptionalUser,
   ) {
-    console.log('POPULAR ENDPOINT HIT', dto);
-
     return this.salonsService.findPopularSalons(dto, req.user?.sub);
   }
 
@@ -111,8 +109,6 @@ export class SalonsController {
     @Query() dto: PaginationQueryDto,
     @Req() req: RequestWithOptionalUser,
   ) {
-    console.log('NEWEST ENDPOINT HIT', dto);
-
     return this.salonsService.findNewestSalons(dto, req.user?.sub);
   }
 
