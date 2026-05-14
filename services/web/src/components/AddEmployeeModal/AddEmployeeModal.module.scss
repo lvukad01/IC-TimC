@@ -27,3 +27,9 @@
 .spanText {
   margin-left: 12px;
 }
+
+@media (min-width: 500px) {
+  .modalButton {
+    padding: 16px 32px;
+  }
+}

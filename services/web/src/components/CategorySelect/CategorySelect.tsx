@@ -7,9 +7,9 @@ import { useFormContext } from 'react-hook-form';
 import styles from './CategorySelect.module.scss';
 
 const CATEGORY_OPTIONS = [
-  { label: 'Hair', value: SalonCategory.HAIR, image: scissors },
-  { label: 'Nails', value: SalonCategory.NAILS, image: nails },
-  { label: 'Beauty', value: SalonCategory.MAKEUP, image: brush },
+  { label: 'Kosa', value: SalonCategory.HAIR, image: scissors },
+  { label: 'Nokti', value: SalonCategory.NAILS, image: nails },
+  { label: 'Makeup', value: SalonCategory.MAKEUP, image: brush },
 ];
 
 const CategorySelect = () => {
@@ -31,7 +31,7 @@ const CategorySelect = () => {
   };
 
   return (
-    <>
+    <div className={styles.content}>
       <h1 className={styles.title}>Odaberi kategoriju</h1>
       <h2 className={styles.subtitle}>
         Odaberi jednu ili više kategorija koje najbolje opisuju tvoj salon
@@ -51,12 +51,12 @@ const CategorySelect = () => {
               onClick={() => selectCategory(c.value)}
             >
               <img className={styles.categoryImg} src={c.image} alt={c.label}></img>
-              <span>{c.label}</span>
+              <span className={styles.categoryLabel}>{c.label}</span>
             </button>
           );
         })}
       </div>
-    </>
+    </div>
   );
 };
 

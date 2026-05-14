@@ -1,6 +1,6 @@
 .container {
   position: relative;
-  padding: 0px 45px;
+  padding: 0px 50px;
   min-height: 100vh;
 }
 
@@ -28,4 +28,10 @@
 
 .submitButton:hover {
   background-color: var(--color-purple-hover);
+}
+
+@media (min-width: 500px) {
+  .container {
+    padding: 0px 80px;
+  }
 }

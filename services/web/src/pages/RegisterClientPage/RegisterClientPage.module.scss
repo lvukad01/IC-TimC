@@ -1,6 +1,6 @@
 .container {
   position: relative;
-  padding: 0px 40px;
+  padding: 0px 50px;
   min-height: 100vh;
 }
 
@@ -26,8 +26,8 @@
   background-color: var(--color-purple);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 500px) {
   .container {
-    padding: 0px 120px;
+    padding: 0px 80px;
   }
 }
