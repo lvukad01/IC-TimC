@@ -10,15 +10,16 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  width: 290px;
+  width: min(75vw, 650px);
   height: 100%;
-  padding: 33px;
+  padding: clamp(25px, 4vw, 33px);
   border-radius: 23px;
   background: #4d3d7c35;
 }
 
 .inputWrapper {
   position: relative;
+  width: 100%;
 }
 
 .icon {
@@ -31,7 +32,7 @@
 }
 
 .input {
-  width: 225px;
+  width: 100%;
   height: 35px;
   padding: 0 16px 0 42px;
   border: 1px solid #4d3d7c70;
@@ -45,7 +46,7 @@
 }
 
 .button {
-  width: 225px;
+  width: 100%;
   height: 35px;
   border: 1px solid transparent;
   border-radius: 14px;

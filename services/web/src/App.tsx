@@ -2,7 +2,6 @@ import Layout from '@components/Layout';
 import { AuthProvider } from '@context/AuthContext';
 import HomePage from '@pages/HomePage';
 import SearchLocationPage from '@pages/SearchPage/SearchLocationPage';
-import { SearchPage } from '@pages/SearchPage/SearchPage';
 import SearchResultsPage from '@pages/SearchPage/SearchResultsPage';
 import SearchServicePage from '@pages/SearchPage/SearchServicePage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';

@@ -20,21 +20,22 @@ type SalonCardData = {
 const getResults = (response: any) =>
   response?.data?.results ?? response?.results ?? response?.data?.data?.results ?? [];
 
+const borderColor = '#A59DBD';
 const pageConfig: Record<ViewMoreType, { title: string; endpoint: string; borderColor: string }> = {
   recommended: {
     title: 'Preporuke',
     endpoint: '/salons/recommended',
-    borderColor: '#DC6AB8',
+    borderColor: borderColor,
   },
   popular: {
     title: 'Popularno',
     endpoint: '/salons/popular',
-    borderColor: '#9786CA',
+    borderColor: borderColor,
   },
   newest: {
     title: 'Novo',
     endpoint: '/salons/newest',
-    borderColor: '#029ED8',
+    borderColor: borderColor,
   },
 };
 
