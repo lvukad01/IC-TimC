@@ -1,7 +1,8 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-import styles from './SearchPage.module.css';
+import styles from './SearchPage.module.scss';
 import { getSalons } from '@api/salons';
+import LocalStorage from '@helpers/LocalStorage';
 
 const SearchLocationPage = () => {
   const location = useLocation();
@@ -9,6 +10,7 @@ const SearchLocationPage = () => {
   const [search, setSearch] = useState('');
   const [cities, setCities] = useState<string[]>([]);
   const [filtered, setFiltered] = useState<string[]>([]);
+  const token = LocalStorage.getAccessToken();
 
   useEffect(() => {
     getSalons()
@@ -48,15 +50,12 @@ const SearchLocationPage = () => {
   };
 
   const handleMyLocation = () => {
-    navigator.geolocation.getCurrentPosition((pos) => {
-      navigate('/', {
-        state: {
-          ...location.state,
-          city: 'Moja lokacija',
-          lat: pos.coords.latitude,
-          lng: pos.coords.longitude,
-        },
-      });
+    navigate('/', {
+      state: {
+        ...location.state,
+        city: 'Moja lokacija',
+        useMyLocation: true,
+      },
     });
   };
 
@@ -75,9 +74,12 @@ const SearchLocationPage = () => {
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <button className={styles.locationBtn} onClick={handleMyLocation}>
-        📍 Koristi moju lokaciju
-      </button>
+      {token && (
+        <button className={styles.locationBtn} onClick={handleMyLocation}>
+          📍 Koristi moju lokaciju
+        </button>
+      )}
+
       <div className={styles.cityList}>
         {filtered.map((city) => (
           <button key={city} className={styles.cityItem} onClick={() => handleSelect(city)}>

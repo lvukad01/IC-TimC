@@ -25,7 +25,15 @@ api.interceptors.response.use(
     return camelcaseKeys(unwrapped, { deep: true });
   },
   (error: ErrorResponse) => {
-    return Promise.reject(error.response.data.message || error.message);
+    const status = error.response?.status;
+
+    if (status === 401) {
+      LocalStorage.removeAccessToken();
+
+      window.location.href = '/login';
+    }
+
+    return Promise.reject(error.response?.data?.message || error.message);
   },
 );
 

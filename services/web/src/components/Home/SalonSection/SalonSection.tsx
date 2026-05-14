@@ -1,4 +1,4 @@
-import styles from './SalonSection.module.css';
+import styles from './SalonSection.module.scss';
 import { SalonCard } from '../SalonCard/SalonCard';
 import { useNavigate } from 'react-router-dom';
 

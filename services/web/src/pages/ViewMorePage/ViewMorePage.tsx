@@ -3,7 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { api } from '../../api';
 import { getSignedFiles } from '@api/files';
 import { SalonCard } from '@components/Home/SalonCard/SalonCard';
-import styles from '../SearchPage/SearchPage.module.css';
+import styles from './SearchPage/SearchPage.module.scss';
+import { AppPaths } from 'common/routes/paths';
+import toast from 'react-hot-toast';
 
 type ViewMoreType = 'recommended' | 'popular' | 'newest';
 
@@ -24,17 +26,17 @@ const borderColor = '#A59DBD';
 const pageConfig: Record<ViewMoreType, { title: string; endpoint: string; borderColor: string }> = {
   recommended: {
     title: 'Preporuke',
-    endpoint: '/salons/recommended',
+    endpoint: AppPaths.VIEW_MORE_RECOMMENDED,
     borderColor: borderColor,
   },
   popular: {
     title: 'Popularno',
-    endpoint: '/salons/popular',
+    endpoint: AppPaths.VIEW_MORE_POPULAR,
     borderColor: borderColor,
   },
   newest: {
     title: 'Novo',
-    endpoint: '/salons/newest',
+    endpoint: AppPaths.VIEW_MORE_NEWEST,
     borderColor: borderColor,
   },
 };
@@ -76,7 +78,7 @@ const ViewMorePage = () => {
 
         setSalons(mappedSalons);
       } catch (error) {
-        console.error('Failed to fetch salons:', error);
+        toast.error('Greška pri dohvaćanju salona');
         setSalons([]);
       } finally {
         setLoading(false);

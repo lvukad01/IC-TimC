@@ -1,5 +1,5 @@
 import { getTodayBookingsCount } from '@api/todayBookingCount';
-import styles from './SearchBar.module.css';
+import styles from './SearchBar.module.scss';
 import locationIcon from '@assets/media/location1.svg';
 import searchIcon from '@assets/media/search.svg';
 import { AppPaths } from 'common/routes/paths';

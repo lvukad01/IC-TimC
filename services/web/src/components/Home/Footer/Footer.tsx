@@ -1,10 +1,10 @@
-import styles from './Footer.module.css';
+import styles from './Footer.module.scss';
 
-import footerBg from '../../../assets/media/Rectangle 24.svg';
+import footerBg from '@assets/media/Rectangle 24.svg';
 
-import instagramIcon from '../../../assets/media/instagram.svg';
-import facebookIcon from '../../../assets/media/facebook.svg';
-import twitterIcon from '../../../assets/media/twitter.svg';
+import instagramIcon from '@assets/media/instagram.svg';
+import facebookIcon from '@assets/media/facebook.svg';
+import twitterIcon from '@assets/media/twitter.svg';
 
 export const Footer = () => {
   return (

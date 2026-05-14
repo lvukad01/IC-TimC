@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import styles from './SearchPage.module.css';
-import { api } from '../../api';
-import { SalonCard } from '../../components/Home/SalonCard/SalonCard';
+import styles from './SearchPage.module.scss';
+import { SalonCard } from '@components/Home/SalonCard/SalonCard';
 import { AppPaths } from 'common/routes/paths';
 import { getSignedFiles } from '@api/files';
+import { getNearbySalons } from '@api/salons';
+import { searchSalons } from '@helpers/SearchSalons';
 
 const SearchResultsPage = () => {
   const navigate = useNavigate();
@@ -16,15 +17,18 @@ const SearchResultsPage = () => {
     const params = new URLSearchParams();
 
     if (state?.search) params.append('search', state.search);
-    if (state?.city) params.append('city', state.city);
+    if (state?.city && !state?.useMyLocation) {
+      params.append('city', state.city);
+    }
     if (state?.category && state.category !== 'Sve' && state.category.toLowerCase() !== 'all') {
       params.append('category', state.category.toUpperCase().replace(' ', '_'));
     }
     if (state?.date) params.append('date', state.date);
     if (state?.serviceId) params.append('serviceId', state.serviceId);
 
-    api
-      .get(`/salons?${params.toString()}`)
+    const request = state?.useMyLocation ? getNearbySalons() : searchSalons(params.toString());
+
+    request
       .then(async (data) => {
         const results = data?.results ?? data ?? [];
 
@@ -52,6 +56,20 @@ const SearchResultsPage = () => {
       });
   }, [state]);
 
+  const getDateTimeLabel = () => {
+    if (!state?.date) return 'Bilo kada';
+
+    const date = new Date(state.date);
+
+    return date.toLocaleString('hr-HR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
   return (
     <section className={styles.page}>
       <div className={styles.topbar}>
@@ -72,7 +90,7 @@ const SearchResultsPage = () => {
             })
           }
         >
-          ◷ {state?.date ? state.date : 'Bilo kada'}
+          ◷ {state?.dateLabel ?? 'Bilo kada'}{' '}
         </button>
       </div>
 

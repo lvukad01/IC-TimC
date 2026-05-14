@@ -1,27 +1,30 @@
 import Layout from '@components/Layout';
 import { AuthProvider } from '@context/AuthContext';
-import HomePage from '@pages/HomePage';
-import SearchLocationPage from '@pages/SearchPage/SearchLocationPage';
-import SearchResultsPage from '@pages/SearchPage/SearchResultsPage';
-import SearchServicePage from '@pages/SearchPage/SearchServicePage';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from 'common/boundary/ErrorBoundary';
 import { AppPaths } from 'common/routes/paths';
 import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import DateTimePage from '@pages/DateTimePage/DateTimePage';
-import ViewMorePage from '@pages/ViewMorePage/ViewMorePage';
+import { Toaster } from 'react-hot-toast';
 
 const queryClient = new QueryClient();
+
+const HomePage = lazy(() => import('@pages/HomePage'));
 const LoginPage = lazy(() => import('@pages/LoginPage'));
 const RegisterClientPage = lazy(() => import('@pages/RegisterClientPage'));
 const RegisterOwnerPage = lazy(() => import('@pages/RegisterOwnerPage'));
+const SearchLocationPage = lazy(() => import('@pages/SearchPage/SearchLocationPage'));
+const SearchResultsPage = lazy(() => import('@pages/SearchPage/SearchResultsPage'));
+const SearchServicePage = lazy(() => import('@pages/SearchPage/SearchServicePage'));
+const DateTimePage = lazy(() => import('@pages/DateTimePage/DateTimePage'));
+const ViewMorePage = lazy(() => import('@pages/ViewMorePage/ViewMorePage'));
 
 function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
+          <Toaster position="top-center" />
           <Layout>
             <Routes>
               <Route path={AppPaths.LOGIN} element={<LoginPage />} />

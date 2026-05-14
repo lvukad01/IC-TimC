@@ -1,6 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import styles from './SearchPage.module.css';
+import styles from './SearchPage.module.scss';
 import { getServiceCategories, type ServiceCategory } from '../../api/serviceCategories';
 
 const allCategory: ServiceCategory = {

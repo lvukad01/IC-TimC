@@ -23,6 +23,7 @@ import { NotificationsService } from '../notifications/notifications.service';
 import { AvailabilityRequestDto } from './dto/availability-request.dto';
 import { BookingResponseDto } from './dto/booking-response.dto';
 import { CreateBookingDto } from './dto/create-booking.dto';
+import { TodayBookingsCountResponseDto } from './dto/today-bookings-count-response.dto';
 
 @Injectable()
 export class BookingsService {
@@ -379,7 +380,7 @@ export class BookingsService {
     return booking;
   }
 
-  async countTodayBookings(): Promise<{ count: number }> {
+  async countTodayBookings(): Promise<TodayBookingsCountResponseDto> {
     const start = startOfDay(new Date());
     const end = endOfDay(new Date());
 

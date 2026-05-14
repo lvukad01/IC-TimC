@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './SalonCard.module.css';
+import styles from './SalonCard.module.scss';
 import favoriteOn from '@assets/media/Vector.svg';
 import favoriteOff from '@assets/media/Frame 117 (1).svg';
-import { api } from '@api/index';
-import { AppPaths } from 'common/routes/paths';
+import { addFavorite, removeFavorite } from '@api/favorites';
+import toast from 'react-hot-toast';
 
 interface SalonCardProps {
   id: string;
@@ -35,22 +35,16 @@ export const SalonCard = ({
 
     try {
       if (liked) {
-        await api.delete(`/favorites/${id}`);
+        await removeFavorite(id);
         setLiked(false);
+        toast.success('Salon uklonjen iz favorita');
       } else {
-        await api.post(`/favorites/${id}`);
+        await addFavorite(id);
         setLiked(true);
+        toast.success('Salon dodan u favorite');
       }
-    } catch (error: any) {
-      const status = error?.response?.status ?? error?.status;
-      const message = error?.message ?? error;
-
-      if (status === 401 || message === 'Unauthorized') {
-        navigate(AppPaths.LOGIN);
-        return;
-      }
-
-      console.error('Failed to update favorite:', error);
+    } catch {
+      toast.error('Greška pri ažuriranju favorita');
     }
   };
 

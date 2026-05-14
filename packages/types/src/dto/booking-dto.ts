@@ -33,3 +33,7 @@ export interface AvailabilityResponse {
   startTime: string;
   endTime: string;
 }
+
+export interface BookingsCountsResponse {
+  count: number;
+}

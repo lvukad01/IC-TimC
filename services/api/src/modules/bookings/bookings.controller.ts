@@ -25,6 +25,7 @@ import { AvailabilityRequestDto } from './dto/availability-request.dto';
 import { AvailabilityResponseDto } from './dto/avaliability-response.dto';
 import { BookingResponseDto } from './dto/booking-response.dto';
 import type { CreateBookingDto } from './dto/create-booking.dto';
+import { TodayBookingsCountResponseDto } from './dto/today-bookings-count-response.dto';
 
 @ApiTags('bookings')
 @Controller('bookings')
@@ -113,7 +114,8 @@ export class BookingsCountController {
 
   @Get('today-count')
   @ApiOperation({ summary: 'Get number of bookings created today' })
-  getTodayBookingsCount() {
+  @ApiOkResponse({ type: TodayBookingsCountResponseDto })
+  getTodayBookingsCount(): Promise<TodayBookingsCountResponseDto> {
     return this.bookingsService.countTodayBookings();
   }
 }

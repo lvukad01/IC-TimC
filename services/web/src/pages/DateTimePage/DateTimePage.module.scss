@@ -90,3 +90,42 @@
   padding: 9px 18px;
   font-weight: 700;
 }
+
+.timePicker {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin: 48px 0 34px;
+  color: #4d3d7c;
+}
+
+.timeColumn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.timeColumn span {
+  font-size: 36px;
+  line-height: 1;
+  font-weight: 400;
+}
+
+.separator {
+  font-size: 36px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.arrowButton {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.arrowButton img {
+  width: 18px;
+  height: 10px;
+}

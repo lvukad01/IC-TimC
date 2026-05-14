@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import styles from './DateTimePage.module.css';
+import styles from './DateTimePage.module.scss';
+import arrowUp from '@assets/media/chevronup.svg';
+import arrowDown from '@assets/media/chevrondown.svg';
 
 const monthNames = [
   'SIJEČANJ',
@@ -18,6 +20,16 @@ const monthNames = [
 ];
 
 const DateTimePage = () => {
+  const [hour, setHour] = useState(0);
+  const [minute, setMinute] = useState(0);
+
+  const increaseHour = () => setHour((prev) => (prev + 1) % 24);
+  const decreaseHour = () => setHour((prev) => (prev === 0 ? 23 : prev - 1));
+
+  const increaseMinute = () => setMinute((prev) => (prev + 15) % 60);
+  const decreaseMinute = () => setMinute((prev) => (prev === 0 ? 45 : prev - 15));
+
+  const formatTime = (value: number) => value.toString().padStart(2, '0');
   const navigate = useNavigate();
   const { state } = useLocation();
 
@@ -47,14 +59,20 @@ const DateTimePage = () => {
   const handleSubmit = () => {
     if (!selectedDay) return;
 
-    const selectedDate = new Date(year, month, selectedDay);
+    const selectedDate = new Date(year, month, selectedDay, hour, minute);
     const formattedDate = selectedDate.toISOString();
 
     navigate(state?.returnTo ?? '/search/results', {
       state: {
         ...state,
         date: formattedDate,
-        dateLabel: `${selectedDay}.${month + 1}.${year}`,
+        dateLabel: selectedDate.toLocaleString('hr-HR', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+        }),
       },
     });
   };
@@ -88,8 +106,33 @@ const DateTimePage = () => {
         ))}
       </div>
 
-      <div className={styles.time}>00 - 00</div>
+      <div className={styles.timePicker}>
+        <div className={styles.timeColumn}>
+          <button className={styles.arrowButton} onClick={increaseHour}>
+            <img src={arrowUp} alt="" />
+          </button>
 
+          <span>{formatTime(hour)}</span>
+
+          <button className={styles.arrowButton} onClick={decreaseHour}>
+            <img src={arrowDown} alt="" />
+          </button>
+        </div>
+
+        <span className={styles.separator}>-</span>
+
+        <div className={styles.timeColumn}>
+          <button className={styles.arrowButton} onClick={increaseMinute}>
+            <img src={arrowUp} alt="" />
+          </button>
+
+          <span>{formatTime(minute)}</span>
+
+          <button className={styles.arrowButton} onClick={decreaseMinute}>
+            <img src={arrowDown} alt="" />
+          </button>
+        </div>
+      </div>
       <button className={styles.submitButton} onClick={handleSubmit}>
         Odaberi
       </button>
