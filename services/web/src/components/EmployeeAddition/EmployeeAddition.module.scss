@@ -1,0 +1,101 @@
+.additionWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.title {
+  margin-top: 24px;
+}
+
+.subtitle {
+  font-size: 12px;
+  font-weight: 300;
+  margin-bottom: 24px;
+}
+
+.ownerInfo {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  padding: 18px 20px;
+  border: 2px solid var(--color-purple);
+  border-radius: var(--main-border-radius);
+}
+
+.ownerInfoWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.ownerName {
+  font-size: 24px;
+  color: var(--color-purple);
+}
+
+.role {
+  align-self: flex-start;
+  color: gray;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.error {
+  font-size: 12px;
+  color: red;
+  margin-bottom: 12px;
+}
+
+.plusIcon {
+  background: none;
+  width: 48px;
+}
+
+.employeeList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  padding: 18px 20px;
+  border: 2px solid var(--color-purple);
+  border-radius: var(--main-border-radius);
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto;
+}
+
+.removeButton {
+  position: absolute;
+  top: -10px;
+  right: -5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  will-change: transform;
+  transform-origin: center center;
+  transition: transform 0.1s linear;
+}
+
+.removeButton:hover {
+  transform: scale(1.05);
+}

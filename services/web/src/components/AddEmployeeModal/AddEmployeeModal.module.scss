@@ -1,20 +1,14 @@
-.container {
-  position: relative;
-  padding: 0px 50px;
-  min-height: 100vh;
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
-.title {
-  margin: 24px 0px;
+.modalTitle {
+  margin-bottom: 24px;
 }
 
-.nameRow {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.submitButton {
+.modalButton {
   margin-top: 24px;
   width: 100%;
   padding: 10px;
@@ -26,12 +20,16 @@
   transition: background-color 0.2s ease;
 }
 
-.submitButton:hover {
+.modalButton:hover {
   background-color: var(--color-purple-hover);
 }
 
+.spanText {
+  margin-left: 12px;
+}
+
 @media (min-width: 500px) {
-  .container {
-    padding: 0px 80px;
+  .modalButton {
+    padding: 16px 32px;
   }
 }

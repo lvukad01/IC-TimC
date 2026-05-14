@@ -21,23 +21,25 @@ const OwnerPersonalInformation = () => {
         helperText={errors.ownerPersonalInformation?.email?.message}
       />
 
-      <FormInput
-        label="Ime"
-        fullWidth
-        margin="normal"
-        {...register('ownerPersonalInformation.firstName')}
-        error={!!errors.ownerPersonalInformation?.firstName}
-        helperText={errors.ownerPersonalInformation?.firstName?.message}
-      />
+      <div className={styles.nameRow}>
+        <FormInput
+          label="Ime"
+          fullWidth
+          margin="normal"
+          {...register('ownerPersonalInformation.firstName')}
+          error={!!errors.ownerPersonalInformation?.firstName}
+          helperText={errors.ownerPersonalInformation?.firstName?.message}
+        />
 
-      <FormInput
-        label="Prezime"
-        fullWidth
-        margin="normal"
-        {...register('ownerPersonalInformation.lastName')}
-        error={!!errors.ownerPersonalInformation?.lastName}
-        helperText={errors.ownerPersonalInformation?.lastName?.message}
-      />
+        <FormInput
+          label="Prezime"
+          fullWidth
+          margin="normal"
+          {...register('ownerPersonalInformation.lastName')}
+          error={!!errors.ownerPersonalInformation?.lastName}
+          helperText={errors.ownerPersonalInformation?.lastName?.message}
+        />
+      </div>
 
       <FormInput
         label="Broj mobitela"
