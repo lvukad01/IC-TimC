@@ -1,12 +1,12 @@
+import { BusinessSection } from '@components/Home/BusinessSection/BusinessSection';
 import { Footer } from '../components/Home/Footer/Footer';
-import { Header } from '../components/Home/Header/Header';
+import { HeroSection } from '../components/Home/HeroSection/HeroSection';
 import { SalonSection } from '../components/Home/SalonSection/SalonSection';
 import { SearchBar } from '../components/Home/SearchBar/SearchBar';
-import { HeroSection } from '../components/Home/HeroSection/HeroSection';
-import { BusinessSection } from '@components/Home/BusinessSection/BusinessSection';
 
-import salonImg from '../assets/media/frizer 1.png';
+import Header from '@components/Home/Header';
 import useInfiniteScroll from '@hooks/useInfiniteScroll';
+import salonImg from '../assets/media/frizer 1.png';
 
 export const salons = [
   {

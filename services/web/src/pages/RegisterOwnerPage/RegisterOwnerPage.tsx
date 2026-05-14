@@ -13,6 +13,7 @@ import {
   OwnerRegistrationFormTypeEnum,
   type OwnerRegistrationFormSchemaProps,
 } from '@validation/ownerRegistrationForm';
+import { AppPaths } from 'common/routes/paths';
 import { useRef } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -57,6 +58,7 @@ const RegisterOwnerPage = () => {
 
   const onRegister = (data: OwnerRegistrationFormSchemaProps) => {
     const { ownerPersonalInformation } = data;
+
     registerMutation.mutate(
       {
         email: ownerPersonalInformation.email,
@@ -69,6 +71,10 @@ const RegisterOwnerPage = () => {
       {
         onSuccess: () => {
           setFormType(OwnerRegistrationFormTypeEnum.SalonLocation);
+        },
+
+        onError: () => {
+          navigate(`${AppPaths.LOGIN}?mode=owner`);
         },
       },
     );
@@ -108,11 +114,18 @@ const RegisterOwnerPage = () => {
       }
       case OwnerRegistrationFormTypeEnum.EmployeeAddition: {
         const values = getValues();
+        const employees = values.employeesAddition?.employees ?? [];
+
+        if (employees.length === 0) {
+          setFormType(OwnerRegistrationFormTypeEnum.Completed);
+          return;
+        }
+
         addEmployeesMutation.mutate(
           {
             salonId: salonIdRef.current!,
             data: {
-              employees: values.employeesAddition?.employees ?? [],
+              employees,
             },
           },
           {

@@ -52,9 +52,9 @@ async function main() {
     data: { name: 'Barbershop', slug: 'barbershop' },
   });
 
-  const owner = await prisma.users.create({
+  const owner1 = await prisma.users.create({
     data: {
-      email: 'owner@lumii.test',
+      email: 'owner1@lumii.test',
       firstName: 'Mia',
       lastName: 'Horvat',
       password,
@@ -66,6 +66,142 @@ async function main() {
       street: 'Ilica 15',
       lat: 45.815,
       lng: 15.9819,
+    },
+  });
+
+  const owner2 = await prisma.users.create({
+    data: {
+      email: 'owner2@lumii.test',
+      firstName: 'Ana',
+      lastName: 'Marić',
+      password,
+      phone: '+385922222222',
+      role: UserRole.SALON_OWNER,
+      country: 'Croatia',
+      city: 'Split',
+      zipcode: '21000',
+      street: 'Riva 10',
+      lat: 43.5081,
+      lng: 16.4402,
+    },
+  });
+
+  const owner3 = await prisma.users.create({
+    data: {
+      email: 'owner3@lumii.test',
+      firstName: 'Petra',
+      lastName: 'Kovač',
+      password,
+      phone: '+385933333333',
+      role: UserRole.SALON_OWNER,
+      country: 'Croatia',
+      city: 'Rijeka',
+      zipcode: '51000',
+      street: 'Korzo 5',
+      lat: 45.3271,
+      lng: 14.4422,
+    },
+  });
+
+  const owner4 = await prisma.users.create({
+    data: {
+      email: 'owner4@lumii.test',
+      firstName: 'Dorian',
+      lastName: 'Leci',
+      password,
+      phone: '+385934334333',
+      role: UserRole.SALON_OWNER,
+      country: 'Croatia',
+      city: 'Virovitica',
+      zipcode: '33000',
+      street: 'Zinke Kunc 9',
+      lat: 45.3271,
+      lng: 14.4422,
+    },
+  });
+
+  const owner5 = await prisma.users.create({
+    data: {
+      email: 'owner5@lumii.test',
+      firstName: 'Ivana',
+      lastName: 'Barišić',
+      password,
+      phone: '+385955555555',
+      role: UserRole.SALON_OWNER,
+      country: 'Croatia',
+      city: 'Zadar',
+      zipcode: '23000',
+      street: 'Obala kneza Branimira 3',
+      lat: 44.1194,
+      lng: 15.2314,
+    },
+  });
+
+  const owner6 = await prisma.users.create({
+    data: {
+      email: 'owner6@lumii.test',
+      firstName: 'Luka',
+      lastName: 'Jurić',
+      password,
+      phone: '+385966666666',
+      role: UserRole.SALON_OWNER,
+      country: 'Croatia',
+      city: 'Osijek',
+      zipcode: '31000',
+      street: 'Europska avenija 18',
+      lat: 45.554,
+      lng: 18.695,
+    },
+  });
+
+  const owner7 = await prisma.users.create({
+    data: {
+      email: 'owner7@lumii.test',
+      firstName: 'Martina',
+      lastName: 'Šarić',
+      password,
+      phone: '+385977777777',
+      role: UserRole.SALON_OWNER,
+      country: 'Croatia',
+      city: 'Pula',
+      zipcode: '52100',
+      street: 'Flanatička 12',
+      lat: 44.8666,
+      lng: 13.8496,
+    },
+  });
+
+  const owner8 = await prisma.users.create({
+    data: {
+      email: 'owner8@lumii.test',
+      firstName: 'Marko',
+      lastName: 'Perković',
+      password,
+      phone: '+385988888888',
+      role: UserRole.SALON_OWNER,
+      country: 'Croatia',
+      city: 'Šibenik',
+      zipcode: '22000',
+      street: 'Obala Hrvatske mornarice 7',
+      lat: 43.735,
+      lng: 15.889,
+    },
+  });
+
+  const owner9 = await prisma.users.create({
+    data: {
+      email: 'owner9@lumii.test',
+      firstName: 'Nina',
+      lastName: 'Radić',
+      password,
+      phone: '+385999999999',
+      role: UserRole.SALON_OWNER,
+      country: 'Croatia',
+      city: 'Karlovac',
+      zipcode: '47000',
+      street: 'Trg bana Josipa Jelačića 2',
+      lat: 45.4872,
+      lng: 15.5478,
     },
   });
 
@@ -102,7 +238,7 @@ async function main() {
 
   const salon = await prisma.salons.create({
     data: {
-      ownerId: owner.id,
+      ownerId: owner1.id,
       name: 'Lumii Beauty Studio',
       country: 'Croatia',
       city: 'Zagreb',
@@ -123,12 +259,12 @@ async function main() {
           {
             key: 'lumii_beauty_studio.svg',
             type: MediaType.PROFILE,
-            sortOrder: 1,
+            sortOrder: 0,
           },
           {
             key: 'lumii_beauty_studio_1.svg',
             type: MediaType.GALLERY,
-            sortOrder: 2,
+            sortOrder: 1,
           },
         ],
       },
@@ -142,7 +278,7 @@ async function main() {
   });
   const salon2 = await prisma.salons.create({
     data: {
-      ownerId: owner.id,
+      ownerId: owner1.id,
       name: 'Glow Beauty',
       country: 'Croatia',
       city: 'Split',
@@ -163,12 +299,12 @@ async function main() {
           {
             key: 'glow_studio_profile.svg',
             type: MediaType.PROFILE,
-            sortOrder: 1,
+            sortOrder: 0,
           },
           {
             key: 'glow_studio_1.svg',
             type: MediaType.GALLERY,
-            sortOrder: 2,
+            sortOrder: 1,
           },
         ],
       },
@@ -177,7 +313,7 @@ async function main() {
 
   const salon3 = await prisma.salons.create({
     data: {
-      ownerId: owner.id,
+      ownerId: owner2.id,
       name: 'Barber House',
       country: 'Croatia',
       city: 'Rijeka',
@@ -195,12 +331,12 @@ async function main() {
           {
             key: 'barber_house_profile.svg',
             type: MediaType.PROFILE,
-            sortOrder: 1,
+            sortOrder: 0,
           },
           {
             key: 'barber_house_1.svg',
             type: MediaType.GALLERY,
-            sortOrder: 2,
+            sortOrder: 1,
           },
         ],
       },
@@ -209,7 +345,7 @@ async function main() {
 
   const salon4 = await prisma.salons.create({
     data: {
-      ownerId: owner.id,
+      ownerId: owner2.id,
       name: 'Luxe Hair Studio',
       country: 'Croatia',
       city: 'Zagreb',
@@ -227,12 +363,12 @@ async function main() {
           {
             key: 'luxe_hair_profile.svg',
             type: MediaType.PROFILE,
-            sortOrder: 1,
+            sortOrder: 0,
           },
           {
             key: 'luxe_hair_1.svg',
             type: MediaType.GALLERY,
-            sortOrder: 2,
+            sortOrder: 1,
           },
         ],
       },
@@ -241,7 +377,7 @@ async function main() {
 
   const salon5 = await prisma.salons.create({
     data: {
-      ownerId: owner.id,
+      ownerId: owner3.id,
       name: 'Makeup Atelier',
       country: 'Croatia',
       city: 'Osijek',
@@ -259,12 +395,197 @@ async function main() {
           {
             key: 'makeup_atelier_profile.svg',
             type: MediaType.PROFILE,
-            sortOrder: 1,
+            sortOrder: 0,
           },
           {
             key: 'makeup_atelier_1.svg',
             type: MediaType.GALLERY,
-            sortOrder: 2,
+            sortOrder: 1,
+          },
+        ],
+      },
+    },
+  });
+
+  const salon7 = await prisma.salons.create({
+    data: {
+      ownerId: owner4.id,
+      name: 'Velvet Nails',
+      country: 'Croatia',
+      city: 'Osijek',
+      zipcode: '31000',
+      street: 'Europska avenija 12',
+      lat: 45.554,
+      lng: 18.695,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-18'),
+      categories: {
+        create: [{ category: SalonCategory.NAILS }],
+      },
+      media: {
+        create: [
+          {
+            key: 'velvet_nails_profile.svg',
+            type: MediaType.PROFILE,
+            sortOrder: 0,
+          },
+        ],
+      },
+    },
+  });
+
+  const salon8 = await prisma.salons.create({
+    data: {
+      ownerId: owner5.id,
+      name: 'Luna Beauty Lab',
+      country: 'Croatia',
+      city: 'Split',
+      zipcode: '21000',
+      street: 'Poljička cesta 32',
+      lat: 43.5123,
+      lng: 16.4632,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-22'),
+      categories: {
+        create: [{ category: SalonCategory.NAILS }],
+      },
+      media: {
+        create: [
+          {
+            key: 'luna_beauty_profile.svg',
+            type: MediaType.PROFILE,
+            sortOrder: 0,
+          },
+          {
+            key: 'luna_beauty_1.svg',
+            type: MediaType.PROFILE,
+            sortOrder: 1,
+          },
+        ],
+      },
+    },
+  });
+
+  const salon9 = await prisma.salons.create({
+    data: {
+      ownerId: owner6.id,
+      name: 'Aura Hair Lounge',
+      country: 'Croatia',
+      city: 'Pula',
+      zipcode: '52100',
+      street: 'Forum 3',
+      lat: 44.8666,
+      lng: 13.8496,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-21'),
+      categories: {
+        create: [{ category: SalonCategory.HAIR }],
+      },
+      media: {
+        create: [
+          {
+            key: 'aura_hair_profile.svg',
+            type: MediaType.PROFILE,
+            sortOrder: 0,
+          },
+          {
+            key: 'aura_hair_1.svg',
+            type: MediaType.GALLERY,
+            sortOrder: 1,
+          },
+        ],
+      },
+    },
+  });
+
+  const salon10 = await prisma.salons.create({
+    data: {
+      ownerId: owner7.id,
+      name: 'Gentleman Barber Studio',
+      country: 'Croatia',
+      city: 'Dubrovnik',
+      zipcode: '20000',
+      street: 'Stradun 12',
+      lat: 42.6407,
+      lng: 18.1084,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-22'),
+      categories: {
+        create: [{ category: SalonCategory.BARBERSHOP }],
+      },
+      media: {
+        create: [
+          {
+            key: 'gentleman_barber_profile.svg',
+            type: MediaType.PROFILE,
+            sortOrder: 0,
+          },
+        ],
+      },
+    },
+  });
+
+  const salon11 = await prisma.salons.create({
+    data: {
+      ownerId: owner8.id,
+      name: 'Glow Skin & Beauty',
+      country: 'Croatia',
+      city: 'Šibenik',
+      zipcode: '22000',
+      street: 'Obala dr. Franje Tuđmana 6',
+      lat: 43.735,
+      lng: 15.8952,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-23'),
+      categories: {
+        create: [{ category: SalonCategory.MAKEUP }],
+      },
+      media: {
+        create: [
+          {
+            key: 'glow_skin_profile.svg',
+            type: MediaType.PROFILE,
+            sortOrder: 0,
+          },
+          {
+            key: 'glow_skin_1.svg',
+            type: MediaType.GALLERY,
+            sortOrder: 1,
+          },
+        ],
+      },
+    },
+  });
+
+  const salon12 = await prisma.salons.create({
+    data: {
+      ownerId: owner9.id,
+      name: 'Studio Elegance',
+      country: 'Croatia',
+      city: 'Varaždin',
+      zipcode: '42000',
+      street: 'Kapucinski trg 4',
+      lat: 46.3057,
+      lng: 16.3366,
+      status: SalonStatus.ACTIVE,
+      createdAt: new Date('2026-05-24'),
+      categories: {
+        create: [
+          { category: SalonCategory.HAIR },
+          { category: SalonCategory.MAKEUP },
+        ],
+      },
+      media: {
+        create: [
+          {
+            key: 'studio_elegance_profile.svg',
+            type: MediaType.PROFILE,
+            sortOrder: 0,
+          },
+          {
+            key: 'studio_elegance_1.svg',
+            type: MediaType.GALLERY,
+            sortOrder: 1,
           },
         ],
       },
@@ -445,7 +766,7 @@ async function main() {
         content: 'Your booking has been confirmed.',
       },
       {
-        userId: owner.id,
+        userId: owner1.id,
         type: NotificationType.REMINDER,
         content: 'You have an upcoming appointment.',
       },
