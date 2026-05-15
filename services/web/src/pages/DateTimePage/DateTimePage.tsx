@@ -55,19 +55,6 @@ const DateTimePage = () => {
 
   const isCurrentMonth = year === new Date().getFullYear() && month === new Date().getMonth();
 
-  const isSelectedToday = () => {
-    if (!selectedDay) return false;
-
-    const selectedDate = new Date(year, month, selectedDay);
-    const todayDate = new Date();
-
-    return (
-      selectedDate.getFullYear() === todayDate.getFullYear() &&
-      selectedDate.getMonth() === todayDate.getMonth() &&
-      selectedDate.getDate() === todayDate.getDate()
-    );
-  };
-
   const isPastSelectedTime = () => {
     if (!selectedDay) return true;
 

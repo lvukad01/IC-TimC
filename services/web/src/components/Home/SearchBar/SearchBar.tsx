@@ -13,13 +13,16 @@ export const SearchBar = () => {
   const location = useLocation();
   const [category, setCategory] = useState('');
   const [city, setCity] = useState('');
+  const [useMyLocation, setUseMyLocation] = useState(false);
+
   useEffect(() => {
     if (location.state?.category) setCategory(location.state.category);
     if (location.state?.city) setCity(location.state.city);
+    setUseMyLocation(Boolean(location.state?.useMyLocation));
   }, [location.state]);
 
   const handleSearch = () => {
-    navigate(AppPaths.SEARCH_RESULTS, { state: { category, city } });
+    navigate(AppPaths.SEARCH_RESULTS, { state: { category, city, useMyLocation } });
   };
 
   useEffect(() => {
@@ -60,6 +63,7 @@ export const SearchBar = () => {
                 state: {
                   category,
                   city,
+                  useMyLocation,
                 },
               })
             }

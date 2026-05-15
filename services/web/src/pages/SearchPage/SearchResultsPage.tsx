@@ -14,21 +14,11 @@ const SearchResultsPage = () => {
   const [salons, setSalons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     const fetchSalons = async () => {
       setLoading(true);
       let favoriteIdsSet = new Set<string>();
-
-      try {
-        const favoritesData = await getFavorites();
-        const favoriteResults =
-          favoritesData?.results ?? favoritesData?.data?.results ?? favoritesData ?? [];
-
-        favoriteIdsSet = new Set(favoriteResults.map((salon: any) => salon.id));
-        setFavoriteIds(favoriteIdsSet);
-      } catch {
-        setFavoriteIds(new Set());
-      }
 
       try {
         const params = new URLSearchParams();
@@ -42,22 +32,22 @@ const SearchResultsPage = () => {
         params.append('page', '1');
         params.append('limit', '50');
 
-        if (state?.date) params.append('date', state.date);
+        if (state?.date) params.append('date', state.date.split('T')[0]);
         if (state?.serviceId) params.append('serviceId', state.serviceId);
-
-        let favoriteIdsSet = new Set<string>();
 
         try {
           const favoritesData = await getFavorites();
           const favoriteResults = favoritesData?.results ?? favoritesData ?? [];
           favoriteIdsSet = new Set(favoriteResults.map((salon: any) => salon.id));
         } catch {}
-
         const data = state?.useMyLocation
           ? await getNearbySalons()
           : await searchSalons(params.toString());
 
-        const results = data?.results ?? data?.data?.results ?? data?.data?.data?.results ?? [];
+        const results = Array.isArray(data)
+          ? data
+          : (data?.results ?? data?.data?.results ?? data?.data ?? []);
+
         const keys = results.map((salon: any) => salon.profileImageKey).filter(Boolean);
         const signedData = keys.length > 0 ? await getSignedFiles(keys) : { files: [] };
 
@@ -116,7 +106,7 @@ const SearchResultsPage = () => {
             })
           }
         >
-          ◷ {state?.dateLabel ?? 'Bilo kada'}{' '}
+          ◷ {getDateTimeLabel()}
         </button>
       </div>
 
