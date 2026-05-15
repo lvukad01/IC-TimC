@@ -69,7 +69,12 @@ const ClientProfilePage = () => {
         signedData.files.map((file: any) => [file.key, file.url]),
       );
 
-      setFavorites(results.map((salon: any) => mapSalonForCard(salon, urlMap)));
+      setFavorites(
+        results.map((salon: any) => ({
+          ...mapSalonForCard(salon, urlMap),
+          isFavorite: true,
+        })),
+      );
     };
 
     const fetchBookings = async () => {
@@ -133,7 +138,16 @@ const ClientProfilePage = () => {
 
         <div className={styles.favoritesList}>
           {favorites.slice(0, 3).map((salon) => (
-            <SalonCard key={salon.id} {...salon} borderColor="#A59DBD" />
+            <SalonCard
+              key={salon.id}
+              {...salon}
+              borderColor="#A59DBD"
+              onFavoriteChange={(salonId, isFavorite) => {
+                if (!isFavorite) {
+                  setFavorites((prev) => prev.filter((s) => s.id !== salonId));
+                }
+              }}
+            />
           ))}
         </div>
       </section>

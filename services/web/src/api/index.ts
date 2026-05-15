@@ -31,10 +31,15 @@ api.interceptors.response.use(
     if (error.config?.url?.includes(AppPaths.LOGIN))
       return Promise.reject(error.response?.data?.message || error.message);
 
-    if (status === 401) {
+    const token = LocalStorage.getAccessToken();
+
+    if (status === 401 && token) {
       LocalStorage.removeAccessToken();
 
-      window.location.href = '/login';
+      window.location.href = AppPaths.LOGIN;
+    }
+    if (status === 401 && !token) {
+      return Promise.reject(error.response?.data?.message || error.message);
     }
 
     return Promise.reject(error.response?.data?.message || error.message);

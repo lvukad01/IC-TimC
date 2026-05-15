@@ -104,10 +104,10 @@ const SearchResultsPage = () => {
             <div key={salon.id} onClick={() => navigate(`/salons/${salon.id}`)}>
               <SalonCard
                 id={salon.id}
-                image={salon.imageUrl ?? ''}
+                profileImage={salon.imageUrl ?? ''}
                 name={salon.name}
                 rating={salon.avgRating ?? 0}
-                type={salon.type ?? ''}
+                categories={salon.type ?? ''}
                 address={`${salon.street}, ${salon.city}`}
                 borderColor="#A59DBD"
               />

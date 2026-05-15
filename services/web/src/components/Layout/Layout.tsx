@@ -15,6 +15,15 @@ const Layout = ({ children }: LayoutProps) => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   }, [pathname]);
 
+  const showHeader = [
+    AppPaths.HOME,
+    AppPaths.LOGIN,
+    AppPaths.REGISTER_CLIENT,
+    AppPaths.REGISTER_SALON_OWNER,
+    AppPaths.OWNER_SALON_INTRO,
+    AppPaths.CLIENT_PROFILE,
+  ].includes(pathname as AppPaths);
+
   return (
     <div>
       <Toaster
@@ -33,7 +42,7 @@ const Layout = ({ children }: LayoutProps) => {
           },
         }}
       />
-      {(pathname === AppPaths.HOME || pathname === AppPaths.CLIENT_PROFILE) && <Header />}
+      {showHeader && <Header />}
       <main>{children}</main>
     </div>
   );

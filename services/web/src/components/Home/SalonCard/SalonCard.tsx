@@ -15,6 +15,7 @@ interface SalonCardProps {
   address: string;
   borderColor?: string;
   isFavorite?: boolean;
+  onFavoriteChange?: (salonId: string, isFavorite: boolean) => void;
 }
 
 const salonTypeLabel: Record<SalonCategory, string> = {
@@ -33,12 +34,14 @@ export const SalonCard = ({
   address,
   borderColor,
   isFavorite = false,
+  onFavoriteChange,
 }: SalonCardProps) => {
   const [liked, setLiked] = useState(Boolean(isFavorite));
 
   useEffect(() => {
     setLiked(Boolean(isFavorite));
   }, [isFavorite]);
+
   const handleFavorites = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
 
@@ -48,16 +51,17 @@ export const SalonCard = ({
     try {
       if (previousLiked) {
         await removeFavorite(id);
+        onFavoriteChange?.(id, false);
         toast.success('Salon uklonjen iz favorita');
       } else {
         await addFavorite(id);
+        onFavoriteChange?.(id, true);
         toast.success('Salon dodan u favorite');
       }
     } catch {
       setLiked(previousLiked);
       toast.error('Greška pri ažuriranju favorita');
     }
-    console.log(name, isFavorite);
   };
 
   return (

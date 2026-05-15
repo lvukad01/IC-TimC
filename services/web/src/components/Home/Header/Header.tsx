@@ -24,7 +24,7 @@ const Header = () => {
   }
 
   function goHome() {
-    navigate(AppPaths.HOME);
+    window.location.href = AppPaths.HOME;
   }
 
   return (

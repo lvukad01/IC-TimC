@@ -5,7 +5,7 @@ import { Footer } from '@components/Home/Footer/Footer';
 import { HeroSection } from '@components/Home/HeroSection/HeroSection';
 import { SalonSection } from '@components/Home/SalonSection/SalonSection';
 import { SearchBar } from '@components/Home/SearchBar/SearchBar';
-
+import { getFavorites } from '@api/favorites';
 import { getSignedFiles } from '@api/files';
 import { mapSalonForCard } from '@helpers/salonMapper';
 import type { SalonListResponse } from '@lumii/types';
@@ -25,6 +25,15 @@ const HomePage = () => {
 
   useEffect(() => {
     const fetchHomeSalons = async () => {
+      let favoriteIds = new Set<string>();
+
+      try {
+        const favoriteData = await getFavorites();
+        const favoriteResults = favoriteData?.results ?? favoriteData ?? [];
+        favoriteIds = new Set(favoriteResults.map((salon: SalonListResponse) => salon.id));
+      } catch {
+        favoriteIds = new Set();
+      }
       try {
         const [recommendedResponse, popularResponse, newestResponse] = await Promise.all([
           api.get(`/salons/recommended?page=1&limit=${LIMIT}`),
@@ -48,10 +57,23 @@ const HomePage = () => {
         );
 
         setRecommended(
-          recommendedResults.map((s: SalonListResponse) => mapSalonForCard(s, urlMap)),
+          recommendedResults.map((s: SalonListResponse) => ({
+            ...mapSalonForCard(s, urlMap),
+            isFavorite: favoriteIds.has(s.id),
+          })),
         );
-        setPopular(popularResults.map((s: SalonListResponse) => mapSalonForCard(s, urlMap)));
-        setNewest(newestResults.map((s: SalonListResponse) => mapSalonForCard(s, urlMap)));
+        setPopular(
+          popularResults.map((s: SalonListResponse) => ({
+            ...mapSalonForCard(s, urlMap),
+            isFavorite: favoriteIds.has(s.id),
+          })),
+        );
+        setNewest(
+          newestResults.map((s: SalonListResponse) => ({
+            ...mapSalonForCard(s, urlMap),
+            isFavorite: favoriteIds.has(s.id),
+          })),
+        );
       } catch (error) {
         console.error('Failed to fetch salons:', error);
       }
