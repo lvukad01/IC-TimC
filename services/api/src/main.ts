@@ -52,6 +52,7 @@ async function bootstrap() {
   app.use(
     helmet.contentSecurityPolicy({
       directives: {
+        contentSecurityPolicy: null,
         upgradeInsecureRequests: null,
       },
     }),
@@ -87,6 +88,6 @@ async function bootstrap() {
 
   console.log(process.env);
 
-  await app.listen(configService.get<number>('PORT') ?? 3000, '0.0.0.0');
+  await app.listen(3001, '0.0.0.0');
 }
 bootstrap();
