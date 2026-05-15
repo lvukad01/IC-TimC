@@ -6,6 +6,18 @@ export interface UpdateUserPayload {
   lng?: number;
 }
 
+export interface UpdateUserRequest {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  password?: string;
+  phone?: string;
+  country?: string;
+  city?: string;
+  street?: string;
+  zipcode?: string;
+}
+
 export interface UserResponse {
   id: string;
   email: string;

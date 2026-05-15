@@ -1,0 +1,30 @@
+.header {
+  display: flex;
+  height: 80px;
+  padding: 5px 31px;
+  align-items: center;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 80px);
+}
+
+.loading img {
+  width: 121px;
+  height: 121px;
+}
+
+.backButton {
+  color: #000;
+  font-family: Outfit;
+  font-size: 32px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}

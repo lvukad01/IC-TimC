@@ -12,4 +12,5 @@ export enum AppPaths {
   VIEW_MORE_NEWEST = '/salons/newest',
   DATE_TIME = '/search/date-time',
   OWNER_SALON_INTRO = '/owner-salon-intro',
+  CLIENT_PROFILE = '/profile/client',
 }
