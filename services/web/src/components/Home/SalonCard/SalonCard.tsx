@@ -1,33 +1,39 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import styles from './SalonCard.module.scss';
-import favoriteOn from '@assets/media/Vector.svg';
-import favoriteOff from '@assets/media/Frame 117 (1).svg';
 import { addFavorite, removeFavorite } from '@api/favorites';
+import favoriteOff from '@assets/media/Frame 117 (1).svg';
+import favoriteOn from '@assets/media/Vector.svg';
+import { SalonCategory } from '@lumii/types';
+import { useState } from 'react';
 import toast from 'react-hot-toast';
+import styles from './SalonCard.module.scss';
 
 interface SalonCardProps {
   id: string;
-  image: string;
+  profileImage: string;
   name: string;
   rating: number;
-  type: string;
+  categories: SalonCategory[];
   address: string;
   borderColor?: string;
   isFavorite?: boolean;
 }
 
+const salonTypeLabel: Record<SalonCategory, string> = {
+  [SalonCategory.HAIR]: 'frizerski salon',
+  [SalonCategory.MAKEUP]: 'makeup studio',
+  [SalonCategory.NAILS]: 'salon za nokte',
+  [SalonCategory.BARBERSHOP]: 'barber shop',
+};
+
 export const SalonCard = ({
   id,
-  image,
+  profileImage,
   name,
+  categories,
   rating,
-  type,
   address,
   borderColor,
   isFavorite = false,
 }: SalonCardProps) => {
-  const navigate = useNavigate();
   const [liked, setLiked] = useState(isFavorite);
 
   const handleFavorites = async (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -51,8 +57,8 @@ export const SalonCard = ({
   return (
     <div className={styles.card} style={{ borderColor: borderColor ?? '#e0e0e0' }}>
       <div className={styles.imageWrapper}>
-        {image ? (
-          <img src={image} alt={name} className={styles.image} />
+        {profileImage ? (
+          <img src={profileImage} alt={name} className={styles.image} />
         ) : (
           <div className={styles.image} />
         )}
@@ -69,10 +75,12 @@ export const SalonCard = ({
       <div className={styles.info}>
         <div className={styles.nameRow}>
           <span className={styles.name}>{name}</span>
-          <span className={styles.rating}>★ {rating}</span>
+          <span className={styles.rating}>★ {rating.toFixed(2)}</span>
         </div>
-        <p className={styles.type}>{type}</p>
-        <p className={styles.address}>{address}</p>
+        <div className={styles.additionalInfo}>
+          <p className={styles.type}>{categories.map((c) => salonTypeLabel[c]).join(', ')}</p>
+          <p className={styles.address}>{address}</p>
+        </div>
       </div>
     </div>
   );

@@ -48,7 +48,7 @@ const CountrySelect = ({ name }: CountrySelectProps) => {
             options={countries}
             onChange={(val) => field.onChange(val?.value)}
             value={countries.find((c) => c.value === field.value)}
-            placeholder="Select country"
+            placeholder="Odaberi državu"
           />
         )}
       />

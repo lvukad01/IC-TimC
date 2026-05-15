@@ -1,5 +1,6 @@
 import { dateRegex, FindSalonsQuery, SalonCategory } from '@lumii/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import {
   IsEnum,
   IsNumber,
@@ -41,8 +42,9 @@ export class FindSalonsQueryDto implements FindSalonsQuery {
     default: 1,
   })
   @IsOptional()
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  page: number = 1;
+  page: number;
 
   @ApiPropertyOptional({
     description: 'Items per page',
@@ -50,8 +52,9 @@ export class FindSalonsQueryDto implements FindSalonsQuery {
     default: 10,
   })
   @IsOptional()
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  limit: number = 10;
+  limit: number;
 
   @ApiPropertyOptional({
     description: 'Filter by availability date',

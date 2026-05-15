@@ -14,6 +14,7 @@ export class SalonsMapper {
   ): SalonDetailResponse {
     return {
       ...salon,
+      categories: salon.categories.map((c) => c.category),
       isFavorite: favoriteSet.has(salon.id) ?? undefined,
       media: salon.media.map((m) => ({
         id: m.id,
@@ -49,6 +50,7 @@ export class SalonsMapper {
       isFavorite: favoriteSet.has(salon.id) ?? undefined,
       profileImageKey: profilePicture?.key,
       avgRating,
+      categories: salon.categories.map((c) => c.category),
     };
   }
 }

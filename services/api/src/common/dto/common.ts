@@ -1,5 +1,6 @@
 import { ActionResponse, PaginationQuery } from '@lumii/types';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Transform } from 'class-transformer';
 import { IsNumber, IsOptional } from 'class-validator';
 
 export class ActionResponseDto implements ActionResponse {
@@ -17,8 +18,9 @@ export class PaginationQueryDto implements PaginationQuery {
     default: 1,
   })
   @IsOptional()
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  page?: number = 1;
+  page?: number;
 
   @ApiPropertyOptional({
     description: 'Items per page',
@@ -26,6 +28,7 @@ export class PaginationQueryDto implements PaginationQuery {
     default: 10,
   })
   @IsOptional()
+  @Transform(({ value }) => Number(value))
   @IsNumber()
-  limit?: number = 10;
+  limit?: number;
 }

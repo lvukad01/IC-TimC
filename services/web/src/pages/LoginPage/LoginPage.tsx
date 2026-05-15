@@ -123,7 +123,7 @@ const LoginPage = () => {
             <h2>Imaš svoj salon?</h2>
             <button
               className={styles.ownerRegisterButton}
-              onClick={() => navigate(`${AppPaths.LOGIN}?mode=owner`)}
+              onClick={() => navigate(AppPaths.OWNER_SALON_INTRO)}
             >
               <span>lumii za poduzeća </span>
               <FaArrowRight className={styles.arrow} />

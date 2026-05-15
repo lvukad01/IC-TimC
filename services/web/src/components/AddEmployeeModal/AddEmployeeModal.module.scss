@@ -1,0 +1,35 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.modalTitle {
+  margin-bottom: 24px;
+}
+
+.modalButton {
+  margin-top: 24px;
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: var(--main-border-radius);
+  background-color: var(--color-purple);
+
+  transition: background-color 0.2s ease;
+}
+
+.modalButton:hover {
+  background-color: var(--color-purple-hover);
+}
+
+.spanText {
+  margin-left: 12px;
+}
+
+@media (min-width: 500px) {
+  .modalButton {
+    padding: 16px 32px;
+  }
+}

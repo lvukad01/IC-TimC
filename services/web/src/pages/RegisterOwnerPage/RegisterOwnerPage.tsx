@@ -1,6 +1,8 @@
 import CategorySelect from '@components/CategorySelect';
+import EmployeeAddition from '@components/EmployeeAddition';
 import OwnerPersonalInformation from '@components/Forms/OwnerPersonalInformation';
 import SalonLocation from '@components/Forms/SalonLocation';
+import ProfileFinishedState from '@components/ProfileFinishedState';
 import { zodResolver } from '@hookform/resolvers/zod';
 import useAddEmployees from '@hooks/useAddEmployees';
 import useAddSalon from '@hooks/useAddSalon';
@@ -11,22 +13,30 @@ import {
   OwnerRegistrationFormTypeEnum,
   type OwnerRegistrationFormSchemaProps,
 } from '@validation/ownerRegistrationForm';
+import { AppPaths } from 'common/routes/paths';
+import { useRef } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './RegisterOwnerPage.module.scss';
 
 const RegisterOwnerPage = () => {
   const location = useLocation();
   const email: string = location.state?.email;
   const { register: registerMutation } = useAuth();
+  const navigate = useNavigate();
 
   const addSalonMutation = useAddSalon();
   const addEmployeesMutation = useAddEmployees();
+  const salonIdRef = useRef<string | null>(null);
 
   const form = useForm<OwnerRegistrationFormSchemaProps>({
     resolver: zodResolver(ownerRegistrationFormSchema) as any,
     defaultValues: {
-      formType: OwnerRegistrationFormTypeEnum.SalonLocation,
+      formType: OwnerRegistrationFormTypeEnum.PersonalInformation,
+
+      ownerPersonalInformation: {
+        email,
+      },
 
       salonLocation: {
         name: '',
@@ -39,12 +49,16 @@ const RegisterOwnerPage = () => {
       categorySelection: {
         categories: [],
       },
+      employeesAddition: {
+        employees: [],
+      },
     },
     shouldUnregister: false,
   });
 
   const onRegister = (data: OwnerRegistrationFormSchemaProps) => {
     const { ownerPersonalInformation } = data;
+
     registerMutation.mutate(
       {
         email: ownerPersonalInformation.email,
@@ -57,6 +71,10 @@ const RegisterOwnerPage = () => {
       {
         onSuccess: () => {
           setFormType(OwnerRegistrationFormTypeEnum.SalonLocation);
+        },
+
+        onError: () => {
+          navigate(`${AppPaths.LOGIN}?mode=owner`);
         },
       },
     );
@@ -86,11 +104,37 @@ const RegisterOwnerPage = () => {
         addSalonMutation.mutate(
           { ...values.salonLocation, ...values.categorySelection },
           {
-            onSuccess: () => {
-              setFormType(OwnerRegistrationFormTypeEnum.CategorySelection);
+            onSuccess: (response) => {
+              salonIdRef.current = response.id;
+              setFormType(OwnerRegistrationFormTypeEnum.EmployeeAddition);
             },
           },
         );
+        break;
+      }
+      case OwnerRegistrationFormTypeEnum.EmployeeAddition: {
+        const values = getValues();
+        const employees = values.employeesAddition?.employees ?? [];
+
+        if (employees.length === 0) {
+          setFormType(OwnerRegistrationFormTypeEnum.Completed);
+          return;
+        }
+
+        addEmployeesMutation.mutate(
+          {
+            salonId: salonIdRef.current!,
+            data: {
+              employees,
+            },
+          },
+          {
+            onSuccess: () => {
+              setFormType(OwnerRegistrationFormTypeEnum.Completed);
+            },
+          },
+        );
+
         break;
       }
     }
@@ -98,6 +142,7 @@ const RegisterOwnerPage = () => {
 
   return (
     <div className={styles.container}>
+      {formType === OwnerRegistrationFormTypeEnum.Completed && <ProfileFinishedState />}
       <FormProvider {...form}>
         <form onSubmit={handleSubmit(handleNextFormType)}>
           {formType === OwnerRegistrationFormTypeEnum.PersonalInformation && (
@@ -105,10 +150,20 @@ const RegisterOwnerPage = () => {
           )}
           {formType === OwnerRegistrationFormTypeEnum.SalonLocation && <SalonLocation />}
           {formType === OwnerRegistrationFormTypeEnum.CategorySelection && <CategorySelect />}
-
-          <button className={styles.submitButton} type="submit">
-            Nastavi
-          </button>
+          {formType === OwnerRegistrationFormTypeEnum.EmployeeAddition && <EmployeeAddition />}
+          {formType === OwnerRegistrationFormTypeEnum.Completed ? (
+            <button
+              className={styles.submitButton}
+              type="button"
+              onClick={() => navigate('/profile')}
+            >
+              Završi
+            </button>
+          ) : (
+            <button className={styles.submitButton} type="submit">
+              Nastavi
+            </button>
+          )}
         </form>
       </FormProvider>
     </div>

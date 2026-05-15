@@ -5,7 +5,6 @@ import ErrorBoundary from 'common/boundary/ErrorBoundary';
 import { AppPaths } from 'common/routes/paths';
 import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
 
 const queryClient = new QueryClient();
 
@@ -18,13 +17,13 @@ const SearchResultsPage = lazy(() => import('@pages/SearchPage/SearchResultsPage
 const SearchServicePage = lazy(() => import('@pages/SearchPage/SearchServicePage'));
 const DateTimePage = lazy(() => import('@pages/DateTimePage/DateTimePage'));
 const ViewMorePage = lazy(() => import('@pages/ViewMorePage/ViewMorePage'));
+const OwnerSalonIntro = lazy(() => import('@pages/SalonRegistrationIntro'));
 
 function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <Toaster position="top-center" />
           <Layout>
             <Routes>
               <Route path={AppPaths.LOGIN} element={<LoginPage />} />
@@ -36,6 +35,7 @@ function App() {
               <Route path={AppPaths.SEARCH_RESULTS} element={<SearchResultsPage />} />{' '}
               <Route path={AppPaths.DATE_TIME} element={<DateTimePage />} />
               <Route path="/salons/:type" element={<ViewMorePage />} />
+              <Route path={AppPaths.OWNER_SALON_INTRO} element={<OwnerSalonIntro />} />
             </Routes>
           </Layout>
         </AuthProvider>
