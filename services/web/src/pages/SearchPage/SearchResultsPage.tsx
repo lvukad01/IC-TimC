@@ -74,7 +74,19 @@ const SearchResultsPage = () => {
 
     fetchSalons();
   }, [state]);
+  const getDateTimeLabel = () => {
+    if (!state?.date) return 'Bilo kada';
 
+    const date = new Date(state.date);
+
+    return date.toLocaleString('hr-HR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
   return (
     <section className={styles.page}>
       <div className={styles.topbar}>
