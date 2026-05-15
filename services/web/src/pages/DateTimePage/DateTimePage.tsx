@@ -34,9 +34,9 @@ const DateTimePage = () => {
   const { state } = useLocation();
 
   const today = new Date();
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 4, 1));
-  const [selectedDay, setSelectedDay] = useState<number | null>(12);
-
+  today.setSeconds(0, 0);
+  const [currentDate, setCurrentDate] = useState(new Date());
+  const [selectedDay, setSelectedDay] = useState<number | null>(new Date().getDate());
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
 
@@ -45,7 +45,35 @@ const DateTimePage = () => {
   }, [year, month]);
 
   const days = Array.from({ length: daysInMonth }, (_, index) => index + 1);
+  const isPastDay = (day: number) => {
+    const date = new Date(year, month, day);
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
 
+    return date < todayDate;
+  };
+
+  const isCurrentMonth = year === new Date().getFullYear() && month === new Date().getMonth();
+
+  const isSelectedToday = () => {
+    if (!selectedDay) return false;
+
+    const selectedDate = new Date(year, month, selectedDay);
+    const todayDate = new Date();
+
+    return (
+      selectedDate.getFullYear() === todayDate.getFullYear() &&
+      selectedDate.getMonth() === todayDate.getMonth() &&
+      selectedDate.getDate() === todayDate.getDate()
+    );
+  };
+
+  const isPastSelectedTime = () => {
+    if (!selectedDay) return true;
+
+    const selectedDateTime = new Date(year, month, selectedDay, hour, minute);
+    return selectedDateTime < new Date();
+  };
   const goPrevMonth = () => {
     setCurrentDate(new Date(year, month - 1, 1));
     setSelectedDay(null);
@@ -60,6 +88,11 @@ const DateTimePage = () => {
     if (!selectedDay) return;
 
     const selectedDate = new Date(year, month, selectedDay, hour, minute);
+
+    if (selectedDate < new Date()) {
+      return;
+    }
+
     const formattedDate = selectedDate.toISOString();
 
     navigate(state?.returnTo ?? '/search/results', {
@@ -86,7 +119,9 @@ const DateTimePage = () => {
       <h1 className={styles.title}>Datum i vrijeme</h1>
 
       <div className={styles.monthRow}>
-        <button onClick={goPrevMonth}>←</button>
+        <button onClick={goPrevMonth} disabled={isCurrentMonth}>
+          ←
+        </button>{' '}
         <div>
           <p>{monthNames[month]}</p>
           <span>{year}</span>
@@ -98,7 +133,14 @@ const DateTimePage = () => {
         {days.map((day) => (
           <button
             key={day}
-            className={day === selectedDay ? styles.selectedDay : styles.day}
+            disabled={isPastDay(day)}
+            className={
+              isPastDay(day)
+                ? styles.disabledDay
+                : day === selectedDay
+                  ? styles.selectedDay
+                  : styles.day
+            }
             onClick={() => setSelectedDay(day)}
           >
             {day}
@@ -133,7 +175,11 @@ const DateTimePage = () => {
           </button>
         </div>
       </div>
-      <button className={styles.submitButton} onClick={handleSubmit}>
+      <button
+        className={styles.submitButton}
+        onClick={handleSubmit}
+        disabled={isPastSelectedTime()}
+      >
         Odaberi
       </button>
     </section>
