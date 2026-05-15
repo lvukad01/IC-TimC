@@ -33,6 +33,7 @@ const HomePage = () => {
         ]);
 
         const recommendedResults = getResults(recommendedResponse);
+
         const popularResults = getResults(popularResponse);
         const newestResults = getResults(newestResponse);
 

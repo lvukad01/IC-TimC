@@ -35,6 +35,27 @@ const ClientProfilePage = () => {
       },
     );
   };
+  const formatDateLabel = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('hr-HR', {
+      day: 'numeric',
+      month: 'long',
+    });
+  };
+
+  const groupBookingsByDate = (bookings: any[]) => {
+    return bookings.reduce<Record<string, any[]>>((groups, booking) => {
+      const label = formatDateLabel(booking.startTime);
+
+      if (!groups[label]) groups[label] = [];
+      groups[label].push(booking);
+
+      return groups;
+    }, {});
+  };
+
+  const isPastBooking = (booking: any) => {
+    return new Date(booking.startTime) < new Date();
+  };
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -59,6 +80,13 @@ const ClientProfilePage = () => {
     fetchFavorites();
     fetchBookings();
   }, []);
+
+  const upcomingBookings = bookings.filter((booking) => !isPastBooking(booking));
+  const pastBookings = bookings.filter(isPastBooking);
+
+  const upcomingGrouped = groupBookingsByDate(upcomingBookings);
+  const pastGrouped = groupBookingsByDate(pastBookings);
+
   return (
     <div className={styles.container}>
       <div className={styles.infoWrapper}>
@@ -115,26 +143,59 @@ const ClientProfilePage = () => {
 
         <h3>U tijeku</h3>
 
-        <div className={styles.bookingList}>
-          {bookings.map((booking) => (
-            <div key={booking.id} className={styles.bookingCard}>
-              <div>
-                <strong>{booking.service?.name ?? 'Usluga'}</strong>
-                <p>{booking.salon?.name}</p>
-                <p>
-                  {booking.salon?.street}, {booking.salon?.city}
-                </p>
-              </div>
+        {Object.entries(upcomingGrouped).map(([date, dateBookings]) => (
+          <div key={date}>
+            <p className={styles.dateLabel}>{date}</p>
 
-              <span>
-                {new Date(booking.startTime).toLocaleTimeString('hr-HR', {
-                  hour: '2-digit',
-                  minute: '2-digit',
-                })}
-              </span>
+            <div className={styles.bookingList}>
+              {dateBookings.map((booking) => (
+                <div key={booking.id} className={styles.bookingCard}>
+                  <div>
+                    <strong>{booking.service?.name ?? 'Usluga'}</strong>
+                    <p>{booking.salon?.name}</p>
+                    <p>
+                      {booking.salon?.street}, {booking.salon?.city}
+                    </p>
+                  </div>
+
+                  <span>
+                    {new Date(booking.startTime).toLocaleTimeString('hr-HR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </span>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
+
+        <h3>Prošle</h3>
+
+        {Object.entries(pastGrouped).map(([date, dateBookings]) => (
+          <div key={date}>
+            <p className={styles.dateLabel}>{date}</p>
+
+            <div className={styles.bookingList}>
+              {dateBookings.map((booking) => (
+                <div key={booking.id} className={styles.bookingCardPast}>
+                  <div>
+                    <strong>{booking.salon?.name}</strong>
+                    <p>{booking.service?.name ?? 'Usluga'}</p>
+                    <p>plaćanje u salonu 25€</p>
+                  </div>
+
+                  <span>
+                    {new Date(booking.startTime).toLocaleTimeString('hr-HR', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
       </section>
     </div>
   );

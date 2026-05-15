@@ -51,6 +51,7 @@ import { SalonsService } from './salons.service';
 export class SalonsController {
   constructor(private readonly salonsService: SalonsService) {}
 
+  @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
   @Get()
   @ApiOperation({ summary: 'Get all salons' })
   @ApiOkResponse({
@@ -82,6 +83,7 @@ export class SalonsController {
     return this.salonsService.findNearbySalons(req.user.sub);
   }
 
+  @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
   @Get('popular')
   @ApiOperation({ summary: 'Get most popular salons based on booking count' })
   @ApiOkResponse({
@@ -97,6 +99,7 @@ export class SalonsController {
     return this.salonsService.findPopularSalons(dto, req.user?.sub);
   }
 
+  @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
   @Get('newest')
   @ApiOperation({ summary: 'Get newest added salons' })
   @ApiOkResponse({
@@ -112,6 +115,7 @@ export class SalonsController {
     return this.salonsService.findNewestSalons(dto, req.user?.sub);
   }
 
+  @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
   @Get('recommended')
   @ApiOperation({ summary: 'Get recommended salons based on rating' })
   @ApiOkResponse({
@@ -130,6 +134,7 @@ export class SalonsController {
   }
 
   @Get(':id')
+  @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Get salon by ID' })
   @ApiOkResponse({ type: SalonDetailResponseDto })
   getSalonById(

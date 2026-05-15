@@ -2,7 +2,7 @@ import { addFavorite, removeFavorite } from '@api/favorites';
 import favoriteOff from '@assets/media/Frame 117 (1).svg';
 import favoriteOn from '@assets/media/Vector.svg';
 import { SalonCategory } from '@lumii/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import styles from './SalonCard.module.scss';
 
@@ -34,24 +34,30 @@ export const SalonCard = ({
   borderColor,
   isFavorite = false,
 }: SalonCardProps) => {
-  const [liked, setLiked] = useState(isFavorite);
+  const [liked, setLiked] = useState(Boolean(isFavorite));
 
+  useEffect(() => {
+    setLiked(Boolean(isFavorite));
+  }, [isFavorite]);
   const handleFavorites = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
 
+    const previousLiked = liked;
+    setLiked(!liked);
+
     try {
-      if (liked) {
+      if (previousLiked) {
         await removeFavorite(id);
-        setLiked(false);
         toast.success('Salon uklonjen iz favorita');
       } else {
         await addFavorite(id);
-        setLiked(true);
         toast.success('Salon dodan u favorite');
       }
     } catch {
+      setLiked(previousLiked);
       toast.error('Greška pri ažuriranju favorita');
     }
+    console.log(name, isFavorite);
   };
 
   return (

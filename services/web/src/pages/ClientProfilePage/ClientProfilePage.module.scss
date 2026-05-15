@@ -132,6 +132,34 @@
   }
 }
 
+.dateLabel {
+  margin: 12px 0 8px;
+  font-size: 16px;
+  color: #000;
+}
+
+.bookingCardPast {
+  display: flex;
+  justify-content: space-between;
+  border: 1px solid #000;
+  border-radius: 10px;
+  padding: 12px;
+
+  strong {
+    font-size: 14px;
+  }
+
+  p {
+    margin: 4px 0 0;
+    font-size: 11px;
+    color: #6c6c6c;
+  }
+
+  span {
+    font-size: 13px;
+  }
+}
+
 @media (min-width: 500px) {
   .container {
     padding: 0px 60px;
