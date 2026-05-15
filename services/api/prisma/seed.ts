@@ -16,6 +16,7 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
+  await prisma.favorites.deleteMany();
   await prisma.reviews.deleteMany();
   await prisma.payments.deleteMany();
   await prisma.bookings.deleteMany();
