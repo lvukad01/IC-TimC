@@ -12,6 +12,7 @@ const Header = () => {
   const { authenticated, logout } = useAuth();
 
   const isLoginPage = location.pathname === AppPaths.LOGIN;
+
   const isRegisterPage =
     location.pathname === AppPaths.REGISTER_CLIENT ||
     location.pathname === AppPaths.REGISTER_SALON_OWNER;
@@ -23,7 +24,7 @@ const Header = () => {
   }
 
   function goHome() {
-    navigate(AppPaths.HOME);
+    window.location.href = AppPaths.HOME;
   }
 
   return (
@@ -31,14 +32,16 @@ const Header = () => {
       <div className={styles.logoWrapper}>
         <img src={logo} alt="Lumii" className={styles.logoImage} />
       </div>
+
       {isLoginPage || isRegisterPage || isSalonIntroPage ? (
         <button className={styles.closeButton} onClick={goHome}>
           <img src={cross} alt="Zatvori" />
         </button>
       ) : authenticated ? (
-        <button className={styles.loginButton} onClick={logout}>
-          Odjava
-        </button>
+        <button
+          className={styles.profileButton}
+          onClick={() => navigate(AppPaths.CLIENT_PROFILE)}
+        />
       ) : (
         <button className={styles.loginButton} onClick={goToLogin}>
           Prijava

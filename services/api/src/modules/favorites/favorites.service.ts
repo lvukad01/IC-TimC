@@ -13,6 +13,20 @@ export class FavoritesService {
   ) {}
 
   async create(userId: string, salonId: string): Promise<ActionResponseDto> {
+    const existingFavorite = await this.prisma.favorites.findFirst({
+      where: {
+        userId,
+        salonId,
+      },
+    });
+
+    if (existingFavorite) {
+      return {
+        id: existingFavorite.id,
+        message: 'Salon is already in favorites',
+      };
+    }
+
     const favorite = await this.prisma.favorites.create({
       data: {
         userId,
@@ -22,7 +36,7 @@ export class FavoritesService {
 
     return {
       id: favorite.id,
-      message: 'Product added do favorites',
+      message: 'Salon added to favorites',
     };
   }
 

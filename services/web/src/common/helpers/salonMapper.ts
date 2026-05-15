@@ -12,5 +12,6 @@ export const mapSalonForCard = (
     rating: salon.avgRating ?? 0,
     categories: salon.categories,
     address: `${salon.street}, ${salon.city}`,
+    isFavorite: salon.isFavorite ?? false,
   };
 };

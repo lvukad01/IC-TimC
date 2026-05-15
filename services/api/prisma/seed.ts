@@ -3,7 +3,6 @@ import {
   DepositType,
   EmployeeRole,
   MediaType,
-  NotificationType,
   PaymentMethod,
   PaymentStatus,
   PaymentType,
@@ -696,87 +695,6 @@ async function main() {
     },
   });
 
-  const salons = [salon, salon2, salon3, salon4, salon5];
-
-  const reviewComments = [
-    'Amazing experience!',
-    'Very professional staff.',
-    'Would definitely come again.',
-    'Super clean and modern salon.',
-    'Loved the result!',
-    'Friendly atmosphere and great service.',
-    'Best salon experience so far.',
-    'Highly recommended.',
-    'Everything was perfect.',
-    'Fast and quality service.',
-  ];
-
-  for (let i = 0; i < 10; i++) {
-    const selectedSalon = salons[Math.floor(Math.random() * salons.length)];
-
-    const employee = await prisma.employees.findFirst({
-      where: {
-        salonId: selectedSalon.id,
-      },
-    });
-
-    const service = await prisma.services.findFirst({
-      where: {
-        salonId: selectedSalon.id,
-      },
-    });
-
-    if (!employee || !service) continue;
-
-    const booking = await prisma.bookings.create({
-      data: {
-        clientId: client.id,
-        salonId: selectedSalon.id,
-        serviceId: service.id,
-        employeeId: employee.id,
-        startTime: new Date(),
-        endTime: new Date(Date.now() + 60 * 60 * 1000),
-        status: BookingStatus.COMPLETED,
-      },
-    });
-
-    await prisma.reviews.create({
-      data: {
-        bookingId: booking.id,
-        clientId: client.id,
-        salonId: selectedSalon.id,
-        rating: Math.floor(Math.random() * 2) + 4,
-        comment: reviewComments[i],
-      },
-    });
-  }
-
-  await prisma.favorites.create({
-    data: {
-      userId: client.id,
-      salonId: salon.id,
-    },
-  });
-
-  await prisma.notifications.createMany({
-    data: [
-      {
-        userId: client.id,
-        type: NotificationType.CONFIRMATION,
-        content: 'Your booking has been confirmed.',
-      },
-      {
-        userId: owner1.id,
-        type: NotificationType.REMINDER,
-        content: 'You have an upcoming appointment.',
-      },
-      {
-        userId: admin.id,
-        type: NotificationType.CONFIRMATION,
-        content: 'Mock data seeded successfully.',
-      },
-    ],
-  });
   await prisma.services.createMany({
     data: [
       {
@@ -807,8 +725,135 @@ async function main() {
         price: 120,
         durationMin: 120,
       },
+      {
+        salonId: salon7.id,
+        categoryId: nails.id,
+        name: 'Classic Manicure',
+        price: 30,
+        durationMin: 60,
+      },
+      {
+        salonId: salon8.id,
+        categoryId: nails.id,
+        name: 'Gel Nails',
+        price: 35,
+        durationMin: 75,
+      },
+      {
+        salonId: salon9.id,
+        categoryId: hair.id,
+        name: 'Blow Dry',
+        price: 25,
+        durationMin: 40,
+      },
+      {
+        salonId: salon10.id,
+        categoryId: barber.id,
+        name: 'Beard Trim',
+        price: 15,
+        durationMin: 25,
+      },
+      {
+        salonId: salon11.id,
+        categoryId: makeup.id,
+        name: 'Daily Makeup',
+        price: 45,
+        durationMin: 60,
+      },
+      {
+        salonId: salon12.id,
+        categoryId: hair.id,
+        name: 'Hair Styling',
+        price: 55,
+        durationMin: 90,
+      },
     ],
   });
+
+  const salons = [
+    salon,
+    salon2,
+    salon3,
+    salon4,
+    salon5,
+    salon7,
+    salon8,
+    salon9,
+    salon10,
+    salon11,
+    salon12,
+  ];
+
+  const reviewComments = [
+    'Amazing experience!',
+    'Very professional staff.',
+    'Would definitely come again.',
+    'Super clean and modern salon.',
+    'Loved the result!',
+    'Friendly atmosphere and great service.',
+    'Best salon experience so far.',
+    'Highly recommended.',
+    'Everything was perfect.',
+    'Fast and quality service.',
+  ];
+
+  for (let i = 0; i < salons.length; i++) {
+    const selectedSalon = salons[i];
+
+    const service = await prisma.services.findFirst({
+      where: {
+        salonId: selectedSalon.id,
+      },
+    });
+
+    if (!service) continue;
+
+    const employee = await prisma.employees.create({
+      data: {
+        salonId: selectedSalon.id,
+        name: `Employee ${selectedSalon.name}`,
+        role: EmployeeRole.HAIRDRESSER,
+        workingHours: {
+          create: [
+            { dayOfWeek: 1, startTime: '09:00', endTime: '17:00' },
+            { dayOfWeek: 2, startTime: '09:00', endTime: '17:00' },
+            { dayOfWeek: 3, startTime: '09:00', endTime: '17:00' },
+            { dayOfWeek: 4, startTime: '09:00', endTime: '17:00' },
+            { dayOfWeek: 5, startTime: '09:00', endTime: '17:00' },
+          ],
+        },
+      },
+    });
+
+    await prisma.employeeServices.create({
+      data: {
+        employeeId: employee.id,
+        serviceId: service.id,
+      },
+    });
+
+    const salonBooking = await prisma.bookings.create({
+      data: {
+        clientId: client.id,
+        salonId: selectedSalon.id,
+        serviceId: service.id,
+        employeeId: employee.id,
+        startTime: new Date(),
+        endTime: new Date(Date.now() + 60 * 60 * 1000),
+        status: BookingStatus.COMPLETED,
+      },
+    });
+
+    await prisma.reviews.create({
+      data: {
+        bookingId: salonBooking.id,
+        clientId: client.id,
+        salonId: selectedSalon.id,
+        rating: Math.floor(Math.random() * 2) + 4,
+        comment: reviewComments[i % reviewComments.length],
+      },
+    });
+  }
 
   console.log('Seed completed.');
   console.log('Owner login: owner@lumii.test / Password123!');

@@ -2,7 +2,7 @@ import { addFavorite, removeFavorite } from '@api/favorites';
 import favoriteOff from '@assets/media/Frame 117 (1).svg';
 import favoriteOn from '@assets/media/Vector.svg';
 import { SalonCategory } from '@lumii/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import styles from './SalonCard.module.scss';
 
@@ -15,6 +15,7 @@ interface SalonCardProps {
   address: string;
   borderColor?: string;
   isFavorite?: boolean;
+  onFavoriteChange?: (salonId: string, isFavorite: boolean) => void;
 }
 
 const salonTypeLabel: Record<SalonCategory, string> = {
@@ -33,23 +34,32 @@ export const SalonCard = ({
   address,
   borderColor,
   isFavorite = false,
+  onFavoriteChange,
 }: SalonCardProps) => {
-  const [liked, setLiked] = useState(isFavorite);
+  const [liked, setLiked] = useState(Boolean(isFavorite));
+
+  useEffect(() => {
+    setLiked(Boolean(isFavorite));
+  }, [isFavorite]);
 
   const handleFavorites = async (event: React.MouseEvent<HTMLButtonElement>) => {
     event.stopPropagation();
 
+    const previousLiked = liked;
+    setLiked(!liked);
+
     try {
-      if (liked) {
+      if (previousLiked) {
         await removeFavorite(id);
-        setLiked(false);
+        onFavoriteChange?.(id, false);
         toast.success('Salon uklonjen iz favorita');
       } else {
         await addFavorite(id);
-        setLiked(true);
+        onFavoriteChange?.(id, true);
         toast.success('Salon dodan u favorite');
       }
     } catch {
+      setLiked(previousLiked);
       toast.error('Greška pri ažuriranju favorita');
     }
   };
@@ -78,7 +88,9 @@ export const SalonCard = ({
           <span className={styles.rating}>★ {rating.toFixed(2)}</span>
         </div>
         <div className={styles.additionalInfo}>
-          <p className={styles.type}>{categories.map((c) => salonTypeLabel[c]).join(', ')}</p>
+          <p className={styles.type}>
+            {(categories ?? []).map((category) => salonTypeLabel[category]).join(', ')}
+          </p>
           <p className={styles.address}>{address}</p>
         </div>
       </div>

@@ -1,14 +1,11 @@
 import styles from './HeroSection.module.scss';
-
-import reserveTxt from '@assets/media/Rezerviraj svoj termin za.svg';
-import hairTxt from '@assets/media/frizuru.svg';
-import makeupTxt from '@assets/media/šminku.svg';
-import nailsTxt from '@assets/media/nokte.svg';
 import { useEffect, useState } from 'react';
 
-const texts = [hairTxt, makeupTxt, nailsTxt];
-const alts = ['frizuru', 'šminku', 'nokte'];
-
+const texts = [
+  { label: 'frizuru', className: 'hairText' },
+  { label: 'šminku', className: 'makeupText' },
+  { label: 'nokte', className: 'nailsText' },
+];
 export const HeroSection = () => {
   const [current, setCurrent] = useState(0);
   const [next, setNext] = useState<number | null>(null);
@@ -17,6 +14,7 @@ export const HeroSection = () => {
     const interval = setInterval(() => {
       const nextIndex = (current + 1) % texts.length;
       setNext(nextIndex);
+
       setTimeout(() => {
         setCurrent(nextIndex);
         setNext(null);
@@ -29,22 +27,25 @@ export const HeroSection = () => {
   return (
     <section className={styles.hero}>
       <div className={styles.titleWrapper}>
-        <img src={reserveTxt} alt="Rezerviraj svoj termin za" className={styles.reserveText} />
+        <h1 className={styles.title}>Rezerviraj svoj termin za</h1>
+
         <div className={styles.dynamicWrapper}>
-          <img
-            src={texts[current]}
-            alt={alts[current]}
-            className={`${styles.dynamicText} ${
+          <span
+            className={`${styles.dynamicText} ${styles[texts[current].className]} ${
               next !== null ? styles.slideOut : styles.currentText
             }`}
-          />
+          >
+            {texts[current].label}
+          </span>
 
           {next !== null && (
-            <img
-              src={texts[next]}
-              alt={alts[next]}
-              className={`${styles.dynamicText} ${styles.slideInFromRight}`}
-            />
+            <span
+              className={`${styles.dynamicText} ${styles[texts[next].className]} ${
+                styles.slideInFromRight
+              }`}
+            >
+              {texts[next].label}
+            </span>
           )}
         </div>
       </div>

@@ -1,7 +1,6 @@
 import { BookingResponseDto } from '@bookings/dto/booking-response.dto';
-import { Bookings } from '@prisma/client';
 
-export function toBookingResponse(booking: Bookings): BookingResponseDto {
+export function toBookingResponse(booking: any): BookingResponseDto {
   return {
     id: booking.id,
     clientId: booking.clientId,
@@ -12,5 +11,28 @@ export function toBookingResponse(booking: Bookings): BookingResponseDto {
     startTime: booking.startTime.toISOString(),
     endTime: booking.endTime.toISOString(),
     createdAt: booking.createdAt.toISOString(),
+
+    salon: booking.salon
+      ? {
+          id: booking.salon.id,
+          name: booking.salon.name,
+          street: booking.salon.street,
+          city: booking.salon.city,
+        }
+      : undefined,
+
+    service: booking.service
+      ? {
+          id: booking.service.id,
+          name: booking.service.name,
+        }
+      : undefined,
+
+    employee: booking.employee
+      ? {
+          id: booking.employee.id,
+          name: booking.employee.name,
+        }
+      : undefined,
   };
 }

@@ -1,62 +1,65 @@
 .hero {
-  padding: 0px 20px;
+  padding: 0 20px;
   display: flex;
   justify-content: center;
-  align-items: center;
-  width: 100%;
+  margin-left: 36px;
+  width: 80%;
 }
 
 .titleWrapper {
-  position: relative;
   display: flex;
-  align-items: flex-end;
-  width: 290px;
+  flex-wrap: wrap;
+  gap: 12px;
+  max-width: 700px;
 }
 
-.reserveText {
-  position: relative;
-  left: 10px;
-  width: 160px;
+.title {
+  margin: 0;
+  color: #000;
+  font-family: Outfit, sans-serif;
+  font-size: 50px;
+  font-weight: 700;
+  line-height: normal;
 }
 
 .dynamicWrapper {
-  position: absolute;
-  top: 74px;
-  left: 44px;
-  width: 120px;
-  height: 50px;
-  overflow: visible;
+  position: relative;
+  width: 180px;
+  height: 52px;
+  overflow: hidden;
 }
 
 .dynamicText {
-  width: 100px;
-  height: 33px;
-  margin-left: 20px;
-  transition:
-    transform 0.4s ease,
-    opacity 0.4s ease;
-}
-
-.currentText {
   position: absolute;
   top: 0;
   left: 0;
-  height: 33px;
-  transform: translateX(0);
+  font-family: Outfit, sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.hairText {
+  color: var(--purple-600, #9786ca);
+}
+
+.makeupText {
+  color: var(--pink-900, #dc6ab8);
+}
+
+.nailsText {
+  color: var(--blue-900, #2b9ec9);
+}
+
+.currentText {
   opacity: 1;
 }
 
 .slideOut {
-  position: absolute;
-  top: 0;
-  left: 0;
   animation: outLeft 0.4s ease forwards;
 }
 
 .slideInFromRight {
-  position: absolute;
-  top: 0;
-  left: 0;
   animation: inRight 0.4s ease forwards;
 }
 
@@ -67,19 +70,56 @@
   }
 
   to {
-    transform: translateX(-130px);
+    transform: translateX(-80px);
     opacity: 0;
   }
 }
 
 @keyframes inRight {
   from {
-    transform: translateX(100px);
+    transform: translateX(80px);
     opacity: 0;
   }
 
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+@media (max-width: 367px) {
+  .dynamicWrapper {
+    top: -60px;
+    left: 56px;
+    font-size: 32px;
+  }
+
+  .title {
+    font-size: 40px;
+    line-height: 1.1;
+  }
+}
+
+@media (min-width: 367px) {
+  .dynamicWrapper {
+    top: -16px;
+    left: 0;
+    font-size: 32px;
+  }
+
+  .title {
+    font-size: 40px;
+    line-height: 1.1;
+  }
+}
+@media (min-width: 548px) and (max-width: 611px) {
+  .dynamicWrapper {
+    top: -58px;
+    margin-left: 56px;
+  }
+
+  .title {
+    font-size: 40px;
+    line-height: 1.1;
   }
 }

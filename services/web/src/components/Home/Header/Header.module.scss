@@ -24,3 +24,16 @@
 .logoutButton:hover {
   background-color: var(--color-purple-hover);
 }
+
+.profileButton {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: var(--color-purple);
+
+  transition: background-color 0.2s ease;
+}
+
+.profileButton:hover {
+  background-color: var(--color-purple-hover);
+}

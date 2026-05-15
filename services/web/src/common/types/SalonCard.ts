@@ -7,4 +7,5 @@ export interface SalonCardData {
   rating: number;
   categories: SalonCategory[];
   address: string;
+  isFavorite: boolean;
 }

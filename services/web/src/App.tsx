@@ -5,8 +5,10 @@ import { UserRole } from '@lumii/types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from 'common/boundary/ErrorBoundary';
 import { AppPaths } from 'common/routes/paths';
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import LoadingPage from '@components/Loading/LoadingPage';
+import NotFound from '@components/NotFound/NotFound';
 
 const queryClient = new QueryClient();
 
@@ -28,26 +30,29 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <Layout>
-            <Routes>
-              <Route path={AppPaths.LOGIN} element={<LoginPage />} />
-              <Route path={AppPaths.REGISTER_CLIENT} element={<RegisterClientPage />} />
-              <Route path={AppPaths.REGISTER_SALON_OWNER} element={<RegisterOwnerPage />} />
-              <Route path={AppPaths.HOME} element={<HomePage />} />
-              <Route path={AppPaths.SEARCH_SERVICE} element={<SearchServicePage />} />
-              <Route path={AppPaths.SEARCH_LOCATION} element={<SearchLocationPage />} />
-              <Route path={AppPaths.SEARCH_RESULTS} element={<SearchResultsPage />} />
-              <Route path={AppPaths.DATE_TIME} element={<DateTimePage />} />
-              <Route path="/salons/:type" element={<ViewMorePage />} />
-              <Route path={AppPaths.OWNER_SALON_INTRO} element={<OwnerSalonIntro />} />
-              <Route
-                path={AppPaths.CLIENT_PROFILE}
-                element={
-                  <RoleBasedRoute allowedRoles={[UserRole.CLIENT]}>
-                    <ClientProfilePage />
-                  </RoleBasedRoute>
-                }
-              />
-            </Routes>
+            <Suspense fallback={<LoadingPage />}>
+              <Routes>
+                <Route path={AppPaths.LOGIN} element={<LoginPage />} />
+                <Route path={AppPaths.REGISTER_CLIENT} element={<RegisterClientPage />} />
+                <Route path={AppPaths.REGISTER_SALON_OWNER} element={<RegisterOwnerPage />} />
+                <Route path={AppPaths.HOME} element={<HomePage />} />
+                <Route path={AppPaths.SEARCH_SERVICE} element={<SearchServicePage />} />
+                <Route path={AppPaths.SEARCH_LOCATION} element={<SearchLocationPage />} />
+                <Route path={AppPaths.SEARCH_RESULTS} element={<SearchResultsPage />} />
+                <Route path={AppPaths.DATE_TIME} element={<DateTimePage />} />
+                <Route path="/salons/view-more/:type" element={<ViewMorePage />} />
+                <Route path={AppPaths.OWNER_SALON_INTRO} element={<OwnerSalonIntro />} />
+                <Route
+                  path={AppPaths.CLIENT_PROFILE}
+                  element={
+                    <RoleBasedRoute allowedRoles={[UserRole.CLIENT]}>
+                      <ClientProfilePage />
+                    </RoleBasedRoute>
+                  }
+                />
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
           </Layout>
         </AuthProvider>
       </QueryClientProvider>

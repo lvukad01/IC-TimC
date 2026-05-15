@@ -1,4 +1,5 @@
 import Header from '@components/Home/Header';
+import { AppPaths } from 'common/routes/paths';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
@@ -13,6 +14,15 @@ const Layout = ({ children }: LayoutProps) => {
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
   }, [pathname]);
+
+  const showHeader = [
+    AppPaths.HOME,
+    AppPaths.LOGIN,
+    AppPaths.REGISTER_CLIENT,
+    AppPaths.REGISTER_SALON_OWNER,
+    AppPaths.OWNER_SALON_INTRO,
+    AppPaths.CLIENT_PROFILE,
+  ].includes(pathname as AppPaths);
 
   return (
     <div>
@@ -32,8 +42,7 @@ const Layout = ({ children }: LayoutProps) => {
           },
         }}
       />
-      <Header />
-
+      {showHeader && <Header />}
       <main>{children}</main>
     </div>
   );

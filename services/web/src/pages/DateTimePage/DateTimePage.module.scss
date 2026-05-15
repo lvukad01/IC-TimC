@@ -129,3 +129,13 @@
   width: 18px;
   height: 10px;
 }
+
+.disabledDay {
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.submitButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
