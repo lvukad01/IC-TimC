@@ -52,7 +52,16 @@ async function bootstrap() {
   app.use(
     helmet.contentSecurityPolicy({
       directives: {
-        contentSecurityPolicy: null,
+        defaultSrc: ["'self'"],
+
+        connectSrc: ["'self'"],
+
+        imgSrc: [
+          "'self'",
+          'data:',
+          'blob:',
+          'https://lumii-salons-images.s3.eu-north-1.amazonaws.com',
+        ],
         upgradeInsecureRequests: null,
       },
     }),
