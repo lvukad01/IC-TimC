@@ -6,54 +6,80 @@ import { AppPaths } from 'common/routes/paths';
 import { getSignedFiles } from '@api/files';
 import { getNearbySalons } from '@api/salons';
 import { searchSalons } from '@helpers/SearchSalons';
+import { getFavorites } from '@api/favorites';
 
 const SearchResultsPage = () => {
   const navigate = useNavigate();
   const { state } = useLocation();
   const [salons, setSalons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
+  const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
   useEffect(() => {
-    const params = new URLSearchParams();
+    const fetchSalons = async () => {
+      setLoading(true);
+      let favoriteIdsSet = new Set<string>();
 
-    if (state?.search) params.append('search', state.search);
-    if (state?.city && !state?.useMyLocation) {
-      params.append('city', state.city);
-    }
-    if (state?.category && state.category !== 'Sve' && state.category.toLowerCase() !== 'all') {
-      params.append('category', state.category.toUpperCase().replace(' ', '_'));
-    }
-    if (state?.date) params.append('date', state.date);
-    if (state?.serviceId) params.append('serviceId', state.serviceId);
+      try {
+        const favoritesData = await getFavorites();
+        const favoriteResults =
+          favoritesData?.results ?? favoritesData?.data?.results ?? favoritesData ?? [];
 
-    const request = state?.useMyLocation ? getNearbySalons() : searchSalons(params.toString());
+        favoriteIdsSet = new Set(favoriteResults.map((salon: any) => salon.id));
+        setFavoriteIds(favoriteIdsSet);
+      } catch {
+        setFavoriteIds(new Set());
+      }
 
-    request
-      .then(async (data) => {
-        const results = data?.results ?? data ?? [];
+      try {
+        const params = new URLSearchParams();
 
+        if (state?.search) params.append('search', state.search);
+        if (state?.city && !state?.useMyLocation) params.append('city', state.city);
+
+        if (state?.category && state.category !== 'Sve' && state.category.toLowerCase() !== 'all') {
+          params.append('search', state.category);
+        }
+        params.append('page', '1');
+        params.append('limit', '50');
+
+        if (state?.date) params.append('date', state.date);
+        if (state?.serviceId) params.append('serviceId', state.serviceId);
+
+        let favoriteIdsSet = new Set<string>();
+
+        try {
+          const favoritesData = await getFavorites();
+          const favoriteResults = favoritesData?.results ?? favoritesData ?? [];
+          favoriteIdsSet = new Set(favoriteResults.map((salon: any) => salon.id));
+        } catch {}
+
+        const data = state?.useMyLocation
+          ? await getNearbySalons()
+          : await searchSalons(params.toString());
+
+        const results = data?.results ?? data?.data?.results ?? data?.data?.data?.results ?? [];
         const keys = results.map((salon: any) => salon.profileImageKey).filter(Boolean);
-
         const signedData = keys.length > 0 ? await getSignedFiles(keys) : { files: [] };
 
         const urlMap = new Map<string, string>(
-          signedData.files.map((file) => [file.key, file.url]),
+          signedData.files.map((file: any) => [file.key, file.url]),
         );
-
         const salonsWithImages = results.map((salon: any) => ({
           ...salon,
+          isFavorite: favoriteIdsSet.has(salon.id),
           imageUrl: salon.profileImageKey ? (urlMap.get(salon.profileImageKey) ?? null) : null,
         }));
 
         setSalons(salonsWithImages);
-      })
-      .catch((error) => {
+      } catch (error) {
         console.error(error);
         setSalons([]);
-      })
-      .finally(() => {
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchSalons();
   }, [state]);
 
   const getDateTimeLabel = () => {
@@ -107,9 +133,24 @@ const SearchResultsPage = () => {
                 profileImage={salon.imageUrl ?? ''}
                 name={salon.name}
                 rating={salon.avgRating ?? 0}
-                categories={salon.type ?? ''}
+                categories={salon.categories ?? []}
                 address={`${salon.street}, ${salon.city}`}
                 borderColor="#A59DBD"
+                isFavorite={favoriteIds.has(salon.id)}
+                onFavoriteChange={(salonId, isFavorite) => {
+                  setFavoriteIds((prev) => {
+                    const next = new Set(prev);
+
+                    if (isFavorite) next.add(salonId);
+                    else next.delete(salonId);
+
+                    return next;
+                  });
+
+                  setSalons((prev) =>
+                    prev.map((s) => (s.id === salonId ? { ...s, isFavorite } : s)),
+                  );
+                }}
               />
             </div>
           ))}

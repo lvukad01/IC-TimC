@@ -40,7 +40,7 @@ function App() {
                 <Route path={AppPaths.SEARCH_LOCATION} element={<SearchLocationPage />} />
                 <Route path={AppPaths.SEARCH_RESULTS} element={<SearchResultsPage />} />
                 <Route path={AppPaths.DATE_TIME} element={<DateTimePage />} />
-                <Route path="/salons/:type" element={<ViewMorePage />} />
+                <Route path="/salons/view-more/:type" element={<ViewMorePage />} />
                 <Route path={AppPaths.OWNER_SALON_INTRO} element={<OwnerSalonIntro />} />
                 <Route
                   path={AppPaths.CLIENT_PROFILE}

@@ -51,7 +51,6 @@ import { SalonsService } from './salons.service';
 export class SalonsController {
   constructor(private readonly salonsService: SalonsService) {}
 
-  @RolesAuth(UserRole.CLIENT, UserRole.SALON_OWNER, UserRole.ADMIN)
   @Get()
   @ApiOperation({ summary: 'Get all salons' })
   @ApiOkResponse({
