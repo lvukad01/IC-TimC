@@ -1,12 +1,12 @@
-import { getFavorites } from '@api/favorites';
+import { useEffect, useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import styles from './SearchPage.module.scss';
+import { SalonCard } from '@components/Home/SalonCard/SalonCard';
+import { AppPaths } from 'common/routes/paths';
 import { getSignedFiles } from '@api/files';
 import { getNearbySalons } from '@api/salons';
-import { SalonCard } from '@components/Home/SalonCard/SalonCard';
 import { searchSalons } from '@helpers/SearchSalons';
-import { AppPaths } from 'common/routes/paths';
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import styles from './SearchPage.module.scss';
+import { getFavorites } from '@api/favorites';
 
 const SearchResultsPage = () => {
   const navigate = useNavigate();
@@ -23,23 +23,33 @@ const SearchResultsPage = () => {
       try {
         const params = new URLSearchParams();
 
-        if (state?.date && state?.time && state?.serviceId) {
-          params.append('date', state.date.split('T')[0]);
-          params.append('time', state.time);
-          params.append('serviceId', state.serviceId);
-        }
-        params.append('page', '1');
-        params.append('limit', '50');
+        const searchValue =
+          state?.category && state.category !== 'Sve' && state.category.toLowerCase() !== 'all'
+            ? state.category
+            : state?.search;
 
-        if (state?.date && state?.serviceId) {
+        if (searchValue) params.set('search', searchValue);
+        if (state?.city && !state?.useMyLocation) params.set('city', state.city);
+
+        params.set('page', '1');
+        params.set('limit', '50');
+
+        if (state?.date) {
           const selectedDate = new Date(state.date);
+          params.set('date', selectedDate.toISOString().split('T')[0]);
 
-          params.append('date', selectedDate.toISOString().split('T')[0]);
-          params.append('time', selectedDate.toTimeString().slice(0, 5));
-          params.append('serviceId', state.serviceId);
+          if (state?.time) {
+            params.set('time', state.time);
+          } else {
+            params.set('time', selectedDate.toTimeString().slice(0, 5));
+          }
         }
-        if (state?.serviceId) params.append('serviceId', state.serviceId);
 
+        if (state?.serviceId) {
+          params.set('serviceId', state.serviceId);
+        }
+
+        console.log('PARAMS:', params.toString());
         try {
           const favoritesData = await getFavorites();
           const favoriteResults = favoritesData?.results ?? favoritesData ?? [];
@@ -74,6 +84,7 @@ const SearchResultsPage = () => {
 
     fetchSalons();
   }, [state]);
+
   const getDateTimeLabel = () => {
     if (!state?.date) return 'Bilo kada';
 
@@ -87,6 +98,7 @@ const SearchResultsPage = () => {
       minute: '2-digit',
     });
   };
+
   return (
     <section className={styles.page}>
       <div className={styles.topbar}>

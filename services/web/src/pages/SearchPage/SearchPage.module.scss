@@ -132,22 +132,6 @@
   font-size: 14px;
 }
 
-.list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: fit-content;
-  margin: 0 auto;
-}
-
-.card {
-  border: 1px solid #c9bfe0;
-  border-radius: 9px;
-  padding: 10px;
-  cursor: pointer;
-  background: #fff;
-}
-
 .imageWrapper {
   position: relative;
   width: 100%;
@@ -225,4 +209,39 @@
 
 .cityItem:hover {
   background: #f7f4ff;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.card {
+  width: 100%;
+  max-width: 360px;
+  justify-self: center;
+  border: 1px solid #c9bfe0;
+  border-radius: 9px;
+  padding: 10px;
+  cursor: pointer;
+  background: #fff;
+}
+
+@media (min-width: 600px) {
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card {
+    max-width: none;
+  }
+}
+
+@media (min-width: 900px) {
+  .list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
