@@ -2,6 +2,7 @@ import { dateRegex, FindSalonsQuery, SalonCategory } from '@lumii/types';
 import { ApiPropertyOptional } from '@nestjs/swagger';
 import { Transform } from 'class-transformer';
 import {
+  IsDateString,
   IsEnum,
   IsNumber,
   IsOptional,
@@ -61,10 +62,15 @@ export class FindSalonsQueryDto implements FindSalonsQuery {
     example: '2026-05-10',
   })
   @IsOptional()
+  @IsDateString()
   @Matches(dateRegex, {
     message: 'Invalid date format, use YYYY-MM-DD',
   })
   date?: string;
+
+  @IsOptional()
+  @IsString()
+  time?: string;
 
   @ApiPropertyOptional({
     description: 'Filter by service availability',

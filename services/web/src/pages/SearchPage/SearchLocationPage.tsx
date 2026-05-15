@@ -45,6 +45,7 @@ const SearchLocationPage = () => {
       state: {
         ...location.state,
         city,
+        useMyLocation: false,
       },
     });
   };

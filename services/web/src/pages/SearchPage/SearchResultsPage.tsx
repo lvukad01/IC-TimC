@@ -14,50 +14,43 @@ const SearchResultsPage = () => {
   const [salons, setSalons] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [favoriteIds, setFavoriteIds] = useState<Set<string>>(new Set());
+
   useEffect(() => {
     const fetchSalons = async () => {
       setLoading(true);
       let favoriteIdsSet = new Set<string>();
 
       try {
-        const favoritesData = await getFavorites();
-        const favoriteResults =
-          favoritesData?.results ?? favoritesData?.data?.results ?? favoritesData ?? [];
-
-        favoriteIdsSet = new Set(favoriteResults.map((salon: any) => salon.id));
-        setFavoriteIds(favoriteIdsSet);
-      } catch {
-        setFavoriteIds(new Set());
-      }
-
-      try {
         const params = new URLSearchParams();
 
-        if (state?.search) params.append('search', state.search);
-        if (state?.city && !state?.useMyLocation) params.append('city', state.city);
-
-        if (state?.category && state.category !== 'Sve' && state.category.toLowerCase() !== 'all') {
-          params.append('search', state.category);
+        if (state?.date && state?.time && state?.serviceId) {
+          params.append('date', state.date.split('T')[0]);
+          params.append('time', state.time);
+          params.append('serviceId', state.serviceId);
         }
         params.append('page', '1');
         params.append('limit', '50');
 
-        if (state?.date) params.append('date', state.date);
-        if (state?.serviceId) params.append('serviceId', state.serviceId);
+        if (state?.date && state?.serviceId) {
+          const selectedDate = new Date(state.date);
 
-        let favoriteIdsSet = new Set<string>();
+          params.append('date', selectedDate.toISOString().split('T')[0]);
+          params.append('time', selectedDate.toTimeString().slice(0, 5));
+          params.append('serviceId', state.serviceId);
+        }
+        if (state?.serviceId) params.append('serviceId', state.serviceId);
 
         try {
           const favoritesData = await getFavorites();
           const favoriteResults = favoritesData?.results ?? favoritesData ?? [];
           favoriteIdsSet = new Set(favoriteResults.map((salon: any) => salon.id));
         } catch {}
-
         const data = state?.useMyLocation
           ? await getNearbySalons()
           : await searchSalons(params.toString());
 
-        const results = data?.results ?? data?.data?.results ?? data?.data?.data?.results ?? [];
+        const results = Array.isArray(data) ? data : (data?.results ?? []);
+
         const keys = results.map((salon: any) => salon.profileImageKey).filter(Boolean);
         const signedData = keys.length > 0 ? await getSignedFiles(keys) : { files: [] };
 
@@ -102,7 +95,7 @@ const SearchResultsPage = () => {
             })
           }
         >
-          ◷ {state?.dateLabel ?? 'Bilo kada'}{' '}
+          ◷ {getDateTimeLabel()}
         </button>
       </div>
 
