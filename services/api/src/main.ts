@@ -88,6 +88,6 @@ async function bootstrap() {
 
   console.log(process.env);
 
-  await app.listen(3001, '0.0.0.0');
+  await app.listen(configService.get<number>('PORT') ?? 3000, '0.0.0.0');
 }
 bootstrap();
