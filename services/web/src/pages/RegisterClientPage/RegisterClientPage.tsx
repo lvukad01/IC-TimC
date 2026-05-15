@@ -10,7 +10,7 @@ import {
 import { AppPaths } from 'common/routes/paths';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate } from 'react-router-dom';
-import styles from '@RegisterClientPage.module.scss';
+import styles from './RegisterClientPage.module.scss';
 
 const RegisterClientPage = () => {
   const location = useLocation();

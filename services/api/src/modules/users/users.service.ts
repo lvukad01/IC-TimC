@@ -5,6 +5,7 @@ import { UserRole } from '@lumii/types';
 import { toUserResponse } from '@mappers/user-response.mapper';
 import {
   BadRequestException,
+  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -92,6 +93,11 @@ export class UsersService {
 
     if (!user) {
       throw new NotFoundException(ErrorMessages.notFound('User'));
+    }
+
+    if (updateUserDto.email) {
+      const user = await this.findOneByEmailWithoutThrow(id);
+      if (user) throw new ConflictException('Email already exists');
     }
 
     const isClient = user.role === UserRole.CLIENT;

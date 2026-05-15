@@ -6,8 +6,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
-  margin-left: 36px;
+  margin: 16px 36px;
 }
 
 .title {
@@ -29,6 +28,7 @@
   gap: 12px;
   overflow-x: auto;
   padding-bottom: 8px;
+  scrollbar-width: none;
 }
 
 .cards::-webkit-scrollbar {

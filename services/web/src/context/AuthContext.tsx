@@ -4,8 +4,10 @@ import LocalStorage from '@helpers/LocalStorage';
 import { useLocalStorage } from '@hooks/useLocalStorage';
 import type { AccessToken, LoginRequest, RegisterRequest, UserRole } from '@lumii/types';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AppPaths } from 'common/routes/paths';
 import { createContext, type ReactNode } from 'react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 export interface AuthContextType {
   authenticated: boolean;
@@ -23,6 +25,8 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     key: LocalStorage.accessTokenKey,
     initialValue: null,
   });
+
+  const navigate = useNavigate();
 
   const { data: user, isLoading } = useMe(accessToken);
 
@@ -59,6 +63,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setAccessToken(null);
     toast.success('Successfully logged out');
     queryClient.removeQueries({ queryKey: [QueryKeys.ME] });
+    navigate(`${AppPaths.LOGIN}?mode=${(user?.role as string).toLowerCase()}`);
   };
 
   return (

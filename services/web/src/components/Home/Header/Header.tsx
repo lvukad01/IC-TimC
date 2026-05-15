@@ -1,7 +1,7 @@
 import cross from '@assets/media/cross.png';
-import loginBtn from '@assets/media/loginBtn.svg';
 import logo from '@assets/media/lumii logo.svg';
 
+import useAuth from '@hooks/useAuth';
 import { AppPaths } from 'common/routes/paths';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
@@ -9,6 +9,7 @@ import styles from './Header.module.scss';
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { authenticated, logout } = useAuth();
 
   const isLoginPage = location.pathname === AppPaths.LOGIN;
   const isRegisterPage =
@@ -30,14 +31,17 @@ const Header = () => {
       <div className={styles.logoWrapper}>
         <img src={logo} alt="Lumii" className={styles.logoImage} />
       </div>
-
       {isLoginPage || isRegisterPage || isSalonIntroPage ? (
-        <button className={styles.loginButton} onClick={goHome}>
+        <button className={styles.closeButton} onClick={goHome}>
           <img src={cross} alt="Zatvori" />
+        </button>
+      ) : authenticated ? (
+        <button className={styles.loginButton} onClick={logout}>
+          Odjava
         </button>
       ) : (
         <button className={styles.loginButton} onClick={goToLogin}>
-          <img src={loginBtn} alt="Prijava" />
+          Prijava
         </button>
       )}
     </header>

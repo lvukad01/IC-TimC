@@ -1,6 +1,7 @@
 import LocalStorage from '@helpers/LocalStorage';
 import axios, { AxiosError, type AxiosResponse } from 'axios';
 import camelcaseKeys from 'camelcase-keys';
+import { AppPaths } from 'common/routes/paths';
 
 const BASE_URL = 'http://localhost:3000/api';
 
@@ -26,6 +27,9 @@ api.interceptors.response.use(
   },
   (error: ErrorResponse) => {
     const status = error.response?.status;
+
+    if (error.config?.url?.includes(AppPaths.LOGIN))
+      return Promise.reject(error.response?.data?.message || error.message);
 
     if (status === 401) {
       LocalStorage.removeAccessToken();

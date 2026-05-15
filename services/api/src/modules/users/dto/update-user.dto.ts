@@ -9,12 +9,14 @@ import {
   NAME_MAX_LENGTH,
   NAME_MIN_LENGTH,
   phoneRegex,
+  UpdateUserRequest,
   zipcodeRegex,
 } from '@lumii/types';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { IsValidName } from '@validators/name.validator';
 import { IsStrongPassword } from '@validators/password.validator';
 import {
+  IsEmail,
   IsOptional,
   IsString,
   Length,
@@ -22,22 +24,27 @@ import {
   MinLength,
 } from 'class-validator';
 
-export class UpdateUserDto {
-  @ApiProperty({ example: 'Lana', required: false })
+export class UpdateUserDto implements UpdateUserRequest {
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsEmail()
+  email?: string;
+
+  @ApiPropertyOptional({ example: 'Lana' })
   @IsOptional()
   @IsString()
   @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
   @IsValidName()
   firstName?: string;
 
-  @ApiProperty({ example: 'Ivić', required: false })
+  @ApiPropertyOptional({ example: 'Ivić' })
   @IsOptional()
   @IsString()
   @Length(NAME_MIN_LENGTH, NAME_MAX_LENGTH)
   @IsValidName()
   lastName?: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: `User password, minimum ${MIN_PASSWORD_LENGTH} characters. Must have one at least one character, one number and one special character`,
     minLength: MIN_PASSWORD_LENGTH,
   })
@@ -46,32 +53,32 @@ export class UpdateUserDto {
   @IsStrongPassword()
   password?: string;
 
-  @ApiProperty({ example: '091 234 567', required: false })
+  @ApiPropertyOptional({ example: '091 234 567' })
   @IsOptional()
   @IsString()
   @Matches(phoneRegex, { message: VALIDATION_MESSAGES.INVALID_PHONE_FORMAT })
   phone?: string;
 
-  @ApiProperty({ example: 'HR', required: false })
+  @ApiPropertyOptional({ example: 'HR' })
   @IsOptional()
   @Matches(countryCodeRegex, {
     message: VALIDATION_MESSAGES.INVALID_COUNTRY_NAME,
   })
   country?: string;
 
-  @ApiProperty({ example: 'Zagreb', required: false })
+  @ApiPropertyOptional({ example: 'Zagreb' })
   @IsOptional()
   @IsString()
   @Length(MIN_CITY_LENGTH, MAX_CITY_LENGTH)
   city?: string;
 
-  @ApiProperty({ example: 'Ilica 123', required: false })
+  @ApiPropertyOptional({ example: 'Ilica 123' })
   @IsOptional()
   @IsString()
   @Length(MIN_STREET_LENGTH, MAX_STREET_LENGTH)
   street?: string;
 
-  @ApiProperty({ example: '21000', required: false })
+  @ApiPropertyOptional({ example: '21000' })
   @IsOptional()
   @IsString()
   @Matches(zipcodeRegex, {
