@@ -1,4 +1,5 @@
 import Header from '@components/Home/Header';
+import { AppPaths } from 'common/routes/paths';
 import { useEffect } from 'react';
 import { Toaster } from 'react-hot-toast';
 import { useLocation } from 'react-router-dom';
@@ -32,8 +33,7 @@ const Layout = ({ children }: LayoutProps) => {
           },
         }}
       />
-      <Header />
-
+      {(pathname === AppPaths.HOME || pathname === AppPaths.CLIENT_PROFILE) && <Header />}
       <main>{children}</main>
     </div>
   );
