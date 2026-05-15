@@ -16,7 +16,6 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  await prisma.notifications.deleteMany();
   await prisma.reviews.deleteMany();
   await prisma.payments.deleteMany();
   await prisma.bookings.deleteMany();
@@ -28,9 +27,7 @@ async function main() {
   await prisma.salonMedia.deleteMany();
   await prisma.salonCategories.deleteMany();
   await prisma.salonPaymentConfig.deleteMany();
-  await prisma.favorites.deleteMany();
   await prisma.salons.deleteMany();
-  await prisma.users.deleteMany();
   await prisma.serviceCategories.deleteMany();
 
   const password = await bcrypt.hash('Password123!', 10);
@@ -51,8 +48,10 @@ async function main() {
     data: { name: 'Barbershop', slug: 'barbershop' },
   });
 
-  const owner1 = await prisma.users.create({
-    data: {
+  const owner1 = await prisma.users.upsert({
+    where: { email: 'owner1@lumii.test' },
+    update: {},
+    create: {
       email: 'owner1@lumii.test',
       firstName: 'Mia',
       lastName: 'Horvat',
@@ -68,8 +67,10 @@ async function main() {
     },
   });
 
-  const owner2 = await prisma.users.create({
-    data: {
+  const owner2 = await prisma.users.upsert({
+    where: { email: 'owner2@lumii.test' },
+    update: {},
+    create: {
       email: 'owner2@lumii.test',
       firstName: 'Ana',
       lastName: 'Marić',
@@ -85,8 +86,10 @@ async function main() {
     },
   });
 
-  const owner3 = await prisma.users.create({
-    data: {
+  const owner3 = await prisma.users.upsert({
+    where: { email: 'owner3@lumii.test' },
+    update: {},
+    create: {
       email: 'owner3@lumii.test',
       firstName: 'Petra',
       lastName: 'Kovač',
@@ -102,8 +105,10 @@ async function main() {
     },
   });
 
-  const owner4 = await prisma.users.create({
-    data: {
+  const owner4 = await prisma.users.upsert({
+    where: { email: 'owner4@lumii.test' },
+    update: {},
+    create: {
       email: 'owner4@lumii.test',
       firstName: 'Dorian',
       lastName: 'Leci',
@@ -119,8 +124,10 @@ async function main() {
     },
   });
 
-  const owner5 = await prisma.users.create({
-    data: {
+  const owner5 = await prisma.users.upsert({
+    where: { email: 'owner5@lumii.test' },
+    update: {},
+    create: {
       email: 'owner5@lumii.test',
       firstName: 'Ivana',
       lastName: 'Barišić',
@@ -136,8 +143,10 @@ async function main() {
     },
   });
 
-  const owner6 = await prisma.users.create({
-    data: {
+  const owner6 = await prisma.users.upsert({
+    where: { email: 'owner6@lumii.test' },
+    update: {},
+    create: {
       email: 'owner6@lumii.test',
       firstName: 'Luka',
       lastName: 'Jurić',
@@ -153,8 +162,10 @@ async function main() {
     },
   });
 
-  const owner7 = await prisma.users.create({
-    data: {
+  const owner7 = await prisma.users.upsert({
+    where: { email: 'owner7@lumii.test' },
+    update: {},
+    create: {
       email: 'owner7@lumii.test',
       firstName: 'Martina',
       lastName: 'Šarić',
@@ -170,8 +181,10 @@ async function main() {
     },
   });
 
-  const owner8 = await prisma.users.create({
-    data: {
+  const owner8 = await prisma.users.upsert({
+    where: { email: 'owner8@lumii.test' },
+    update: {},
+    create: {
       email: 'owner8@lumii.test',
       firstName: 'Marko',
       lastName: 'Perković',
@@ -187,8 +200,10 @@ async function main() {
     },
   });
 
-  const owner9 = await prisma.users.create({
-    data: {
+  const owner9 = await prisma.users.upsert({
+    where: { email: 'owner9@lumii.test' },
+    update: {},
+    create: {
       email: 'owner9@lumii.test',
       firstName: 'Nina',
       lastName: 'Radić',
@@ -204,8 +219,10 @@ async function main() {
     },
   });
 
-  const client = await prisma.users.create({
-    data: {
+  const client = await prisma.users.upsert({
+    where: { email: 'client@lumii.test' },
+    update: {},
+    create: {
       email: 'client@lumii.test',
       firstName: 'Lana',
       lastName: 'Vukadin',
@@ -219,8 +236,10 @@ async function main() {
     },
   });
 
-  const admin = await prisma.users.create({
-    data: {
+  const admin = await prisma.users.upsert({
+    where: { email: 'admin@lumii.test' },
+    update: {},
+    create: {
       email: 'admin@lumii.test',
       firstName: 'Admin',
       lastName: 'User',

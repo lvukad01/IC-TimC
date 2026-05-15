@@ -11,6 +11,7 @@ import {
   MediaType,
   MIN_FIXED_DEPOSIT_VALUE,
   MIN_PERCENTAGE_DEPOSIT_VALUE,
+  SalonCategory,
   SalonStatus,
   UserRole,
 } from '@lumii/types';
@@ -44,7 +45,6 @@ import type { UpdateSalonDto } from './dto/update-salon.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UploadMediaDto } from './dto/upload-media.dto';
 import { SalonsMapper } from './mapper/salons.mapper';
-import { SalonCategory } from 'generated/prisma';
 
 const RADIUS_METERS = 1000;
 
