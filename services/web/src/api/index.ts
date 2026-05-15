@@ -3,7 +3,7 @@ import axios, { AxiosError, type AxiosResponse } from 'axios';
 import camelcaseKeys from 'camelcase-keys';
 import { AppPaths } from 'common/routes/paths';
 
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = 'http://http://13.60.66.182/api';
 
 export const api = axios.create({
   baseURL: BASE_URL,
