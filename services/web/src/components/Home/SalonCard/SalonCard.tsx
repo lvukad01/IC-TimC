@@ -78,7 +78,9 @@ export const SalonCard = ({
           <span className={styles.rating}>★ {rating.toFixed(2)}</span>
         </div>
         <div className={styles.additionalInfo}>
-          <p className={styles.type}>{categories.map((c) => salonTypeLabel[c]).join(', ')}</p>
+          <p className={styles.type}>
+            {(categories ?? []).map((category) => salonTypeLabel[category]).join(', ')}
+          </p>
           <p className={styles.address}>{address}</p>
         </div>
       </div>

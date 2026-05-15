@@ -5,10 +5,15 @@ import logo from '@assets/media/lumii logo.svg';
 import { AppPaths } from 'common/routes/paths';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
+import LocalStorage from '@helpers/LocalStorage';
+import { useMe } from '@api/auth';
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const token = LocalStorage.getAccessToken();
+  const { data: user } = useMe(token);
 
   const isLoginPage = location.pathname === AppPaths.LOGIN;
   const isRegisterPage =
@@ -25,6 +30,10 @@ const Header = () => {
     navigate(AppPaths.HOME);
   }
 
+  function goToProfile() {
+    navigate(AppPaths.HOME);
+  }
+
   return (
     <header className={styles.header}>
       <div className={styles.logoWrapper}>
@@ -35,6 +44,8 @@ const Header = () => {
         <button className={styles.loginButton} onClick={goHome}>
           <img src={cross} alt="Zatvori" />
         </button>
+      ) : token ? (
+        <button className={styles.profileButton} onClick={goToProfile} />
       ) : (
         <button className={styles.loginButton} onClick={goToLogin}>
           <img src={loginBtn} alt="Prijava" />
