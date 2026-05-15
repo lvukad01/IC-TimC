@@ -1,3 +1,4 @@
+import { getFavorites } from '@api/favorites';
 import { useMoreSalonsInfinite } from '@api/salons';
 import { SalonCard } from '@components/Home/SalonCard/SalonCard';
 import useInfiniteScroll from '@hooks/useInfiniteScroll';
@@ -5,10 +6,9 @@ import type { PaginatedResponse } from '@lumii/types';
 import type { InfiniteData } from '@tanstack/react-query';
 import { type SalonCardData } from '@tstypes/SalonCard';
 import { AppPaths } from 'common/routes/paths';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import styles from '../SearchPage/SearchPage.module.scss';
-import { useEffect, useState } from 'react';
-import { getFavorites } from '@api/favorites';
 
 type ViewMoreType = 'recommended' | 'popular' | 'newest';
 
@@ -57,8 +57,10 @@ const ViewMorePage = () => {
   const { type } = useParams<{ type: ViewMoreType }>();
 
   const config = pageConfig[type ?? 'recommended'];
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading, isError, refetch } =
-    useMoreSalonsInfinite(config.endpoint, LIMIT);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, isLoading } = useMoreSalonsInfinite(
+    config.endpoint,
+    LIMIT,
+  );
 
   const salons = getResults<SalonCardData>(data)
     .filter((salon, index, self) => index === self.findIndex((s) => s.id === salon.id))

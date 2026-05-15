@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import styles from './SearchPage.module.scss';
-import { SalonCard } from '@components/Home/SalonCard/SalonCard';
-import { AppPaths } from 'common/routes/paths';
+import { getFavorites } from '@api/favorites';
 import { getSignedFiles } from '@api/files';
 import { getNearbySalons } from '@api/salons';
+import { SalonCard } from '@components/Home/SalonCard/SalonCard';
 import { searchSalons } from '@helpers/SearchSalons';
-import { getFavorites } from '@api/favorites';
+import { AppPaths } from 'common/routes/paths';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import styles from './SearchPage.module.scss';
 
 const SearchResultsPage = () => {
   const navigate = useNavigate();
@@ -81,20 +81,6 @@ const SearchResultsPage = () => {
 
     fetchSalons();
   }, [state]);
-
-  const getDateTimeLabel = () => {
-    if (!state?.date) return 'Bilo kada';
-
-    const date = new Date(state.date);
-
-    return date.toLocaleString('hr-HR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-  };
 
   return (
     <section className={styles.page}>

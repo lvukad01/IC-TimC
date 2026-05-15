@@ -1,18 +1,18 @@
+import { getFavorites } from '@api/favorites';
+import { getSignedFiles } from '@api/files';
+import { api } from '@api/index';
 import { useProfile } from '@api/profile';
 import profileIcon from '@assets/media/client_profile_icon.svg';
+import { SalonCard } from '@components/Home/SalonCard/SalonCard';
 import InlineEdit from '@components/InlineEdit';
+import { mapSalonForCard } from '@helpers/salonMapper';
 import useAuth from '@hooks/useAuth';
 import useUpdateProfile from '@hooks/useUpdateProfile';
+import type { SalonCardData } from '@tstypes/SalonCard';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { FaArrowRight } from 'react-icons/fa';
 import styles from './ClientProfilePage.module.scss';
-import { useEffect, useState } from 'react';
-import { getFavorites } from '@api/favorites';
-import { getSignedFiles } from '@api/files';
-import { mapSalonForCard } from '@helpers/salonMapper';
-import { SalonCard } from '@components/Home/SalonCard/SalonCard';
-import type { SalonCardData } from '@tstypes/SalonCard';
-import { api } from '@api/index';
 
 const ClientProfilePage = () => {
   const [favorites, setFavorites] = useState<SalonCardData[]>([]);
@@ -29,7 +29,7 @@ const ClientProfilePage = () => {
         onSuccess: () => {
           toast.success('Profil uspješno ažuriran');
         },
-        onError: (err: any) => {
+        onError: () => {
           toast.error('Greška pri ažuriranju profila');
         },
       },

@@ -1,8 +1,8 @@
+import arrowDown from '@assets/media/chevrondown.svg';
+import arrowUp from '@assets/media/chevronup.svg';
 import { useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './DateTimePage.module.scss';
-import arrowUp from '@assets/media/chevronup.svg';
-import arrowDown from '@assets/media/chevrondown.svg';
 
 const monthNames = [
   'SIJEČANJ',
@@ -54,19 +54,6 @@ const DateTimePage = () => {
   };
 
   const isCurrentMonth = year === new Date().getFullYear() && month === new Date().getMonth();
-
-  const isSelectedToday = () => {
-    if (!selectedDay) return false;
-
-    const selectedDate = new Date(year, month, selectedDay);
-    const todayDate = new Date();
-
-    return (
-      selectedDate.getFullYear() === todayDate.getFullYear() &&
-      selectedDate.getMonth() === todayDate.getMonth() &&
-      selectedDate.getDate() === todayDate.getDate()
-    );
-  };
 
   const isPastSelectedTime = () => {
     if (!selectedDay) return true;

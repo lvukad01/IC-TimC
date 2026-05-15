@@ -9,7 +9,7 @@ import styles from './Header.module.scss';
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { authenticated, logout } = useAuth();
+  const { authenticated } = useAuth();
 
   const isLoginPage = location.pathname === AppPaths.LOGIN;
 
