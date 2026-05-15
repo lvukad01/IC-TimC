@@ -49,9 +49,7 @@ const SearchResultsPage = () => {
           ? await getNearbySalons()
           : await searchSalons(params.toString());
 
-        const results = Array.isArray(data)
-          ? data
-          : (data?.results ?? data?.data?.results ?? data?.data ?? []);
+        const results = Array.isArray(data) ? data : (data?.results ?? []);
 
         const keys = results.map((salon: any) => salon.profileImageKey).filter(Boolean);
         const signedData = keys.length > 0 ? await getSignedFiles(keys) : { files: [] };
