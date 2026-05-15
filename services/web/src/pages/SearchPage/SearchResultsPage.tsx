@@ -25,14 +25,25 @@ const SearchResultsPage = () => {
 
         if (state?.search) params.append('search', state.search);
         if (state?.city && !state?.useMyLocation) params.append('city', state.city);
-
         if (state?.category && state.category !== 'Sve' && state.category.toLowerCase() !== 'all') {
-          params.append('search', state.category);
+          params.append('category', state.category.toUpperCase().replace(' ', '_'));
         }
         params.append('page', '1');
         params.append('limit', '50');
 
-        if (state?.date) params.append('date', state.date.split('T')[0]);
+        if (state?.date) {
+          const selectedDate = new Date(state.date);
+
+          params.append('date', selectedDate.toISOString().split('T')[0]);
+          params.append(
+            'time',
+            selectedDate.toLocaleTimeString('hr-HR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            }),
+          );
+        }
         if (state?.serviceId) params.append('serviceId', state.serviceId);
 
         try {

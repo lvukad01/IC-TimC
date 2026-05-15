@@ -5,6 +5,7 @@ import { GeocodingService } from '@geocoding/geocoding.service';
 import { buildFullAdress, isAddressChanged } from '@helpers/adress-helper';
 import { ErrorMessages, VALIDATION_MESSAGES } from '@lumii/messages';
 import {
+  BookingStatus,
   DepositType,
   MAX_PERCENTAGE_DEPOSIT_VALUE,
   MediaType,
@@ -14,6 +15,7 @@ import {
   UserRole,
 } from '@lumii/types';
 import {
+  BadRequestException,
   ConflictException,
   forwardRef,
   Inject,
@@ -42,6 +44,7 @@ import type { UpdateSalonDto } from './dto/update-salon.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
 import { UploadMediaDto } from './dto/upload-media.dto';
 import { SalonsMapper } from './mapper/salons.mapper';
+import { SalonCategory } from 'generated/prisma';
 
 const RADIUS_METERS = 1000;
 
@@ -83,17 +86,27 @@ export class SalonsService {
       page,
       limit,
       date,
+      time,
       serviceId,
     }: FindSalonsQueryDto,
     userId?: string,
   ): Promise<PaginatedResponse<SalonListResponseDto>> {
-    if (date && serviceId) {
+    if ((date || time) && !serviceId) {
+      throw new BadRequestException(
+        'serviceId is required when filtering by date and time',
+      );
+    }
+
+    if (date && time && serviceId) {
       const availableSalons = await this.findAvailableSalons(
-        date,
+        `${date}T${time}:00`,
         serviceId,
         city,
+        category,
       );
+
       const favorites = await this.resolveFavorites(userId);
+
       return {
         results: availableSalons.map((salon) =>
           this.mapper.mapSalonListItem(salon as SalonsWithReviews, favorites),
@@ -110,15 +123,18 @@ export class SalonsService {
     }
 
     const where: any = getStatusFilter();
+
     if (search) {
       where.OR = [{ name: { contains: search, mode: 'insensitive' } }];
     }
+
     if (city) {
       where.city = { contains: city, mode: 'insensitive' };
     }
+
     if (category) {
       where.categories = {
-        some: { category: category },
+        some: { category },
       };
     }
 
@@ -534,11 +550,35 @@ export class SalonsService {
     return salon.config;
   }
 
-  async findAvailableSalons(date: string, serviceId: string, city?: string) {
+  async findAvailableSalons(
+    date: string,
+    serviceId: string,
+    city?: string,
+    category?: SalonCategory,
+  ) {
+    const requestedStart = new Date(date);
+
+    const service = await this.prisma.services.findUnique({
+      where: { id: serviceId },
+    });
+
+    if (!service) {
+      throw new NotFoundException(ErrorMessages.notFound('Service'));
+    }
+
+    const requestedEnd = new Date(
+      requestedStart.getTime() + service.durationMin * 60 * 1000,
+    );
+
     const salons = await this.prisma.salons.findMany({
       where: {
         status: SalonStatus.ACTIVE,
         ...(city && { city: { contains: city, mode: 'insensitive' } }),
+        ...(category && {
+          categories: {
+            some: { category },
+          },
+        }),
         services: {
           some: { id: serviceId, isActive: true },
         },
@@ -547,7 +587,16 @@ export class SalonsService {
         ...SALON_LIST_INCLUDE,
         employees: {
           where: { isActive: true },
-          include: { workingHours: true },
+          include: {
+            workingHours: true,
+            bookings: {
+              where: {
+                startTime: { lt: requestedEnd },
+                endTime: { gt: requestedStart },
+                status: { not: BookingStatus.CANCELLED },
+              },
+            },
+          },
         },
         services: {
           where: { id: serviceId },
@@ -555,23 +604,33 @@ export class SalonsService {
       },
     });
 
-    const availableSalons: typeof salons = [];
+    return salons.filter((salon) =>
+      salon.employees.some((employee) => {
+        const dayOfWeek = requestedStart.getDay();
 
-    for (const salon of salons) {
-      const dateSalon = new Date(date);
-      const dayOfWeek = dateSalon.getDay();
-
-      for (const employee of salon.employees) {
-        const worksToday = employee.workingHours.some(
-          (wh) => wh.dayOfWeek == dayOfWeek,
+        const workingHours = employee.workingHours.find(
+          (wh) => wh.dayOfWeek === dayOfWeek,
         );
 
-        if (worksToday) {
-          availableSalons.push(salon);
-          break;
-        }
-      }
-    }
-    return availableSalons;
+        if (!workingHours) return false;
+
+        const workStart = new Date(requestedStart);
+        const [startHour, startMin] = workingHours.startTime
+          .split(':')
+          .map(Number);
+        workStart.setHours(startHour, startMin, 0, 0);
+
+        const workEnd = new Date(requestedStart);
+        const [endHour, endMin] = workingHours.endTime.split(':').map(Number);
+        workEnd.setHours(endHour, endMin, 0, 0);
+
+        const isInsideWorkingHours =
+          requestedStart >= workStart && requestedEnd <= workEnd;
+
+        const hasNoBookingConflict = employee.bookings.length === 0;
+
+        return isInsideWorkingHours && hasNoBookingConflict;
+      }),
+    );
   }
 }
