@@ -73,8 +73,8 @@ jobs:
             IMAGE="ghcr.io/dorianleci/lumii:latest"
             sudo docker pull $IMAGE
 
-            sudo docker stop cart_app || true
-            sudo docker rm cart_app || true
+            sudo docker stop lumii_app || true
+            sudo docker rm lumii_app || true
             sudo docker run -d -p 3000:3000 \
             --env-file .env --restart always \
             --name cart_app \
