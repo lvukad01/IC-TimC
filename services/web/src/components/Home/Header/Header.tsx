@@ -5,18 +5,14 @@ import useAuth from '@hooks/useAuth';
 import { AppPaths } from 'common/routes/paths';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './Header.module.scss';
-import LocalStorage from '@helpers/LocalStorage';
-import { useMe } from '@api/auth';
 
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { authenticated, logout } = useAuth();
 
-  const token = LocalStorage.getAccessToken();
-  const { data: user } = useMe(token);
-
   const isLoginPage = location.pathname === AppPaths.LOGIN;
+
   const isRegisterPage =
     location.pathname === AppPaths.REGISTER_CLIENT ||
     location.pathname === AppPaths.REGISTER_SALON_OWNER;
@@ -31,23 +27,21 @@ const Header = () => {
     navigate(AppPaths.HOME);
   }
 
-  function goToProfile() {
-    navigate(AppPaths.HOME);
-  }
-
   return (
     <header className={styles.header}>
       <div className={styles.logoWrapper}>
         <img src={logo} alt="Lumii" className={styles.logoImage} />
       </div>
+
       {isLoginPage || isRegisterPage || isSalonIntroPage ? (
         <button className={styles.closeButton} onClick={goHome}>
           <img src={cross} alt="Zatvori" />
         </button>
       ) : authenticated ? (
-        <button className={styles.loginButton} onClick={logout}>
-          Odjava
-        </button>
+        <button
+          className={styles.profileButton}
+          onClick={() => navigate(AppPaths.CLIENT_PROFILE)}
+        />
       ) : (
         <button className={styles.loginButton} onClick={goToLogin}>
           Prijava

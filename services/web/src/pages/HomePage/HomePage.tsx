@@ -11,7 +11,7 @@ import { mapSalonForCard } from '@helpers/salonMapper';
 import type { SalonListResponse } from '@lumii/types';
 import type { SalonCardData } from '@tstypes/SalonCard';
 import { AppPaths } from 'common/routes/paths';
-import { api } from '../../api';
+import { api } from '@api/index';
 
 const getResults = (response: any) =>
   response?.data?.results ?? response?.results ?? response?.data?.data?.results ?? [];

@@ -6,8 +6,17 @@ import useUpdateProfile from '@hooks/useUpdateProfile';
 import toast from 'react-hot-toast';
 import { FaArrowRight } from 'react-icons/fa';
 import styles from './ClientProfilePage.module.scss';
+import { useEffect, useState } from 'react';
+import { getFavorites } from '@api/favorites';
+import { getSignedFiles } from '@api/files';
+import { mapSalonForCard } from '@helpers/salonMapper';
+import { SalonCard } from '@components/Home/SalonCard/SalonCard';
+import type { SalonCardData } from '@tstypes/SalonCard';
+import { api } from '@api/index';
 
 const ClientProfilePage = () => {
+  const [favorites, setFavorites] = useState<SalonCardData[]>([]);
+  const [bookings, setBookings] = useState<any[]>([]);
   const { data: profile } = useProfile();
 
   const updateProfileMutation = useUpdateProfile();
@@ -27,6 +36,29 @@ const ClientProfilePage = () => {
     );
   };
 
+  useEffect(() => {
+    const fetchFavorites = async () => {
+      const data = await getFavorites();
+      const results = data?.results ?? data ?? [];
+
+      const keys = results.map((salon: any) => salon.profileImageKey).filter(Boolean);
+      const signedData = keys.length > 0 ? await getSignedFiles(keys) : { files: [] };
+
+      const urlMap = new Map<string, string>(
+        signedData.files.map((file: any) => [file.key, file.url]),
+      );
+
+      setFavorites(results.map((salon: any) => mapSalonForCard(salon, urlMap)));
+    };
+
+    const fetchBookings = async () => {
+      const data = await api.get('/bookings');
+      setBookings(data ?? []);
+    };
+
+    fetchFavorites();
+    fetchBookings();
+  }, []);
   return (
     <div className={styles.container}>
       <div className={styles.infoWrapper}>
@@ -65,6 +97,45 @@ const ClientProfilePage = () => {
           </span>
         </div>
       </div>
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h2>♡ Favoriti</h2>
+          <button>Vidi sve →</button>
+        </div>
+
+        <div className={styles.favoritesList}>
+          {favorites.slice(0, 3).map((salon) => (
+            <SalonCard key={salon.id} {...salon} borderColor="#A59DBD" />
+          ))}
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <h2>Rezervacije</h2>
+
+        <h3>U tijeku</h3>
+
+        <div className={styles.bookingList}>
+          {bookings.map((booking) => (
+            <div key={booking.id} className={styles.bookingCard}>
+              <div>
+                <strong>{booking.service?.name ?? 'Usluga'}</strong>
+                <p>{booking.salon?.name}</p>
+                <p>
+                  {booking.salon?.street}, {booking.salon?.city}
+                </p>
+              </div>
+
+              <span>
+                {new Date(booking.startTime).toLocaleTimeString('hr-HR', {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </span>
+            </div>
+          ))}
+        </div>
+      </section>
     </div>
   );
 };

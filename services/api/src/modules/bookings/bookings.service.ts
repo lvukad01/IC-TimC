@@ -37,6 +37,14 @@ export class BookingsService {
   async findAllBookings(userId: string): Promise<BookingResponseDto[]> {
     const bookings = await this.prisma.bookings.findMany({
       where: { clientId: userId },
+      include: {
+        service: true,
+        salon: true,
+        employee: true,
+      },
+      orderBy: {
+        startTime: 'asc',
+      },
     });
 
     return bookings.map((b) => toBookingResponse(b));

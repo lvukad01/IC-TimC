@@ -45,6 +45,7 @@ const ViewMorePage = () => {
   const salons = getResults<SalonCardData>(data).filter(
     (salon, index, self) => index === self.findIndex((s) => s.id === salon.id),
   );
+
   const loadMoreRef = useInfiniteScroll({
     fetchNextPage,
     hasNextPage,

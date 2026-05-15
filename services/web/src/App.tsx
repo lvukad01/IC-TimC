@@ -7,6 +7,7 @@ import ErrorBoundary from 'common/boundary/ErrorBoundary';
 import { AppPaths } from 'common/routes/paths';
 import { lazy } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import LoadingPage from '@components/LoadingPage/LoadingPage';
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ function App() {
               <Route path={AppPaths.DATE_TIME} element={<DateTimePage />} />
               <Route path="/salons/:type" element={<ViewMorePage />} />
               <Route path={AppPaths.OWNER_SALON_INTRO} element={<OwnerSalonIntro />} />
+              <Route path={AppPaths.LOADING} element={<LoadingPage />} />
               <Route
                 path={AppPaths.CLIENT_PROFILE}
                 element={
