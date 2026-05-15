@@ -1,0 +1,70 @@
+.container {
+  min-height: 100vh;
+  padding: 0px 31px;
+}
+
+.infoWrapper {
+  display: flex;
+  gap: 33px;
+  justify-content: center;
+  align-items: center;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex: 1;
+  max-width: 300px;
+}
+
+.profileIcon {
+  align-self: flex-start;
+}
+
+.name {
+  color: #9786ca;
+  font-weight: 500;
+  font-size: 24px;
+}
+
+.email,
+.phone {
+  color: #6c6c6c;
+  font-weight: 400;
+}
+
+.logoutButton {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  margin-top: 24px;
+  width: clamp(120px, 4vw, 150px);
+  padding: 10px;
+  font-size: 16px;
+  color: white;
+  font-weight: bold;
+  border-radius: var(--main-border-radius);
+  background-color: var(--color-purple);
+
+  transition: background-color 0.2s ease;
+}
+
+.logoutButton:hover {
+  background-color: var(--color-purple-hover);
+}
+
+.arrow {
+  transform: translate(2px, 40%);
+  transition: transform 0.15s ease;
+}
+
+.logoutButton:hover .arrow {
+  transform: translate(3px, 40%);
+}
+
+@media (min-width: 500px) {
+  .container {
+    padding: 0px 60px;
+  }
+}

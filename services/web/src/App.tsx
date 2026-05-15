@@ -1,5 +1,7 @@
 import Layout from '@components/Layout';
+import RoleBasedRoute from '@components/RoleBasedRoute';
 import { AuthProvider } from '@context/AuthContext';
+import { UserRole } from '@lumii/types';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from 'common/boundary/ErrorBoundary';
 import { AppPaths } from 'common/routes/paths';
@@ -18,6 +20,7 @@ const SearchServicePage = lazy(() => import('@pages/SearchPage/SearchServicePage
 const DateTimePage = lazy(() => import('@pages/DateTimePage/DateTimePage'));
 const ViewMorePage = lazy(() => import('@pages/ViewMorePage/ViewMorePage'));
 const OwnerSalonIntro = lazy(() => import('@pages/SalonRegistrationIntro'));
+const ClientProfilePage = lazy(() => import('@pages/ClientProfilePage'));
 
 function App() {
   return (
@@ -32,10 +35,18 @@ function App() {
               <Route path={AppPaths.HOME} element={<HomePage />} />
               <Route path={AppPaths.SEARCH_SERVICE} element={<SearchServicePage />} />
               <Route path={AppPaths.SEARCH_LOCATION} element={<SearchLocationPage />} />
-              <Route path={AppPaths.SEARCH_RESULTS} element={<SearchResultsPage />} />{' '}
+              <Route path={AppPaths.SEARCH_RESULTS} element={<SearchResultsPage />} />
               <Route path={AppPaths.DATE_TIME} element={<DateTimePage />} />
               <Route path="/salons/:type" element={<ViewMorePage />} />
               <Route path={AppPaths.OWNER_SALON_INTRO} element={<OwnerSalonIntro />} />
+              <Route
+                path={AppPaths.CLIENT_PROFILE}
+                element={
+                  <RoleBasedRoute allowedRoles={[UserRole.CLIENT]}>
+                    <ClientProfilePage />
+                  </RoleBasedRoute>
+                }
+              />
             </Routes>
           </Layout>
         </AuthProvider>

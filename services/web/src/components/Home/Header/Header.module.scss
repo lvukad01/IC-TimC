@@ -10,15 +10,17 @@
   height: 32px;
 }
 
-.loginButton {
-  border: none;
-  border-radius: 14px;
-  color: white;
-  background: none;
-  font-size: 10px;
-  font-weight: 600;
-  cursor: pointer;
+.loginButton,
+.logoutButton {
+  height: 40px;
+  padding: 0px 16px;
+  border-radius: var(--main-border-radius);
+  font-size: 16px;
+  font-weight: bold;
+  background-color: var(--color-purple);
 }
-.loginButton img {
-  height: 35;
+
+.loginButton:hover,
+.logoutButton:hover {
+  background-color: var(--color-purple-hover);
 }

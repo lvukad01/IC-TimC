@@ -1,3 +1,4 @@
+import useHorizontalScroll from '@hooks/useHorizontalScroll';
 import type { SalonCategory } from '@lumii/types';
 import { useNavigate } from 'react-router-dom';
 import { SalonCard } from '../SalonCard/SalonCard';
@@ -20,6 +21,7 @@ interface SalonSectionProps {
 
 export const SalonSection = ({ title, borderColor, salons, viewMorePath }: SalonSectionProps) => {
   const navigate = useNavigate();
+  const ref = useHorizontalScroll();
 
   return (
     <section className={styles.section}>
@@ -33,7 +35,7 @@ export const SalonSection = ({ title, borderColor, salons, viewMorePath }: Salon
           vidi više →
         </button>
       </div>
-      <div className={styles.cards}>
+      <div ref={ref} className={styles.cards}>
         {salons.map((salon) => (
           <SalonCard
             key={salon.id}
