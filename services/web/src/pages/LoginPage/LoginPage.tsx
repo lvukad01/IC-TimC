@@ -86,36 +86,38 @@ const LoginPage = () => {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Prijavi se ili registriraj</h1>
-      <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {step === LoginSteps.EMAIL && (
-            <FormInput
-              label="Email"
-              fullWidth
-              margin="normal"
-              {...register('email')}
-              error={!!errors.email}
-              helperText={errors.email?.message}
-            />
-          )}
+      <div className={styles.loginContainer}>
+        <h1 className={styles.title}>Prijavi se ili registriraj</h1>
+        <FormProvider {...form}>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {step === LoginSteps.EMAIL && (
+              <FormInput
+                label="Email"
+                fullWidth
+                margin="normal"
+                {...register('email')}
+                error={!!errors.email}
+                helperText={errors.email?.message}
+              />
+            )}
 
-          {step === LoginSteps.PASSWORD && (
-            <FormInput
-              label="Password"
-              type="password"
-              fullWidth
-              margin="normal"
-              {...register('password')}
-              error={!!errors.password}
-              helperText={errors.password?.message}
-            />
-          )}
-          <button className={styles.continueButton} type="submit">
-            {step === LoginSteps.EMAIL ? 'Nastavi' : 'Prijavi se'}
-          </button>
-        </form>
-      </FormProvider>
+            {step === LoginSteps.PASSWORD && (
+              <FormInput
+                label="Password"
+                type="password"
+                fullWidth
+                margin="normal"
+                {...register('password')}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+              />
+            )}
+            <button className={styles.continueButton} type="submit">
+              {step === LoginSteps.EMAIL ? 'Nastavi' : 'Prijavi se'}
+            </button>
+          </form>
+        </FormProvider>
+      </div>
       {(!loginMode || loginMode === LoginMode.CLIENT) && (
         <div className={styles.ownerContainer}>
           <img className={styles.rectangle} src={rectangle} alt="rectangle" />

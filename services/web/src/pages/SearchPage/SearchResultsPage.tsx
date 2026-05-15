@@ -23,26 +23,20 @@ const SearchResultsPage = () => {
       try {
         const params = new URLSearchParams();
 
-        if (state?.search) params.append('search', state.search);
-        if (state?.city && !state?.useMyLocation) params.append('city', state.city);
-        if (state?.category && state.category !== 'Sve' && state.category.toLowerCase() !== 'all') {
-          params.append('category', state.category.toUpperCase().replace(' ', '_'));
+        if (state?.date && state?.time && state?.serviceId) {
+          params.append('date', state.date.split('T')[0]);
+          params.append('time', state.time);
+          params.append('serviceId', state.serviceId);
         }
         params.append('page', '1');
         params.append('limit', '50');
 
-        if (state?.date) {
+        if (state?.date && state?.serviceId) {
           const selectedDate = new Date(state.date);
 
           params.append('date', selectedDate.toISOString().split('T')[0]);
-          params.append(
-            'time',
-            selectedDate.toLocaleTimeString('hr-HR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false,
-            }),
-          );
+          params.append('time', selectedDate.toTimeString().slice(0, 5));
+          params.append('serviceId', state.serviceId);
         }
         if (state?.serviceId) params.append('serviceId', state.serviceId);
 
