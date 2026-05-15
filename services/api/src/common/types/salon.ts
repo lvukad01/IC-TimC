@@ -1,4 +1,4 @@
-import { Prisma } from 'generated/prisma';
+import { Prisma } from '@prisma/client';
 
 export type SalonsWithMedia = Prisma.SalonsGetPayload<{
   include: { media: true; categories: true };
