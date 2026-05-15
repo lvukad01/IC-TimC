@@ -8,9 +8,10 @@
   display: flex;
   width: 390px;
   padding-bottom: 301px;
+  padding-top: 220px;
   flex-direction: column;
   align-items: center;
-  gap: 220px;
+  gap: 48px;
 }
 
 .notFound h1 {
@@ -25,8 +26,9 @@
 
 .homeButton {
   display: flex;
+  margin-right: 86px;
   height: 40px;
-  padding: 0 16px;
+  padding: 0 20px;
   justify-content: center;
   align-items: center;
   gap: 10px;
