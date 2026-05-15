@@ -70,7 +70,7 @@ jobs:
           script: |
             echo "${{ secrets.ENV_FILE }}"> .env
 
-            IMAGE="ghcr.io/dorianleci/lumii:latest"
+            IMAGE="ghcr.io/lvukad01/lumii:latest"
             sudo docker pull $IMAGE
 
             sudo docker stop lumii_app || true
